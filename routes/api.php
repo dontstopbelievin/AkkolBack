@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('register', ['as' => 'register', 'uses' => 'RegisterController@index']);
+
+Route::group(['prefix' => '/apz', 'middleware' => 'auth:api'], function() {
+    Route::get('/', 'ApzController@index');
+});
