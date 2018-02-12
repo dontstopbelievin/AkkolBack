@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Lcobucci\JWT\Parser;
 
 class LoginController extends Controller
 {
@@ -37,8 +40,37 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    /**
+     * Get username
+     *
+     * @return string
+     */
     public function username()
     {
         return 'iin';
+    }
+
+    /**
+     * Logout
+     *
+     * @return array
+     */
+    public function logout(Request $request)
+    {
+        $value = $request->bearerToken();
+        $id= (new Parser())->parse($value)->getHeader('jti');
+
+        DB::table('oauth_access_tokens')
+            ->where('id', '=', $id)
+            ->update(['revoked' => true]);
+
+        $this->guard()->logout();
+
+        $json = [
+            'success' => true,
+            'code' => 200,
+            'message' => 'You are Logged out.',
+        ];
+        return response()->json($json, '200');
     }
 }

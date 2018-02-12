@@ -17,7 +17,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('register', ['as' => 'register', 'uses' => 'RegisterController@index']);
+Route::post('token', 'Auth\AccessTokenController@issueToken');
+Route::post('logout', 'Auth\LoginController@logout');
+Route::post('register', ['as' => 'register', 'uses' => 'Auth\RegisterController@create'])->middleware('cors');
 
 Route::group(['prefix' => '/apz', 'middleware' => 'auth:api'], function() {
     Route::get('/', 'ApzController@index');
