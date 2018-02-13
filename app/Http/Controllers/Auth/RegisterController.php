@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Role;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -49,7 +52,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => 'required|string|max:255',
-            'iin' => 'required|string|max:255',
+            'iin' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -58,19 +61,54 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
-     * @return \App\User
+     * @param  Request  $request
+     * @return array
      */
-    protected function create(array $data)
+    protected function create(Request $request)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'iin' => $data['iin'],
-            'bin' => $data['bin'],
-            'password' => bcrypt($data['password']),
-        ]);
+        $valid = $this->validator($request->all());
+
+        if ($valid->fails()) {
+            $jsonError = response()->json($valid->errors()->all(), 400);
+
+            return $jsonError;
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $data = $request->all();
+
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'iin' => $data['iin'],
+                'bin' => $data['bin'],
+                'password' => bcrypt($data['password']),
+            ]);
+
+            $user->roles()->attach(Role::where('id', Role::TEMPORARY)->first());
+
+            $client = DB::table('oauth_clients')->where('password_client', 1)->first();
+
+            $result = [
+                'grant_type'    => 'password',
+                'client_id'     => $client->id,
+                'client_secret' => $client->secret,
+                'username'      => $data['iin'],
+                'password'      => $data['password'],
+                'scope'         => null,
+            ];
+
+            DB::commit();
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return response()->json(['error' => 'Не удалось создать пользователя'], 500);
+        }
     }
 }

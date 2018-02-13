@@ -12,7 +12,14 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('register', ['as' => 'register', 'uses' => 'RegisterController@index']);
+
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+Route::post('token', 'Auth\AccessTokenController@issueToken');
+Route::post('logout', 'Auth\LoginController@logout');
+Route::post('register', ['as' => 'register', 'uses' => 'Auth\RegisterController@create'])->middleware('cors');
 
 Route::group(['middleware' => 'auth:api'], function ()
 {
@@ -32,4 +39,3 @@ Route::group(['middleware' => 'auth:api'], function ()
         Route::post('personal', 'PhotoReport@personal');
     });
 });
-
