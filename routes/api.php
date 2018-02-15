@@ -38,6 +38,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::group(['prefix' => '/file'], function () {
         Route::get('/', 'FileController@index');
+        Route::get('all', 'FileController@all');
+        Route::get('categoriesList', 'FileController@categoriesList');
+        Route::get('download/{id}', 'FileController@download');
         Route::post('upload', 'FileController@upload');
     });
 

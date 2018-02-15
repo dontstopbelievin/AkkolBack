@@ -108,7 +108,7 @@ class RegisterController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return response()->json(['error' => 'Не удалось создать пользователя'], 500);
+            return response()->json(['error' => $e], 500);
         }
     }
 }
