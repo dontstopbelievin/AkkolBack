@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Lcobucci\JWT\Parser;
 
@@ -37,7 +38,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        $this->middleware('guest')->except(['logout', 'userInfo']);
     }
 
     /**
@@ -58,7 +59,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $value = $request->bearerToken();
-        $id= (new Parser())->parse($value)->getHeader('jti');
+        $id = (new Parser())->parse($value)->getHeader('jti');
 
         DB::table('oauth_access_tokens')
             ->where('id', '=', $id)
@@ -71,6 +72,36 @@ class LoginController extends Controller
             'code' => 200,
             'message' => 'You are Logged out.',
         ];
+
+        return response()->json($json, '200');
+    }
+
+    /**
+     * Get user info
+     *
+     * @return array
+     */
+    public function userInfo()
+    {
+        if (!Auth::guard('api')->user()) {
+            return response()->json('Пользователь не авторизован', '401');
+        }
+
+        $token = Auth::guard('api')->user()->token();
+
+        if (strtotime($token->expires_at) <= time()) {
+            $token->revoked = true;
+            $token->save();
+
+            $this->guard()->logout();
+
+            return response()->json('Пользователь не авторизован', '401');
+        }
+
+        $json = [
+            'iin' => Auth::guard('api')->user()->iin
+        ];
+
         return response()->json($json, '200');
     }
 }

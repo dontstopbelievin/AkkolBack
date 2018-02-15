@@ -20,19 +20,28 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('token', 'Auth\AccessTokenController@issueToken');
 Route::post('logout', 'Auth\LoginController@logout');
 Route::post('register', ['as' => 'register', 'uses' => 'Auth\RegisterController@create'])->middleware('cors');
+Route::get('/user_info', 'Auth\LoginController@userInfo');
 
-Route::group(['middleware' => 'auth:api'], function ()
-{
-    Route::group(['prefix' => '/apz'], function() {
-        Route::get('/', 'ApzController@index');
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::group(['prefix' => '/apz'], function () {
+        Route::group(['middleware' => 'role:citizen'], function () {
+            Route::post('/Create', 'ApzController@create');
+            Route::get('/user', 'ApzController@getApzByUser');
+            Route::get('/detail/{id}', 'ApzController@getApzDetail');
+        });
+
+        Route::group(['middleware' => 'role:region'], function () {
+            Route::get('/region', 'ApzController@getApzByRegion');
+        });
     });
 
-    Route::group(['prefix' => '/file'], function() {
+    Route::group(['prefix' => '/file'], function () {
         Route::get('/', 'FileController@index');
         Route::post('upload', 'FileController@upload');
     });
 
-    Route::group(['prefix' => '/photoreport'], function() {
+    Route::group(['prefix' => '/photoreport'], function () {
         Route::get('/', 'PhotoReportController@index');
         Route::post('create', 'PhotoReport@create');
         Route::post('response', 'PhotoReport@response');

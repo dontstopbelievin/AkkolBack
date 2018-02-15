@@ -18,7 +18,7 @@ class CheckRole
     public function handle($request, Closure $next, $role)
     {
         if (!Auth::user() || !Auth::user()->hasRole($role)) {
-            return response()->json(['error' => 'Not authorized.'],401);
+            return response()->json(['message' => 'У вас недостаточно прав для доступа к данной странице.'],403);
         }
 
         return $next($request);
