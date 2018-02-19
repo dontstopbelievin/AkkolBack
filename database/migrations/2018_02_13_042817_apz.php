@@ -82,6 +82,7 @@ class Apz extends Migration
             $table->float('production', 11,3)->comment('На производственные нужды')->nullable();
             $table->float('fire_fighting', 11,3)->comment('Потребные расходы наружного пожаротушения')->nullable();
             $table->float('sewage', 11,3)->comment('Канализация');
+            $table->integer('status')->default(2)->comment('Статус (0-declined, 1-accepted, 2-active)');
             $table->timestamps();
         });
 
@@ -96,6 +97,7 @@ class Apz extends Migration
             $table->float('tech', 11,3)->comment('Технологические нужды')->nullable();
             $table->string('distribution', 255)->comment('Разделить нагрузку по жилью и по встроенным помещениям')->nullable();
             $table->string('saving', 255)->comment('Энергосберегающее мероприятие')->nullable();
+            $table->integer('status')->default(2)->comment('Статус (0-declined, 1-accepted, 2-active)');
             $table->timestamps();
         });
 
@@ -107,6 +109,7 @@ class Apz extends Migration
             $table->string('capacity', 255)->comment('Телефонная емкость')->nullable();
             $table->string('sewage', 255)->comment('Планируемая телефонная канализация')->nullable();
             $table->string('client_wishes', 255)->comment('Пожелания заказчика')->nullable();
+            $table->integer('status')->default(2)->comment('Статус (0-declined, 1-accepted, 2-active)');
             $table->timestamps();
         });
 
@@ -120,6 +123,7 @@ class Apz extends Migration
             $table->float('max_load_device', 11,3)->comment('Из указанной макс. нагрузки относятся к электроприемникам')->nullable();
             $table->float('max_load', 11,3)->comment('Существующая максимальная нагрузка')->nullable();
             $table->float('allowed_power', 11,3)->comment('Мощность трансформаторов')->nullable();
+            $table->integer('status')->default(2)->comment('Статус (0-declined, 1-accepted, 2-active)');
             $table->timestamps();
         });
 
@@ -133,6 +137,7 @@ class Apz extends Migration
             $table->float('ventilation', 11,3)->comment('Вентиляция')->nullable();
             $table->float('conditionaer', 11,3)->comment('Кондиционирование')->nullable();
             $table->float('water', 11,3)->comment('Горячее водоснабжение')->nullable();
+            $table->integer('status')->default(2)->comment('Статус (0-declined, 1-accepted, 2-active)');
             $table->timestamps();
         });
 
@@ -145,6 +150,7 @@ class Apz extends Migration
             $table->float('production', 11,3)->comment('Производственно-загрязненных')->nullable();
             $table->float('to_city', 11,3)->comment('Условно-чистых сбрасываемых на городскую канализацию')->nullable();
             $table->string('client_wishes', 255)->comment('Пожелание заказчика')->nullable();
+            $table->integer('status')->default(2)->comment('Статус (0-declined, 1-accepted, 2-active)');
             $table->timestamps();
         });
     }

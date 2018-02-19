@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Apz;
 
 use App\Apz;
 use App\ApzElectricity;
@@ -9,11 +9,12 @@ use App\ApzHeat;
 use App\ApzPhone;
 use App\ApzSewage;
 use App\ApzWater;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class ApzController extends Controller
+class ApzCitizenController extends Controller
 {
     /**
      * Create Apz
@@ -60,7 +61,7 @@ class ApzController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getApzByUser()
+    public function all()
     {
         $apzs = Apz::where('user_id', Auth::user()->id)->get();
 
@@ -73,13 +74,13 @@ class ApzController extends Controller
      * @param integer $id
      * @return \Illuminate\Http\Response
      */
-    public function getApzDetail($id)
+    public function show($id)
     {
         $apz = Apz::where([
             'id' => $id,
             'user_id' => Auth::user()->id
         ])
-        ->with('apz_electricity', 'apz_gas', 'apz_heat', 'apz_phone', 'apz_sewage', 'apz_water')
+        ->with('apzElectricity', 'apzGas', 'apzHeat', 'apzPhone', 'apzSewage', 'apzWater')
         ->first();
 
         if (!$apz) {
@@ -88,37 +89,4 @@ class ApzController extends Controller
 
         return response()->json($apz, 200);
     }
-
-    /**
-     * Show apz list for region
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getApzByRegion()
-    {
-        $region = Auth::user()->roles()->where('level', 3)->first();
-
-        if (!$region) {
-            return response()->json(['message' => 'У вас недостаточно прав для доступа к данной странице'], 403);
-        }
-
-        $apzs = Apz::where([
-            'region' => $region->name
-        ])->with([
-            'apzElectricity',
-            'apzGas',
-            'apzHeat',
-            'apzPhone',
-            'apzSewage',
-            'apzWater',
-            'commission.apzElectricityResponse',
-            'commission.apzGasResponse',
-            'commission.apzHeatResponse',
-            'commission.apzPhoneResponse',
-            'commission.apzWaterResponse',
-        ])->get();
-
-        return response()->json($apzs, 200);
-    }
-
 }

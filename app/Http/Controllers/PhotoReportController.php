@@ -19,7 +19,7 @@ class PhotoReportController extends Controller
         try {
             $userId = Auth::user()->id;
             $getPersonal = PhotoReport::select('id')->where(['user_id' => $userId])->get();
-            return response()->json([$getPersonal], 200);
+            return response()->json($getPersonal, 200);
         }
         catch (\Exception $e) {
             return response()->json(['message' => 'Заявки не найдены'], 401);

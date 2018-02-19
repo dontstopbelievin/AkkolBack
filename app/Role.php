@@ -42,6 +42,7 @@ class Role extends Model
     const MEDEU         = 21;
     const NAURYZBAI     = 22;
     const TURKSIB       = 23;
+    const PHOTOREPORTER = 24;
 
     /**
      * Get users

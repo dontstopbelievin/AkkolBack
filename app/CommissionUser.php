@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
  */
 class CommissionUser extends Model
 {
-    protected $table = "apz_commissions_users";
+    protected $table = "commissions_users";
 
     /**
      * Add item in database

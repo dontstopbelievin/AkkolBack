@@ -185,6 +185,12 @@ class CreateRolesTable extends Migration
                 'parent_id' => 9,
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now()
+            ],
+            [
+                'name' => 'PhotoReporter',
+                'level' => 1,
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
             ]
         ]);
     }

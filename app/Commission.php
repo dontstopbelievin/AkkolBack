@@ -16,7 +16,7 @@ class Commission extends Model
      */
     public function apzElectricityResponse()
     {
-        return $this->belongsTo(ApzProviderElectricityResponse::class);
+        return $this->hasOne(ApzProviderElectricityResponse::class, 'commission_id' , 'id');
     }
 
     /**
@@ -24,7 +24,7 @@ class Commission extends Model
      */
     public function apzGasResponse()
     {
-        return $this->belongsTo(ApzProviderGasResponse::class);
+        return $this->hasOne(ApzProviderGasResponse::class, 'commission_id' , 'id');
     }
 
     /**
@@ -32,7 +32,7 @@ class Commission extends Model
      */
     public function apzHeatResponse()
     {
-        return $this->belongsTo(ApzProviderHeatResponse::class);
+        return $this->hasOne(ApzProviderHeatResponse::class, 'commission_id' , 'id');
     }
 
     /**
@@ -40,7 +40,7 @@ class Commission extends Model
      */
     public function apzPhoneResponse()
     {
-        return $this->belongsTo(ApzProviderPhoneResponse::class);
+        return $this->hasOne(ApzProviderPhoneResponse::class, 'commission_id' , 'id');
     }
 
     /**
@@ -48,7 +48,7 @@ class Commission extends Model
      */
     public function apzWaterResponse()
     {
-        return $this->belongsTo(ApzProviderWaterResponse::class);
+        return $this->hasOne(ApzProviderWaterResponse::class, 'commission_id' , 'id');
     }
 
     /**
@@ -57,5 +57,13 @@ class Commission extends Model
     public function apz()
     {
         return $this->hasOne(Apz::class, 'id', 'apz_id');
+    }
+
+    /**
+     * Get apz
+     */
+    public function users()
+    {
+        return $this->hasMany(CommissionUser::class, 'commission_id', 'id');
     }
 }

@@ -46,6 +46,24 @@ class Apz extends Model
         return $this;
     }
 
+    public static function getApzBaseRelationList()
+    {
+        return [
+            'apzElectricity',
+            'apzGas',
+            'apzHeat',
+            'apzPhone',
+            'apzSewage',
+            'apzWater',
+            'commission.apzElectricityResponse',
+            'commission.apzGasResponse',
+            'commission.apzHeatResponse',
+            'commission.apzPhoneResponse',
+            'commission.apzWaterResponse',
+            'stateHistory'
+        ];
+    }
+
     /**
      * Get electricity
      */
@@ -99,13 +117,21 @@ class Apz extends Model
      */
     public function commission()
     {
-        return $this->belongsTo(Commission::class);
+        return $this->hasOne(Commission::class, 'apz_id', 'id');
+    }
+
+    /**
+     * Get states
+     */
+    public function stateHistory()
+    {
+        return $this->hasMany(ApzStateHistory::class, 'apz_id', 'id');
     }
 
     /**
      * Get status
      */
-    public function apz_status()
+    public function apzStatus()
     {
         return $this->hasOne(ApzStatus::class, 'id', 'status_id');
     }

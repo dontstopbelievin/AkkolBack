@@ -19,7 +19,7 @@ class ApzResponse extends Migration
             $table->foreign('apz_id')->references('id')->on('apzs');
             $table->integer('user_id')->unsigned()->comment('ИД пользователя')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->boolean('is_active')->defaultValue(false)->comment('Флаг активности');
+            $table->boolean('is_active')->default(false)->comment('Флаг активности');
             $table->timestamps();
         });
 
@@ -29,6 +29,7 @@ class ApzResponse extends Migration
             $table->foreign('commission_id')->references('id')->on('commissions');
             $table->integer('user_id')->unsigned()->comment('ИД пользователя')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->boolean('is_done')->default(false)->comment('Завершен');
             $table->timestamps();
         });
 
