@@ -23,6 +23,11 @@ class AccessTokenController extends ATC
 
             //get user
             $user = User::where('iin', '=', $username)->first();
+
+            if (!$user) {
+                throw new ModelNotFoundException();
+            }
+
             $roles = $user->roles;
 
             DB::table('oauth_access_tokens')

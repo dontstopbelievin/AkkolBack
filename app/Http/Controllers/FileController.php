@@ -43,11 +43,41 @@ class FileController extends Controller
     public function download($id)
     {
         try {
-            $userId = Auth::user()->id;
-            $getFile = File::select('id', 'name', 'url', 'hash')
-                ->where(['id' => $id, 'user_id' => $userId])
-                ->get();
-            return response()->json([$getFile], 200);
+            $file = File::select('id', 'name', 'url', 'hash', 'category_id', 'user_id', 'content_type')->where(['id' => $id])->first();
+//            $user = Auth::user();
+//            $can_download = false;
+//
+//            switch ($file->category_id) {
+//                case FileCategory::IDENTITY_CARD:
+//                case FileCategory::APPROVED_ASSIGNMENT:
+//                case FileCategory::TITLE_DOCUMENT:
+//                    if ($user->hasAnyRole(['Provider', 'Urban', 'Engineer', 'Head']) || $file->user_id == $user->id) {
+//                        $can_download = true;
+//                    }
+//                    break;
+//
+//                case FileCategory::MOTIVATED_REJECT:
+//                case FileCategory::TECHNICAL_CONDITION:
+//                    $apz = Apz::where(['id' => $file->items[0]->item_id])->first();
+//
+//                    if ($user->hasAnyRole(['Head']) || $file->user_id == $user->id || in_array($apz->status_id, [ApzStatus::DECLINED, ApzStatus::ACCEPTED])) {
+//                        $can_download = true;
+//                    }
+//                    break;
+//                default:
+//                    if ($file->user_id == $user->id) {
+//                        $can_download = true;
+//                    }
+//                    break;
+//            }
+//
+//            if (!$can_download) {
+//                throw new \Exception('Отказано в доступе');
+//            }
+
+            $filePath = storage_path('app/' . $file->url);
+
+            return response()->json(['file' => base64_encode(file_get_contents($filePath)), 'file_name' => $file->name], 200);
         }
         catch (\Exception $e) {
             return response()->json(['message' => 'Файл не найден, либо у вас нет прав'], 401);

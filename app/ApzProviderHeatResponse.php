@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -29,5 +30,21 @@ class ApzProviderHeatResponse extends Model
     public function commission()
     {
         return $this->hasOne(Commission::class, 'id', 'commission_id');
+    }
+
+    /**
+     * Get files
+     */
+    public function files()
+    {
+        return $this->belongsToMany(
+            File::class,
+            'files_items',
+            'item_id',
+            'file_id'
+        )->wherePivot(
+            'item_type_id',
+            FileItemType::HEAT_RESPONSE
+        );
     }
 }

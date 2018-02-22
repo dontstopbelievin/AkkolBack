@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
+use App\FileItem;
 use Illuminate\Database\Eloquent\Model;
-use function PHPSTORM_META\type;
 
 class File extends Model
 {
     /**
-     * Save files for gallery
+     * Get items
      */
-    public static function saveFiles($request)
+    public function items()
     {
-
+        return $this->hasMany(FileItem::class, 'file_id', 'id');
     }
 }

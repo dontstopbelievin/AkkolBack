@@ -3,26 +3,27 @@
 namespace App\Http\Controllers\Apz;
 
 use App\Apz;
-use App\ApzElectricity;
-use App\ApzGas;
-use App\ApzHeat;
-use App\ApzPhone;
 use App\ApzProviderElectricityResponse;
 use App\ApzProviderGasResponse;
 use App\ApzProviderHeatResponse;
 use App\ApzProviderPhoneResponse;
 use App\ApzProviderWaterResponse;
-use App\ApzSewage;
 use App\ApzStateHistory;
 use App\ApzStatus;
 use App\ApzState;
-use App\ApzWater;
 use App\Commission;
+use App\CommissionStatus;
 use App\CommissionUser;
+use App\CommissionUserStatus;
+use App\FileItem;
+use App\FileItemType;
 use App\Http\Controllers\Controller;
+use App\Models\File;
+use App\Models\FileCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ApzProviderController extends Controller
 {
@@ -44,15 +45,11 @@ class ApzProviderController extends Controller
                     $query->whereIn('state_id', [ApzState::WATER_APPROVED, ApzState::WATER_DECLINED]);
                 })->get();
 
-                $accepted = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::WATER_APPROVED);
                 })->get();
 
-                $declined = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::WATER_DECLINED);
                 })->get();
 
@@ -65,15 +62,11 @@ class ApzProviderController extends Controller
                     $query->whereIn('state_id', [ApzState::GAS_APPROVED, ApzState::GAS_DECLINED]);
                 })->get();
 
-                $accepted = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::GAS_APPROVED);
                 })->get();
 
-                $declined = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::GAS_DECLINED);
                 })->get();
 
@@ -86,15 +79,11 @@ class ApzProviderController extends Controller
                     $query->whereIn('state_id', [ApzState::ELECTRICITY_APPROVED, ApzState::ELECTRICITY_DECLINED]);
                 })->get();
 
-                $accepted = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::ELECTRICITY_APPROVED);
                 })->get();
 
-                $declined = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::ELECTRICITY_DECLINED);
                 })->get();
 
@@ -107,15 +96,11 @@ class ApzProviderController extends Controller
                     $query->whereIn('state_id', [ApzState::PHONE_APPROVED, ApzState::PHONE_DECLINED]);
                 })->get();
 
-                $accepted = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::PHONE_APPROVED);
                 })->get();
 
-                $declined = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::PHONE_DECLINED);
                 })->get();
 
@@ -128,15 +113,11 @@ class ApzProviderController extends Controller
                     $query->whereIn('state_id', [ApzState::HEAT_APPROVED, ApzState::HEAT_DECLINED]);
                 })->get();
 
-                $accepted = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::HEAT_APPROVED);
                 })->get();
 
-                $declined = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
                     $query->where('state_id', ApzState::HEAT_DECLINED);
                 })->get();
 
@@ -200,6 +181,34 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
+                $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
+                $file_ext = $request->file('file')->getClientOriginalExtension();
+                $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                Storage::put($file_url, file_get_contents($request->file('file')));
+
+                if (!Storage::disk('local')->exists($file_url)) {
+                    throw new \Exception('Файл не сохранен');
+                }
+
+                $file = new File();
+                $file->name = $request->file('file')->getClientOriginalName();
+                $file->url = $file_url;
+                $file->extension = $request->file('file')->getClientOriginalExtension();
+                $file->content_type = $request->file('file')->getClientMimeType();
+                $file->size = $request->file('file')->getClientSize();
+                $file->hash = $file_name;
+                $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
+                $file->user_id = Auth::user()->id;
+                $file->save();
+
+                $file_item = new FileItem();
+                $file_item->file_id = $file->id;
+                $file_item->item_id = $response->id;
+                $file_item->item_type_id = FileItemType::WATER_RESPONSE;
+                $file_item->save();
+                $response->files;
+
                 return response()->json($response, 200);
 
             case 'electro':
@@ -217,6 +226,34 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
+                $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
+                $file_ext = $request->file('file')->getClientOriginalExtension();
+                $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                Storage::put($file_url, file_get_contents($request->file('file')));
+
+                if (!Storage::disk('local')->exists($file_url)) {
+                    throw new \Exception('Файл не сохранен');
+                }
+
+                $file = new File();
+                $file->name = $request->file('file')->getClientOriginalName();
+                $file->url = $file_url;
+                $file->extension = $request->file('file')->getClientOriginalExtension();
+                $file->content_type = $request->file('file')->getClientMimeType();
+                $file->size = $request->file('file')->getClientSize();
+                $file->hash = $file_name;
+                $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
+                $file->user_id = Auth::user()->id;
+                $file->save();
+
+                $file_item = new FileItem();
+                $file_item->file_id = $file->id;
+                $file_item->item_id = $response->id;
+                $file_item->item_type_id = FileItemType::ELECTRICITY_RESPONSE;
+                $file_item->save();
+                $response->files;
+
                 return response()->json($response, 200);
 
             case 'gas':
@@ -232,6 +269,34 @@ class ApzProviderController extends Controller
                 $response->reconsideration = $request['Reconsideration'];
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
+
+                $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
+                $file_ext = $request->file('file')->getClientOriginalExtension();
+                $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                Storage::put($file_url, file_get_contents($request->file('file')));
+
+                if (!Storage::disk('local')->exists($file_url)) {
+                    throw new \Exception('Файл не сохранен');
+                }
+
+                $file = new File();
+                $file->name = $request->file('file')->getClientOriginalName();
+                $file->url = $file_url;
+                $file->extension = $request->file('file')->getClientOriginalExtension();
+                $file->content_type = $request->file('file')->getClientMimeType();
+                $file->size = $request->file('file')->getClientSize();
+                $file->hash = $file_name;
+                $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
+                $file->user_id = Auth::user()->id;
+                $file->save();
+
+                $file_item = new FileItem();
+                $file_item->file_id = $file->id;
+                $file_item->item_id = $response->id;
+                $file_item->item_type_id = FileItemType::GAS_RESPONSE;
+                $file_item->save();
+                $response->files;
 
                 return response()->json($response, 200);
 
@@ -253,6 +318,34 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
+                $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
+                $file_ext = $request->file('file')->getClientOriginalExtension();
+                $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                Storage::put($file_url, file_get_contents($request->file('file')));
+
+                if (!Storage::disk('local')->exists($file_url)) {
+                    throw new \Exception('Файл не сохранен');
+                }
+
+                $file = new File();
+                $file->name = $request->file('file')->getClientOriginalName();
+                $file->url = $file_url;
+                $file->extension = $request->file('file')->getClientOriginalExtension();
+                $file->content_type = $request->file('file')->getClientMimeType();
+                $file->size = $request->file('file')->getClientSize();
+                $file->hash = $file_name;
+                $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
+                $file->user_id = Auth::user()->id;
+                $file->save();
+
+                $file_item = new FileItem();
+                $file_item->file_id = $file->id;
+                $file_item->item_id = $response->id;
+                $file_item->item_type_id = FileItemType::HEAT_RESPONSE;
+                $file_item->save();
+                $response->files;
+
                 return response()->json($response, 200);
 
             case 'phone':
@@ -268,6 +361,34 @@ class ApzProviderController extends Controller
                 $response->client_wishes = $request['ResponseClientWishes'];
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
+
+                $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
+                $file_ext = $request->file('file')->getClientOriginalExtension();
+                $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                Storage::put($file_url, file_get_contents($request->file('file')));
+
+                if (!Storage::disk('local')->exists($file_url)) {
+                    throw new \Exception('Файл не сохранен');
+                }
+
+                $file = new File();
+                $file->name = $request->file('file')->getClientOriginalName();
+                $file->url = $file_url;
+                $file->extension = $request->file('file')->getClientOriginalExtension();
+                $file->content_type = $request->file('file')->getClientMimeType();
+                $file->size = $request->file('file')->getClientSize();
+                $file->hash = $file_name;
+                $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
+                $file->user_id = Auth::user()->id;
+                $file->save();
+
+                $file_item = new FileItem();
+                $file_item->file_id = $file->id;
+                $file_item->item_id = $response->id;
+                $file_item->item_type_id = FileItemType::PHONE_RESPONSE;
+                $file_item->save();
+                $response->files;
 
                 return response()->json($response, 200);
 
@@ -363,13 +484,15 @@ class ApzProviderController extends Controller
             }
 
             $commission_user = CommissionUser::where(['commission_id' => $commission->id, 'user_id' => $response->user_id])->first();
-
-            $commission_user->is_done = 1;
+            $commission_user->status_id = $response->response ? CommissionUserStatus::ACCEPTED : CommissionUserStatus::DECLINED;
             $commission_user->save();
 
-            if (sizeof($commission->users()->where('is_done', 1)->get()) == sizeof($commission->users)) {
+            if (sizeof($commission->users()->where('status_id', '<>', CommissionUserStatus::IN_PROCESS)->get()) == sizeof($commission->users)) {
                 $apz->status_id = ApzStatus::ENGINEER;
                 $apz->save();
+
+                $commission->status_id = CommissionStatus::FINISHED;
+                $commission->save();
 
                 $engineer_state = new ApzStateHistory();
                 $engineer_state->apz_id = $apz->id;

@@ -19,30 +19,31 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Role extends Model
 {
-    const TEMPORARY     = 1;
-    const ADMIN         = 2;
-    const CITIZEN       = 3;
-    const URBAN         = 4;
-    const PROVIDER      = 5;
-    const INDIVIDUAL    = 6;
-    const BUSINESS      = 7;
-    const HEAD          = 8;
-    const REGION        = 9;
-    const ENGINEER      = 10;
-    const GAS           = 11;
-    const ELECTRICITY   = 12;
-    const WATER         = 13;
-    const HEAT          = 14;
-    const PHONE         = 15;
-    const ALATAU        = 16;
-    const ALMATY        = 17;
-    const AUEZOV        = 18;
-    const BOSTANDYK     = 19;
-    const JETISU        = 20;
-    const MEDEU         = 21;
-    const NAURYZBAI     = 22;
-    const TURKSIB       = 23;
-    const PHOTOREPORTER = 24;
+    const TEMPORARY         = 1;
+    const ADMIN             = 2;
+    const CITIZEN           = 3;
+    const URBAN             = 4;
+    const PROVIDER          = 5;
+    const INDIVIDUAL        = 6;
+    const BUSINESS          = 7;
+    const HEAD              = 8;
+    const REGION            = 9;
+    const ENGINEER          = 10;
+    const GAS               = 11;
+    const ELECTRICITY       = 12;
+    const WATER             = 13;
+    const HEAT              = 14;
+    const PHONE             = 15;
+    const ALATAU            = 16;
+    const ALMATY            = 17;
+    const AUEZOV            = 18;
+    const BOSTANDYK         = 19;
+    const JETISU            = 20;
+    const MEDEU             = 21;
+    const NAURYZBAI         = 22;
+    const TURKSIB           = 23;
+    const PHOTOREPORTER     = 24;
+    const APZ_DEPARTMENT    = 25;
 
     /**
      * Get users

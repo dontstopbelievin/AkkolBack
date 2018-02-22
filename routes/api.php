@@ -25,10 +25,11 @@ Route::get('/user_info', 'Auth\LoginController@userInfo');
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => '/apz'], function () {
-        Route::group(['middleware' => 'role:citizen'], function () {
-            Route::post('/Create', 'Apz\ApzCitizenController@create');
-            Route::get('/user', 'Apz\ApzCitizenController@all');
+        Route::group(['prefix' => '/citizen', 'middleware' => 'role:citizen'], function () {
+            Route::get('/', 'Apz\ApzCitizenController@all');
             Route::get('/detail/{id}', 'Apz\ApzCitizenController@show');
+            Route::post('/create', 'Apz\ApzCitizenController@create');
+            Route::post('/upload/{id}', 'Apz\ApzCitizenController@upload');
         });
 
         Route::group(['prefix' => '/region', 'middleware' => 'role:region'], function () {
@@ -40,6 +41,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => '/engineer', 'middleware' => 'role:engineer'], function () {
             Route::get('/', 'Apz\ApzEngineerController@all');
             Route::get('/detail/{id}', 'Apz\ApzEngineerController@show');
+            Route::get('/get_providers', 'Apz\ApzEngineerController@getProviders');
+            Route::get('/get_commission/{id}', 'Apz\ApzEngineerController@getCommission');
             Route::post('/create_commission/{id}', 'Apz\ApzEngineerController@createCommission');
             Route::post('/status/{id}', 'Apz\ApzEngineerController@decision');
         });
@@ -49,6 +52,12 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/{provider}/{id}', 'Apz\ApzProviderController@show');
             Route::post('/{provider}/{id}/save', 'Apz\ApzProviderController@save');
             Route::get('/{provider}/{id}/update', 'Apz\ApzProviderController@update');
+        });
+
+        Route::group(['prefix' => '/apz_department', 'middleware' => 'role:apzdepartment'], function () {
+            Route::get('/', 'Apz\ApzDepartmentController@all');
+            Route::get('/detail/{id}', 'Apz\ApzDepartmentController@show');
+            Route::post('/status/{id}', 'Apz\ApzDepartmentController@decision');
         });
 
         Route::group(['prefix' => '/head', 'middleware' => 'role:head'], function () {

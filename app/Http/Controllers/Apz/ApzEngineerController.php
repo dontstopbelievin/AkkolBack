@@ -9,6 +9,8 @@ use App\ApzStatus;
 use App\Commission;
 use App\CommissionUser;
 use App\Http\Controllers\Controller;
+use App\Role;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,21 +27,16 @@ class ApzEngineerController extends Controller
         /**
          * TODO Переделать запросы. Временное решение
          */
-        $process = Apz::where([
-            'status_id' => ApzStatus::ENGINEER
-        ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-            $query->whereIn('state_id', [ApzState::ENGINEER_APPROVED, ApzState::ENGINEER_DECLINED]);
-        })->get();
+        $process = Apz::whereIn('status_id', [ApzStatus::ENGINEER, ApzStatus::PROVIDER])
+            ->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
+                $query->whereIn('state_id', [ApzState::ENGINEER_APPROVED, ApzState::ENGINEER_DECLINED]);
+            })->get();
 
-        $accepted = Apz::where([
-            'status_id' => ApzStatus::ENGINEER
-        ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+        $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
             $query->where('state_id', ApzState::ENGINEER_APPROVED);
         })->get();
 
-        $declined = Apz::where([
-            'status_id' => ApzStatus::ENGINEER
-        ])->with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
+        $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
             $query->where('state_id', ApzState::ENGINEER_DECLINED);
         })->get();
 
@@ -57,13 +54,76 @@ class ApzEngineerController extends Controller
      */
     public function show($id)
     {
-        $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+        $apz = Apz::where(['id' => $id])->with(Apz::getApzEngineerRelationList())->first();
 
         if (!$apz) {
             return response()->json(['message' => 'Заявка не найдена'], 404);
         }
 
         return response()->json($apz, 200);
+    }
+
+    /**
+     * Get commission
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getCommission($apz_id)
+    {
+        $apz = Apz::where(['id' => $apz_id])->first();
+
+        if (!$apz) {
+            return response()->json(['message' => 'Заявка не найдена'], 404);
+        }
+
+        $commission = Commission::where(['apz_id' => $apz_id])->with([
+            'apzElectricityResponse.files',
+            'apzGasResponse.files',
+            'apzHeatResponse.files',
+            'apzPhoneResponse.files',
+            'apzWaterResponse.files',
+            'users.role',
+        ])->first();
+
+        return response()->json($commission, 200);
+    }
+
+    /**
+     * Get providers
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getProviders()
+    {
+        $providers = [];
+
+        $users = User::whereHas('roles', function ($q) {
+            $q->where('roles.id', Role::PROVIDER);
+        })->with('roles')->get();
+
+        foreach ($users as $item) {
+            if ($item->hasRole('Water')) {
+                $providers['water'] = $item;
+            }
+
+            if ($item->hasRole('Heat')) {
+                $providers['heat'] = $item;
+            }
+
+            if ($item->hasRole('Gas')) {
+                $providers['gas'] = $item;
+            }
+
+            if ($item->hasRole('Electricity')) {
+                $providers['electro'] = $item;
+            }
+
+            if ($item->hasRole('Phone')) {
+                $providers['phone'] = $item;
+            }
+        }
+
+        return response()->json($providers, 200);
     }
 
     /**
@@ -82,6 +142,10 @@ class ApzEngineerController extends Controller
             return response()->json(['message' => 'Заявка не найдена'], 404);
         }
 
+        if (sizeof($request['commission_users']) == 0) {
+            return response()->json(['message' => 'Не выбран пользователь'], 500);
+        }
+
         DB::beginTransaction();
 
         try {
@@ -91,13 +155,15 @@ class ApzEngineerController extends Controller
             $commission = new Commission();
             $commission->apz_id = $apz->id;
             $commission->user_id = Auth::user()->id;
-            $commission->is_active = true;
             $commission->save();
 
-            foreach ($request['commission_users'] as $item) {
+            foreach ($request['commission_users'] as $key => $value) {
+                $role = Role::where(['name' => $key])->first();
+
                 $commission_user = new CommissionUser();
                 $commission_user->commission_id = $commission->id;
-                $commission_user->user_id = $item;
+                $commission_user->user_id = $value;
+                $commission_user->role_id = $role->id;
                 $commission_user->save();
             }
 
@@ -110,7 +176,7 @@ class ApzEngineerController extends Controller
             return response()->json(['message' => 'Заявка успешно отправлена'], 200);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['message' => 'Не удалось отправить заявку'], 500);
+            return response()->json(['message' => $e->getTrace()], 500);
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +41,7 @@ class Apz extends Model
         $this->project_address = $request->ProjectAddress;
         $this->project_address_coordinates = $request->ProjectAddressCoordinates;
         $this->cadastral_number = $request->CadastralNumber;
-        $this->status_id = 1;
+        $this->status_id = ApzStatus::ARCHITECT;
         $this->save();
 
         return $this;
@@ -55,13 +56,24 @@ class Apz extends Model
             'apzPhone',
             'apzSewage',
             'apzWater',
-            'commission.apzElectricityResponse',
-            'commission.apzGasResponse',
-            'commission.apzHeatResponse',
-            'commission.apzPhoneResponse',
-            'commission.apzWaterResponse',
-            'stateHistory'
+            'commission.apzElectricityResponse.files',
+            'commission.apzGasResponse.files',
+            'commission.apzHeatResponse.files',
+            'commission.apzPhoneResponse.files',
+            'commission.apzWaterResponse.files',
+            'apzHeadResponse.files',
+            'stateHistory',
+            'files'
         ];
+    }
+
+    public static function getApzEngineerRelationList()
+    {
+        $base_array = self::getApzBaseRelationList();
+
+        array_push($base_array, 'commission.users.role', 'commission.users.status');
+
+        return $base_array;
     }
 
     /**
@@ -121,6 +133,14 @@ class Apz extends Model
     }
 
     /**
+     * Get head response
+     */
+    public function apzHeadResponse()
+    {
+        return $this->hasOne(ApzHeadResponse::class, 'apz_id', 'id');
+    }
+
+    /**
      * Get states
      */
     public function stateHistory()
@@ -142,5 +162,21 @@ class Apz extends Model
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    /**
+     * Get files
+     */
+    public function files()
+    {
+        return $this->belongsToMany(
+            File::class,
+            'files_items',
+            'item_id',
+            'file_id'
+        )->wherePivot(
+            'item_type_id',
+            FileItemType::APZ
+        );
     }
 }

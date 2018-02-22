@@ -53,7 +53,7 @@ class CreateRolesTable extends Migration
                 'level' => 1,
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now()
-            ]
+            ],
         ]);
 
         DB::table('roles')->insert([
@@ -94,6 +94,7 @@ class CreateRolesTable extends Migration
             ],
             [
                 'name' => 'Gas',
+                'description' => 'Газоснабжение',
                 'level' => 2,
                 'parent_id' => 5,
                 'created_at' => \Carbon\Carbon::now(),
@@ -101,6 +102,7 @@ class CreateRolesTable extends Migration
             ],
             [
                 'name' => 'Electricity',
+                'description' => 'Электроснабжение',
                 'level' => 2,
                 'parent_id' => 5,
                 'created_at' => \Carbon\Carbon::now(),
@@ -108,6 +110,7 @@ class CreateRolesTable extends Migration
             ],
             [
                 'name' => 'Water',
+                'description' => 'Водоснабжение',
                 'level' => 2,
                 'parent_id' => 5,
                 'created_at' => \Carbon\Carbon::now(),
@@ -115,6 +118,7 @@ class CreateRolesTable extends Migration
             ],
             [
                 'name' => 'Heat',
+                'description' => 'Теплоснабжение',
                 'level' => 2,
                 'parent_id' => 5,
                 'created_at' => \Carbon\Carbon::now(),
@@ -122,6 +126,7 @@ class CreateRolesTable extends Migration
             ],
             [
                 'name' => 'Phone',
+                'description' => 'Телефонизация',
                 'level' => 2,
                 'parent_id' => 5,
                 'created_at' => \Carbon\Carbon::now(),
@@ -191,7 +196,13 @@ class CreateRolesTable extends Migration
                 'level' => 1,
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now()
-            ]
+            ],
+            [
+                'name' => 'ApzDepartment',
+                'level' => 1,
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ],
         ]);
     }
 
