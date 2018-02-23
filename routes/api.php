@@ -67,6 +67,11 @@ Route::group(['middleware' => 'auth:api'], function () {
         });
     });
 
+    Route::group(['prefix' => '/print'], function () {
+        Route::get('/apz/{id}', 'ApzPrintController@printApz');
+        Route::get('/tc/{tc}/{id}', 'ApzPrintController@printTc');
+    });
+
     Route::group(['prefix' => '/file'], function () {
         Route::get('/', 'FileController@index');
         Route::get('all', 'FileController@all');

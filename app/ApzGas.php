@@ -26,7 +26,7 @@ class ApzGas extends Model
         $this->cooking = $request->GasCooking;
         $this->heat = $request->GasHeat;
         $this->ventilation = $request->GasVentilation;
-        $this->conditionaer = $request->GasConditioner;
+        $this->conditioner = $request->GasConditioner;
         $this->water = $request->GasWater;
         $this->save();
 

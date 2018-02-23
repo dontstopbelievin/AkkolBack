@@ -135,7 +135,7 @@ class Apz extends Migration
             $table->float('cooking', 11,3)->comment('На приготовление пищи')->nullable();
             $table->float('heat', 11,3)->comment('Отопление');
             $table->float('ventilation', 11,3)->comment('Вентиляция')->nullable();
-            $table->float('conditionaer', 11,3)->comment('Кондиционирование')->nullable();
+            $table->float('conditioner', 11,3)->comment('Кондиционирование')->nullable();
             $table->float('water', 11,3)->comment('Горячее водоснабжение')->nullable();
             $table->integer('status')->default(2)->comment('Статус (0-declined, 1-accepted, 2-active)');
             $table->timestamps();
