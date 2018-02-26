@@ -59,6 +59,7 @@ class CreateRolesTable extends Migration
         DB::table('roles')->insert([
             [
                 'name' => 'Individual',
+                'description' => '',
                 'level' => 2,
                 'parent_id' => 3,
                 'created_at' => \Carbon\Carbon::now(),
@@ -66,6 +67,7 @@ class CreateRolesTable extends Migration
             ],
             [
                 'name' => 'Business',
+                'description' => '',
                 'level' => 2,
                 'parent_id' => 3,
                 'created_at' => \Carbon\Carbon::now(),
@@ -73,6 +75,7 @@ class CreateRolesTable extends Migration
             ],
             [
                 'name' => 'Head',
+                'description' => '',
                 'level' => 2,
                 'parent_id' => 4,
                 'created_at' => \Carbon\Carbon::now(),
@@ -80,6 +83,7 @@ class CreateRolesTable extends Migration
             ],
             [
                 'name' => 'Region',
+                'description' => '',
                 'level' => 2,
                 'parent_id' => 4,
                 'created_at' => \Carbon\Carbon::now(),
@@ -87,6 +91,7 @@ class CreateRolesTable extends Migration
             ],
             [
                 'name' => 'Engineer',
+                'description' => '',
                 'level' => 2,
                 'parent_id' => 4,
                 'created_at' => \Carbon\Carbon::now(),
@@ -194,12 +199,14 @@ class CreateRolesTable extends Migration
             [
                 'name' => 'PhotoReporter',
                 'level' => 1,
+                'parent_id' => null,
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now()
             ],
             [
                 'name' => 'ApzDepartment',
                 'level' => 1,
+                'parent_id' => null,
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now()
             ],
