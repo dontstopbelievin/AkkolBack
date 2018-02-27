@@ -107,168 +107,183 @@
         </div>
 
         <table class="row" width="100%">
-            <tr>
-                <td width="50%">
-                    <table border="1">
-                        <tr>
-                            <th colspan="2">Электроснабжение</th>
-                        </tr>
-                        <tr>
-                            <td>Требуемая мощность (кВт)</td>
-                            <td>{{ $apz->commission->apzElectricityResponse->req_power }}</td>
-                        </tr>
-                        <tr>
-                            <td>Характер нагрузки (фаза)</td>
-                            <td>{{ $apz->commission->apzElectricityResponse->phase }}</td>
-                        </tr>
-                        <tr>
-                            <td>Категория по надежности (кВт)</td>
-                            <td>{{ $apz->commission->apzElectricityResponse->safe_category }}</td>
-                        </tr>
-                        <tr>
-                            <td>Точка подключения</td>
-                            <td>{{ $apz->commission->apzElectricityResponse->connection_point }}</td>
-                        </tr>
-                        <tr>
-                            <td>Рекомендация</td>
-                            <td>{{ $apz->commission->apzElectricityResponse->recommendation }}</td>
-                        </tr>
-                        <tr>
-                            <td>Согласно техническим условиям</td>
-                            <td>№ {{ $apz->commission->apzElectricityResponse->doc_number }}</td>
-                        </tr>
-                        <tr>
-                            <td>Дата выдачи ТУ</td>
-                            <td>{{ date('d-m-Y', strtotime($apz->commission->apzElectricityResponse->created_at)) }}</td>
-                        </tr>
-                    </table>
-                    <br />
-                </td>
-                <td>
-                    <table border="1">
-                        <tr>
-                            <th colspan="2">Газоснабжение</th>
-                        </tr>
-                        <tr>
-                            <td>Точка подключения</td>
-                            <td>{{ $apz->commission->apzGasResponse->connection_point }}</td>
-                        </tr>
-                        <tr>
-                            <td>Диаметр газопровода (мм)</td>
-                            <td>{{ $apz->commission->apzGasResponse->gas_pipe_diameter }}</td>
-                        </tr>
-                        <tr>
-                            <td>Предполагаемый объем (м<sup>3</sup>/час)</td>
-                            <td>{{ $apz->commission->apzGasResponse->assumed_capacity }}</td>
-                        </tr>
-                        <tr>
-                            <td>Предусмотрение</td>
-                            <td>{{ $apz->commission->apzGasResponse->reconsideration }}</td>
-                        </tr>
-                        <tr>
-                            <td>Согласно техническим условиям</td>
-                            <td>№ {{ $apz->commission->apzGasResponse->doc_number }}</td>
-                        </tr>
-                        <tr>
-                            <td>Дата выдачи ТУ</td>
-                            <td>{{ date('d-m-Y', strtotime($apz->commission->apzGasResponse->created_at)) }}</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <table border="1">
-                        <tr>
-                            <th colspan="2">Водоснабжение</th>
-                        </tr>
-                        <tr>
-                            <td>Общая потребность в воде (м<sup>3</sup>/сутки)</td>
-                            <td>{{ $apz->commission->apzWaterResponse->gen_water_req }}</td>
-                        </tr>
-                        <tr>
-                            <td>Хозпитьевые нужды (м<sup>3</sup>/сутки)</td>
-                            <td>{{ $apz->commission->apzWaterResponse->drinking_water }}</td>
-                        </tr>
-                        <tr>
-                            <td>Производственные нужды (м<sup>3</sup>/сутки)</td>
-                            <td>{{ $apz->commission->apzWaterResponse->prod_water }}</td>
-                        </tr>
-                        <tr>
-                            <td>Расходы пожаротушения внутренные (л/сек)</td>
-                            <td>{{ $apz->commission->apzWaterResponse->fire_fighting_water_in }}</td>
-                        </tr>
-                        <tr>
-                            <td>Расходы пожаротушения внешные (л/сек)</td>
-                            <td>{{ $apz->commission->apzWaterResponse->fire_fighting_water_out }}</td>
-                        </tr>
-                        <tr>
-                            <td>Точка подключения</td>
-                            <td>{{ $apz->commission->apzWaterResponse->connection_point }}</td>
-                        </tr>
-                        <tr>
-                            <td>Рекомендация</td>
-                            <td>{{ $apz->commission->apzWaterResponse->recommendation }}</td>
-                        </tr>
-                        <tr>
-                            <td>Согласно техническим условиям</td>
-                            <td>№ {{ $apz->commission->apzWaterResponse->doc_number }}</td>
-                        </tr>
-                        <tr>
-                            <td>Дата выдачи ТУ</td>
-                            <td>{{ date('d-m-Y', strtotime($apz->commission->apzWaterResponse->created_at)) }}</td>
-                        </tr>
-                    </table>
-                    <br />
-                </td>
-                <td>
-                    <table border="1">
-                        <tr>
-                            <th colspan="2">Теплоснабжение</th>
-                        </tr>
-                        <tr>
-                            <td>Источник</td>
-                            <td>{{ $apz->commission->apzHeatResponse->resource }}</td>
-                        </tr>
-                        <tr>
-                            <td>Точка подключения</td>
-                            <td>{{ $apz->commission->apzHeatResponse->connection_point }}</td>
-                        </tr>
-                        <tr>
-                            <td>Давление теплоносителя {{ $apz->commission->apzHeatResponse->connection_point }}</td>
-                            <td>{{ $apz->commission->apzHeatResponse->trans_pressure }}</td>
-                        </tr>
-                        <tr>
-                            <td>Тепловые нагрузки по договору №</td>
-                            <td>{{ $apz->commission->apzHeatResponse->load_contract_num }}</td>
-                        </tr>
-                        <tr>
-                            <td>Отопление (Гкал/ч)</td>
-                            <td>{{ $apz->commission->apzHeatResponse->main_in_contract }}</td>
-                        </tr>
-                        <tr>
-                            <td>Вентиляция (Гкал/ч)</td>
-                            <td>{{ $apz->commission->apzHeatResponse->ven_in_contract }}</td>
-                        </tr>
-                        <tr>
-                            <td>Горячее водоснабжение (Гкал/ч)</td>
-                            <td>{{ $apz->commission->apzHeatResponse->water_in_contract }}</td>
-                        </tr>
-                        <tr>
-                            <td>Дополнительное</td>
-                            <td>{{ $apz->commission->apzHeatResponse->addition }}</td>
-                        </tr>
-                        <tr>
-                            <td>Согласно техническим условиям</td>
-                            <td>№ {{ $apz->commission->apzHeatResponse->doc_number }}</td>
-                        </tr>
-                        <tr>
-                            <td>Дата выдачи ТУ</td>
-                            <td>{{ date('d-m-Y', strtotime($apz->commission->apzHeatResponse->created_at)) }}</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+            @if($apz->commission->apzElectricityResponse || $apz->commission->apzGasResponse)
+                <tr>
+                    @if($apz->commission->apzElectricityResponse)
+                        <td width="50%">
+                            <table border="1">
+                                <tr>
+                                    <th colspan="2">Электроснабжение</th>
+                                </tr>
+                                <tr>
+                                    <td>Требуемая мощность (кВт)</td>
+                                    <td>{{ $apz->commission->apzElectricityResponse->req_power }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Характер нагрузки (фаза)</td>
+                                    <td>{{ $apz->commission->apzElectricityResponse->phase }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Категория по надежности (кВт)</td>
+                                    <td>{{ $apz->commission->apzElectricityResponse->safe_category }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Точка подключения</td>
+                                    <td>{{ $apz->commission->apzElectricityResponse->connection_point }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Рекомендация</td>
+                                    <td>{{ $apz->commission->apzElectricityResponse->recommendation }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Согласно техническим условиям</td>
+                                    <td>№ {{ $apz->commission->apzElectricityResponse->doc_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Дата выдачи ТУ</td>
+                                    <td>{{ date('d-m-Y', strtotime($apz->commission->apzElectricityResponse->created_at)) }}</td>
+                                </tr>
+                            </table>
+                            <br />
+                        </td>
+                    @endif
+
+                    @if($apz->commission->apzGasResponse)
+                        <td width="50%">
+                            <table border="1">
+                                <tr>
+                                    <th colspan="2">Газоснабжение</th>
+                                </tr>
+                                <tr>
+                                    <td>Точка подключения</td>
+                                    <td>{{ $apz->commission->apzGasResponse->connection_point }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Диаметр газопровода (мм)</td>
+                                    <td>{{ $apz->commission->apzGasResponse->gas_pipe_diameter }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Предполагаемый объем (м<sup>3</sup>/час)</td>
+                                    <td>{{ $apz->commission->apzGasResponse->assumed_capacity }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Предусмотрение</td>
+                                    <td>{{ $apz->commission->apzGasResponse->reconsideration }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Согласно техническим условиям</td>
+                                    <td>№ {{ $apz->commission->apzGasResponse->doc_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Дата выдачи ТУ</td>
+                                    <td>{{ date('d-m-Y', strtotime($apz->commission->apzGasResponse->created_at)) }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    @endif
+                </tr>
+            @endif
+
+            @if($apz->commission->apzWaterResponse || $apz->commission->apzHeatResponse)
+                <tr>
+                    @if($apz->commission->apzWaterResponse)
+                        <td width="50%">
+                            <table border="1">
+                                <tr>
+                                    <th colspan="2">Водоснабжение</th>
+                                </tr>
+                                <tr>
+                                    <td>Общая потребность в воде (м<sup>3</sup>/сутки)</td>
+                                    <td>{{ $apz->commission->apzWaterResponse->gen_water_req }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Хозпитьевые нужды (м<sup>3</sup>/сутки)</td>
+                                    <td>{{ $apz->commission->apzWaterResponse->drinking_water }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Производственные нужды (м<sup>3</sup>/сутки)</td>
+                                    <td>{{ $apz->commission->apzWaterResponse->prod_water }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Расходы пожаротушения внутренные (л/сек)</td>
+                                    <td>{{ $apz->commission->apzWaterResponse->fire_fighting_water_in }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Расходы пожаротушения внешные (л/сек)</td>
+                                    <td>{{ $apz->commission->apzWaterResponse->fire_fighting_water_out }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Точка подключения</td>
+                                    <td>{{ $apz->commission->apzWaterResponse->connection_point }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Рекомендация</td>
+                                    <td>{{ $apz->commission->apzWaterResponse->recommendation }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Согласно техническим условиям</td>
+                                    <td>№ {{ $apz->commission->apzWaterResponse->doc_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Дата выдачи ТУ</td>
+                                    <td>{{ date('d-m-Y', strtotime($apz->commission->apzWaterResponse->created_at)) }}</td>
+                                </tr>
+                            </table>
+                            <br />
+                        </td>
+                    @endif
+
+                    @if($apz->commission->apzHeatResponse)
+                        <td width="50%">
+                            <table border="1">
+                                <tr>
+                                    <th colspan="2">Теплоснабжение</th>
+                                </tr>
+                                <tr>
+                                    <td>Источник</td>
+                                    <td>{{ $apz->commission->apzHeatResponse->resource }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Точка подключения</td>
+                                    <td>{{ $apz->commission->apzHeatResponse->connection_point }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Давление теплоносителя {{ $apz->commission->apzHeatResponse->connection_point }}</td>
+                                    <td>{{ $apz->commission->apzHeatResponse->trans_pressure }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Тепловые нагрузки по договору №</td>
+                                    <td>{{ $apz->commission->apzHeatResponse->load_contract_num }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Отопление (Гкал/ч)</td>
+                                    <td>{{ $apz->commission->apzHeatResponse->main_in_contract }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Вентиляция (Гкал/ч)</td>
+                                    <td>{{ $apz->commission->apzHeatResponse->ven_in_contract }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Горячее водоснабжение (Гкал/ч)</td>
+                                    <td>{{ $apz->commission->apzHeatResponse->water_in_contract }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Дополнительное</td>
+                                    <td>{{ $apz->commission->apzHeatResponse->addition }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Согласно техническим условиям</td>
+                                    <td>№ {{ $apz->commission->apzHeatResponse->doc_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Дата выдачи ТУ</td>
+                                    <td>{{ date('d-m-Y', strtotime($apz->commission->apzHeatResponse->created_at)) }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    @endif
+                </tr>
+            @endif
         </table>
         <br/>
         <p>Архитектурно-планировочное задание (АПЗ) и технические условия действуют в течение всего срока нормативной продолжительности строительства, утвержденной в составе проектной (проектно-сметной) документации</p>
@@ -288,136 +303,154 @@
         <p><b>Арыз берушінің мекенжайы мен телефоны</b>: {{ $apz->address }}, {{ $apz->phone }}</p>
         <br />
         <table class="row" width="100%">
-            <tr>
-                <td width="50%">
-                    <table border="1">
-                        <tr>
-                            <th colspan="2">Электрмен жабдықтау бойынша мәлімет</th>
-                        </tr>
-                        <tr>
-                            <td>Требуемая мощность (кВт)</td>
-                            <td>{{ $apz->apzElectricity->required_power }}</td>
-                        </tr>
-                        <tr>
-                            <td>Характер нагрузки (фаза)</td>
-                            <td>{{ $apz->apzElectricity->phase }}</td>
-                        </tr>
-                        <tr>
-                            <td>Категория по надежности (кВт)</td>
-                            <td>{{ $apz->apzElectricity->safety_category }}</td>
-                        </tr>
-                        <tr>
-                            <td>Из указ. макс. нагрузки относ. к э-приемникам (кВА)</td>
-                            <td>{{ $apz->apzElectricity->max_load_device }}</td>
-                        </tr>
-                        <tr>
-                            <td>Существующая максимальная нагрузка (кВА)</td>
-                            <td>{{ $apz->apzElectricity->max_load }}</td>
-                        </tr>
-                        <tr>
-                            <td>Мощность трансформаторов (кВА)</td>
-                            <td>{{ $apz->apzElectricity->allowed_power }}</td>
-                        </tr>
-                    </table>
-                    <br />
-                </td>
-                <td>
-                    <table border="1">
-                        <tr>
-                            <th colspan="2">Газбен жабдықтау бойынша мәлімет</th>
-                        </tr>
-                        <tr>
-                            <td>Общая потребность (м<sup>3</sup>/час)</td>
-                            <td>{{ $apz->apzGas->general }}</td>
-                        </tr>
-                        <tr>
-                            <td>На приготовление пищи (м<sup>3</sup>/час)</td>
-                            <td>{{ $apz->apzGas->cooking }}</td>
-                        </tr>
-                        <tr>
-                            <td>Отопление (м<sup>3</sup>/час)</td>
-                            <td>{{ $apz->apzGas->heat }}</td>
-                        </tr>
-                        <tr>
-                            <td>Вентиляция (м<sup>3</sup>/час)</td>
-                            <td>{{ $apz->apzGas->ventilation }}</td>
-                        </tr>
-                        <tr>
-                            <td>Кондиционирование (м<sup>3</sup>/час)</td>
-                            <td>{{ $apz->apzGas->conditioner }}</td>
-                        </tr>
-                        <tr>
-                            <td>Горячее водоснабжение (м<sup>3</sup>/час)</td>
-                            <td>{{ $apz->apzGas->water }}</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <table border="1">
-                        <tr>
-                            <th colspan="2">Сумен жабдықтау бойынша мәлімет</th>
-                        </tr>
-                        <tr>
-                            <td>Общая потребность в воде (м<sup>3</sup>/сутки)</td>
-                            <td>{{ $apz->apzWater->requirement }}</td>
-                        </tr>
-                        <tr>
-                            <td>На хозпитьевые нужды (м<sup>3</sup>/сутки)</td>
-                            <td>{{ $apz->apzWater->drinking }}</td>
-                        </tr>
-                        <tr>
-                            <td>На производственные нужды (м<sup>3</sup>/сутки)</td>
-                            <td>{{ $apz->apzWater->production }}</td>
-                        </tr>
-                        <tr>
-                            <td>Потребные расходы пожаротушения (л/сек)</td>
-                            <td>{{ $apz->apzWater->fire_fighting }}</td>
-                        </tr>
-                        <tr>
-                            <td>Общее количество сточных вод (м<sup>3</sup>/сутки)</td>
-                            <td>{{ $apz->apzWater->sewage }}</td>
-                        </tr>
-                    </table>
-                    <br />
-                </td>
-                <td>
-                    <table border="1">
-                        <tr>
-                            <th colspan="2">Жылумен жабдықтау бойынша мәлімет</th>
-                        </tr>
-                        <tr>
-                            <td>Общая тепловая нагрузка (Гкал/ч)</td>
-                            <td>{{ $apz->apzHeat->general }}</td>
-                        </tr>
-                        <tr>
-                            <td>Отопление (Гкал/ч)</td>
-                            <td>{{ $apz->apzHeat->main }}</td>
-                        </tr>
-                        <tr>
-                            <td>Вентиляция (Гкал/ч)</td>
-                            <td>{{ $apz->apzHeat->ventilation }}</td>
-                        </tr>
-                        <tr>
-                            <td>Горячее водоснабжение (Гкал/ч)</td>
-                            <td>{{ $apz->apzHeat->water }}</td>
-                        </tr>
-                        <tr>
-                            <td>Технологические нужды(пар) (Т/ч)</td>
-                            <td>{{ $apz->apzHeat->tech }}</td>
-                        </tr>
-                        <tr>
-                            <td>Разделить нагрузку</td>
-                            <td>{{ $apz->apzHeat->distribution }}</td>
-                        </tr>
-                        <tr>
-                            <td>Энергосберегающее мероприятие</td>
-                            <td>{{ $apz->apzHeat->saving }}</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+            @if($apz->apzElectricity || $apz->apzGas)
+                <tr>
+                    @if($apz->apzElectricity)
+                        <td width="50%">
+                            <table border="1">
+                                <tr>
+                                    <th colspan="2">Электрмен жабдықтау бойынша мәлімет</th>
+                                </tr>
+                                <tr>
+                                    <td>Требуемая мощность (кВт)</td>
+                                    <td>{{ $apz->apzElectricity->required_power }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Характер нагрузки (фаза)</td>
+                                    <td>{{ $apz->apzElectricity->phase }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Категория по надежности (кВт)</td>
+                                    <td>{{ $apz->apzElectricity->safety_category }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Из указ. макс. нагрузки относ. к э-приемникам (кВА)</td>
+                                    <td>{{ $apz->apzElectricity->max_load_device }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Существующая максимальная нагрузка (кВА)</td>
+                                    <td>{{ $apz->apzElectricity->max_load }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Мощность трансформаторов (кВА)</td>
+                                    <td>{{ $apz->apzElectricity->allowed_power }}</td>
+                                </tr>
+                            </table>
+                            <br />
+                        </td>
+                    @endif
+
+                    @if($apz->apzGas)
+                        <td width="50%">
+                            @if($apz->apzGas)
+                                <table border="1">
+                                    <tr>
+                                        <th colspan="2">Газбен жабдықтау бойынша мәлімет</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Общая потребность (м<sup>3</sup>/час)</td>
+                                        <td>{{ $apz->apzGas->general }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>На приготовление пищи (м<sup>3</sup>/час)</td>
+                                        <td>{{ $apz->apzGas->cooking }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Отопление (м<sup>3</sup>/час)</td>
+                                        <td>{{ $apz->apzGas->heat }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Вентиляция (м<sup>3</sup>/час)</td>
+                                        <td>{{ $apz->apzGas->ventilation }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Кондиционирование (м<sup>3</sup>/час)</td>
+                                        <td>{{ $apz->apzGas->conditioner }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Горячее водоснабжение (м<sup>3</sup>/час)</td>
+                                        <td>{{ $apz->apzGas->water }}</td>
+                                    </tr>
+                                </table>
+                                <br />
+                            @endif
+                        </td>
+                    @endif
+                </tr>
+            @endif
+
+            @if($apz->apzWater || $apz->apzHeat)
+                <tr>
+                    @if($apz->apzWater)
+                        <td>
+                            <table border="1">
+                                <tr>
+                                    <th colspan="2">Сумен жабдықтау бойынша мәлімет</th>
+                                </tr>
+                                <tr>
+                                    <td>Общая потребность в воде (м<sup>3</sup>/сутки)</td>
+                                    <td>{{ $apz->apzWater->requirement }}</td>
+                                </tr>
+                                <tr>
+                                    <td>На хозпитьевые нужды (м<sup>3</sup>/сутки)</td>
+                                    <td>{{ $apz->apzWater->drinking }}</td>
+                                </tr>
+                                <tr>
+                                    <td>На производственные нужды (м<sup>3</sup>/сутки)</td>
+                                    <td>{{ $apz->apzWater->production }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Потребные расходы пожаротушения (л/сек)</td>
+                                    <td>{{ $apz->apzWater->fire_fighting }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Общее количество сточных вод (м<sup>3</sup>/сутки)</td>
+                                    <td>{{ $apz->apzWater->sewage }}</td>
+                                </tr>
+                            </table>
+                            <br />
+                        </td>
+                    @endif
+
+                    @if($apz->apzHeat)
+                        <td>
+                            <table border="1">
+                                <tr>
+                                    <th colspan="2">Жылумен жабдықтау бойынша мәлімет</th>
+                                </tr>
+                                <tr>
+                                    <td>Общая тепловая нагрузка (Гкал/ч)</td>
+                                    <td>{{ $apz->apzHeat->general }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Отопление (Гкал/ч)</td>
+                                    <td>{{ $apz->apzHeat->main }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Вентиляция (Гкал/ч)</td>
+                                    <td>{{ $apz->apzHeat->ventilation }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Горячее водоснабжение (Гкал/ч)</td>
+                                    <td>{{ $apz->apzHeat->water }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Технологические нужды(пар) (Т/ч)</td>
+                                    <td>{{ $apz->apzHeat->tech }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Разделить нагрузку</td>
+                                    <td>{{ $apz->apzHeat->distribution }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Энергосберегающее мероприятие</td>
+                                    <td>{{ $apz->apzHeat->saving }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    @endif
+                </tr>
+            @endif
         </table>
         <br/>
         <p>Сәулет-жоспарлау тапсырмасы (СЖТ) және техникалық талаптар жобалау (жобалау-сметалық) құжаттарының құрамында бекітілген құрылыстың бүкіл нормативтік ұзақтылығы мерзімі ішінде қолданылады.</p>

@@ -36,7 +36,17 @@ class Apz extends Migration
                 'updated_at' => \Carbon\Carbon::now()
             ],
             [
+                'name' => 'Инженер',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ],
+            [
                 'name' => 'Провайдер',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ],
+            [
+                'name' => 'Отдел АПЗ',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now()
             ],
@@ -75,8 +85,8 @@ class Apz extends Migration
 
         Schema::create('apz_waters', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('apz_id')->unsigned()->comment('ИД АПЗ');
-            $table->foreign('apz_id')->references('id')->on('apzs');
+            $table->integer('apz_id')->nullable()->unsigned()->comment('ИД АПЗ');
+            $table->foreign('apz_id')->references('id')->on('apzs')->onDelete('CASCADE');
             $table->float('requirement', 11,3)->comment('Общая потребность в воде');
             $table->float('drinking', 11,3)->comment('На хозпитьевые нужды')->nullable();
             $table->float('production', 11,3)->comment('На производственные нужды')->nullable();
@@ -88,8 +98,8 @@ class Apz extends Migration
 
         Schema::create('apz_heats', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('apz_id')->unsigned()->comment('ИД АПЗ');
-            $table->foreign('apz_id')->references('id')->on('apzs')->nullable();
+            $table->integer('apz_id')->nullable()->unsigned()->comment('ИД АПЗ');
+            $table->foreign('apz_id')->references('id')->on('apzs')->onDelete('CASCADE');
             $table->float('general', 11,3)->comment('Общая тепловая нагрузка')->nullable();
             $table->float('main', 11,3)->comment('Отопление')->nullable();
             $table->float('ventilation', 11,3)->comment('Вентиляция')->nullable();
@@ -103,8 +113,8 @@ class Apz extends Migration
 
         Schema::create('apz_phones', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('apz_id')->unsigned()->comment('ИД АПЗ');
-            $table->foreign('apz_id')->references('id')->on('apzs');
+            $table->integer('apz_id')->nullable()->unsigned()->comment('ИД АПЗ');
+            $table->foreign('apz_id')->references('id')->on('apzs')->onDelete('CASCADE');
             $table->float('service_num', 11,3)->comment('Количество ОТА и услуг в разбивке физ.лиц и юр.лиц')->nullable();
             $table->string('capacity', 255)->comment('Телефонная емкость')->nullable();
             $table->string('sewage', 255)->comment('Планируемая телефонная канализация')->nullable();
@@ -115,9 +125,9 @@ class Apz extends Migration
 
         Schema::create('apz_electricity', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('apz_id')->unsigned()->comment('ИД АПЗ');
-            $table->foreign('apz_id')->references('id')->on('apzs');
-            $table->float('required_power', 11,3)->comment('Требуемая мощность');
+            $table->integer('apz_id')->nullable()->unsigned()->comment('ИД АПЗ');
+            $table->foreign('apz_id')->references('id')->on('apzs')->onDelete('CASCADE');
+            $table->float('required_power', 11,3)->comment('Требуемая мощность')->nullable();
             $table->string('phase', 255)->comment('Характер нагрузки')->nullable();
             $table->string('safety_category', 255)->comment('Категория по надежности')->nullable();
             $table->float('max_load_device', 11,3)->comment('Из указанной макс. нагрузки относятся к электроприемникам')->nullable();
@@ -129,8 +139,8 @@ class Apz extends Migration
 
         Schema::create('apz_gases', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('apz_id')->unsigned()->comment('ИД АПЗ');
-            $table->foreign('apz_id')->references('id')->on('apzs');
+            $table->integer('apz_id')->nullable()->unsigned()->comment('ИД АПЗ');
+            $table->foreign('apz_id')->references('id')->on('apzs')->onDelete('CASCADE');
             $table->float('general', 11,3)->comment('Общая потребность');
             $table->float('cooking', 11,3)->comment('На приготовление пищи')->nullable();
             $table->float('heat', 11,3)->comment('Отопление');
@@ -143,8 +153,8 @@ class Apz extends Migration
 
         Schema::create('apz_sewages', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('apz_id')->unsigned()->comment('ИД АПЗ');
-            $table->foreign('apz_id')->references('id')->on('apzs');
+            $table->integer('apz_id')->nullable()->unsigned()->comment('ИД АПЗ');
+            $table->foreign('apz_id')->references('id')->on('apzs')->onDelete('CASCADE');
             $table->float('amount', 11,3)->comment('Общее количество сточных вод');
             $table->float('feksal', 11,3)->comment('Фекcальных')->nullable();
             $table->float('production', 11,3)->comment('Производственно-загрязненных')->nullable();

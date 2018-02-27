@@ -57,7 +57,7 @@ class ApzCitizenController extends Controller
             return response()->json($apz, 200);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['message' => 'Не удалось отправить заявку'], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 

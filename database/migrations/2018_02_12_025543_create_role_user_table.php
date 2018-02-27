@@ -18,7 +18,7 @@ class CreateRoleUserTable extends Migration
             $table->integer('role_id')->unsigned()->comment('ИД роли')->nullable();
             $table->foreign('role_id')->references('id')->on('roles');
             $table->integer('user_id')->unsigned()->comment('ИД пользователя')->nullable();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('CASCADE');
             $table->timestamps();
         });
     }

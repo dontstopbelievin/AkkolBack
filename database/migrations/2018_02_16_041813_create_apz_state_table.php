@@ -23,10 +23,10 @@ class CreateApzStateTable extends Migration
         Schema::create('apz_states_history', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('apz_id')->unsigned()->comment('ИД АПЗ');
-            $table->foreign('apz_id')->references('id')->on('apzs');
+            $table->foreign('apz_id')->references('id')->on('apzs')->onDelete('CASCADE');
             $table->integer('state_id')->unsigned()->comment('ИД состояние');
-            $table->foreign('state_id')->references('id')->on('apz_states');
-            $table->string('comment', 255)->comment('Коментарии');
+            $table->foreign('state_id')->references('id')->on('apz_states')->onDelete('CASCADE');
+            $table->string('comment', 255)->comment('Коментарии')->nullable();
             $table->timestamps();
         });
 

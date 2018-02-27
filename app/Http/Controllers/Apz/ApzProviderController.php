@@ -168,7 +168,6 @@ class ApzProviderController extends Controller
                 $response = new ApzProviderWaterResponse();
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
-                $response->file_id = null;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
                 $response->gen_water_req = $request['GenWaterReq'];
@@ -215,7 +214,6 @@ class ApzProviderController extends Controller
                 $response = new ApzProviderElectricityResponse();
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
-                $response->file_id = null;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
                 $response->req_power = $request['ElecReqPower'];
@@ -260,7 +258,6 @@ class ApzProviderController extends Controller
                 $response = new ApzProviderGasResponse();
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
-                $response->file_id = null;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
                 $response->connection_point = $request['ConnectionPoint'];
@@ -304,7 +301,6 @@ class ApzProviderController extends Controller
                 $response = new ApzProviderHeatResponse();
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
-                $response->file_id = null;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
                 $response->resource = $request['HeatResource'];
@@ -352,7 +348,6 @@ class ApzProviderController extends Controller
                 $response = new ApzProviderPhoneResponse();
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
-                $response->file_id = null;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
                 $response->service_num = $request['ResponseServiceNum'];

@@ -176,7 +176,7 @@ class ApzEngineerController extends Controller
             return response()->json(['message' => 'Заявка успешно отправлена'], 200);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['message' => $e->getTrace()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -206,11 +206,13 @@ class ApzEngineerController extends Controller
                 $region_state = new ApzStateHistory();
                 $region_state->apz_id = $apz->id;
                 $region_state->state_id = ApzState::ENGINEER_APPROVED;
+                $region_state->comment = $request["message"];
                 $region_state->save();
 
                 $engineer_state = new ApzStateHistory();
                 $engineer_state->apz_id = $apz->id;
                 $engineer_state->state_id = ApzState::TO_APZ;
+                $engineer_state->comment = $request["message"];
                 $engineer_state->save();
             } else {
                 $region_state = new ApzStateHistory();
@@ -224,7 +226,7 @@ class ApzEngineerController extends Controller
             return response()->json(['message' => 'Заявка успешно отправлена'], 200);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['message' => 'Не удалось отправить заявку'], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

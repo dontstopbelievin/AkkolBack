@@ -49,7 +49,7 @@ class CreateFilesTables extends Migration
         Schema::create('files_items', function (Blueprint $table) {
             $table->increments('id')->comment('ИД');
             $table->integer('file_id')->unsigned()->comment('ИД файла')->nullable();
-            $table->foreign('file_id')->references('id')->on('files');
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('CASCADE');
             $table->string('item_id')->comment('ИД родителя');
             $table->integer('item_type_id')->unsigned()->comment('ИД типа связи')->nullable();
             $table->foreign('item_type_id')->references('id')->on('files_items_types');
@@ -168,6 +168,36 @@ class CreateFilesTables extends Migration
             ],
             [
                 'name' => 'Фотоотчеты',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ],
+            [
+                'name' => 'ТУ/МО Водоснабжение',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ],
+            [
+                'name' => 'ТУ/МО Газоснабжение',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ],
+            [
+                'name' => 'ТУ/МО Телефонизация',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ],
+            [
+                'name' => 'ТУ/МО Электроснабжение',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ],
+            [
+                'name' => 'ТУ/МО Теплоснабжение',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ],
+            [
+                'name' => 'ТУ/МО Главный архитектор',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now()
             ]
