@@ -1,6 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\PhotoReport;
+use App\PhotoReport;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;

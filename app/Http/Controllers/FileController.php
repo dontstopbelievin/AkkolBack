@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\File;
-use App\Models\FileCategory;
+use App\File;
+use App\FileCategory;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;

@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 
 class ApzRegionController extends Controller
 {
@@ -26,28 +27,55 @@ class ApzRegionController extends Controller
             return response()->json(['message' => 'У вас недостаточно прав для доступа к данной странице'], 403);
         }
 
-        /**
-         * TODO Переделать запросы. Временное решение
-         */
-        $process = Apz::where([
-            'region' => $region->name
-        ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-            $query->whereIn('state_id', [ApzState::REGION_APPROVED, ApzState::REGION_DECLINED]);
-        })->get();
+        $query = Apz::where(['region' => $region->name])->with(Apz::getApzBaseRelationList());
 
-        $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-            $query->where('state_id', ApzState::REGION_APPROVED);
-        })->get();
+        if (Input::get('status')) {
+            $query->whereHas('stateHistory', function($query) {
+                $query->where('state_id', Input::get('status') == 'accepted' ? ApzState::REGION_APPROVED : ApzState::REGION_DECLINED );
+            });
+        }
 
-        $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-            $query->where('state_id', ApzState::REGION_DECLINED);
-        })->get();
+        if (Input::get('start_date')) {
+            $query->where('created_at', '>=', Input::get('start_date'));
+        }
 
-        return response()->json([
-            'in_process' => $process,
-            'accepted' => $accepted,
-            'declined' => $declined
-        ], 200);
+        if (Input::get('end_date')) {
+            $query->where('created_at', '<', Input::get('end_date'));
+        }
+
+        $data = $query->get();
+        $result = ['in_process' => [], 'accepted' => [], 'declined' => []];
+
+        foreach ($data as $item) {
+            $in_process = $item->stateHistory->filter(function ($value) {
+                return in_array($value->state_id, [ApzState::REGION_APPROVED, ApzState::REGION_DECLINED]);
+            });
+
+            $accepted = $item->stateHistory->filter(function ($value) {
+                return $value->state_id == ApzState::REGION_APPROVED;
+            });
+
+            $declined = $item->stateHistory->filter(function ($value) {
+                return $value->state_id == ApzState::REGION_DECLINED;
+            });
+
+            if (sizeof($in_process) == 0) {
+                $result['in_process'][] = $item;
+                continue;
+            }
+
+            if (sizeof($accepted) > 0) {
+                $result['accepted'][] = $item;
+                continue;
+            }
+
+            if (sizeof($declined) > 0) {
+                $result['declined'][] = $item;
+                continue;
+            }
+        }
+
+        return response()->json($result, 200);
     }
 
     /**
@@ -92,11 +120,13 @@ class ApzRegionController extends Controller
                 $region_state = new ApzStateHistory();
                 $region_state->apz_id = $apz->id;
                 $region_state->state_id = ApzState::REGION_APPROVED;
+                $region_state->comment = $request["message"];
                 $region_state->save();
 
                 $engineer_state = new ApzStateHistory();
                 $engineer_state->apz_id = $apz->id;
                 $engineer_state->state_id = ApzState::TO_ENGINEER;
+                $engineer_state->comment = $request["message"];
                 $engineer_state->save();
             } else {
                 $region_state = new ApzStateHistory();
@@ -110,7 +140,7 @@ class ApzRegionController extends Controller
             return response()->json(['message' => 'Заявка успешно отправлена'], 200);
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['message' => 'Не удалось отправить заявку'], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

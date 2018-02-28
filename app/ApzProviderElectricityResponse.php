@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Models\File;
+use App\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 

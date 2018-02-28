@@ -10,11 +10,12 @@ use App\ApzStatus;
 use App\FileItem;
 use App\FileItemType;
 use App\Http\Controllers\Controller;
-use App\Models\File;
-use App\Models\FileCategory;
+use App\File;
+use App\FileCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Storage;
 
 class ApzHeadController extends Controller
@@ -26,28 +27,55 @@ class ApzHeadController extends Controller
      */
     public function all()
     {
-        /**
-         * TODO Переделать запросы. Временное решение
-         */
-        $process = Apz::where([
-            'status_id' => ApzStatus::CHIEF_ARCHITECT
-        ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-            $query->whereIn('state_id', [ApzState::HEAD_APPROVED, ApzState::HEAD_DECLINED]);
-        })->get();
+        $query = Apz::with(Apz::getApzBaseRelationList());
 
-        $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-            $query->where('state_id', ApzState::HEAD_APPROVED);
-        })->get();
+        if (Input::get('status')) {
+            $query->whereHas('stateHistory', function($query) {
+                $query->where('state_id', Input::get('status') == 'accepted' ? ApzState::HEAD_APPROVED : ApzState::HEAD_DECLINED );
+            });
+        }
 
-        $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-            $query->where('state_id', ApzState::HEAD_DECLINED);
-        })->get();
+        if (Input::get('start_date')) {
+            $query->where('created_at', '>=', Input::get('start_date'));
+        }
 
-        return response()->json([
-            'in_process' => $process,
-            'accepted' => $accepted,
-            'declined' => $declined
-        ], 200);
+        if (Input::get('end_date')) {
+            $query->where('created_at', '<', Input::get('end_date'));
+        }
+
+        $data = $query->get();
+        $result = ['in_process' => [], 'accepted' => [], 'declined' => []];
+
+        foreach ($data as $item) {
+            $in_process = $item->stateHistory->filter(function ($value) {
+                return in_array($value->state_id, [ApzState::HEAD_APPROVED, ApzState::HEAD_DECLINED]);
+            });
+
+            $accepted = $item->stateHistory->filter(function ($value) {
+                return $value->state_id == ApzState::HEAD_APPROVED;
+            });
+
+            $declined = $item->stateHistory->filter(function ($value) {
+                return $value->state_id == ApzState::HEAD_DECLINED;
+            });
+
+            if (sizeof($in_process) == 0 && $item->status_id == ApzStatus::CHIEF_ARCHITECT) {
+                $result['in_process'][] = $item;
+                continue;
+            }
+
+            if (sizeof($accepted) > 0) {
+                $result['accepted'][] = $item;
+                continue;
+            }
+
+            if (sizeof($declined) > 0) {
+                $result['declined'][] = $item;
+                continue;
+            }
+        }
+
+        return response()->json($result, 200);
     }
 
     /**
