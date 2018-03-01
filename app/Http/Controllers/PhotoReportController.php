@@ -2,7 +2,6 @@
 namespace App\Http\Controllers;
 use App\PhotoReport;
 use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -18,11 +17,11 @@ class PhotoReportController extends Controller
     {
         try {
             $userId = Auth::user()->id;
-            $getPersonal = PhotoReport::select('id')->where(['user_id' => $userId])->get();
+            $getPersonal = PhotoReport::where(['user_id' => $userId])->get();
             return response()->json($getPersonal, 200);
         }
         catch (\Exception $e) {
-            return response()->json(['message' => 'Заявки не найдены'], 401);
+            return response()->json(['message' => $e->getMessage()], 401);
         }
     }
 

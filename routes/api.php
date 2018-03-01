@@ -75,6 +75,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => '/file'], function () {
         Route::get('/', 'FileController@index');
         Route::get('all', 'FileController@all');
+        Route::get('images', 'FileController@images');
         Route::get('categoriesList', 'FileController@categoriesList');
         Route::get('download/{id}', 'FileController@download');
         Route::post('upload', 'FileController@upload');
@@ -82,8 +83,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::group(['prefix' => '/photoreport'], function () {
         Route::get('/', 'PhotoReportController@index');
-        Route::post('create', 'PhotoReport@create');
-        Route::post('response', 'PhotoReport@response');
-        Route::post('personal', 'PhotoReport@personal');
+        Route::post('/create', 'PhotoReportController@create');
+        Route::post('/response', 'PhotoReportController@response');
+        Route::get('/personal', 'PhotoReportController@personal');
     });
 });

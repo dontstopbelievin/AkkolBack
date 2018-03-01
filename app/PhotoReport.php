@@ -7,6 +7,5 @@ use function PHPSTORM_META\type;
 
 class PhotoReport extends Model
 {
-
-
+    protected $table = 'photoreports';
 }

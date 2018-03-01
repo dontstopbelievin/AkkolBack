@@ -19,21 +19,48 @@ class FileController extends Controller
     {
         try {
             $userId = Auth::user()->id;
-            $getAll = FileCategory::select('id', 'name', 'url', 'hash', 'extension', 'size', 'category_id', 'created_at')
+            $getAll = File::select('id', 'name', 'description', 'url', 'hash', 'extension', 'size', 'category_id', 'created_at')
+                ->with('category')
                 ->where(['user_id' => $userId])
+                ->whereHas('category', function($query) {
+                    $query->where('is_visible', 1);
+                })
                 ->get();
-            return response()->json([$getAll], 200);
+            return response()->json($getAll, 200);
         }
         catch (\Exception $e) {
-            return response()->json(['message' => 'Файлы не найдены'], 401);
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function images()
+    {
+        try {
+            $userId = Auth::user()->id;
+            $query = File::select('id', 'name', 'content_type', 'description', 'url', 'hash', 'extension', 'size', 'category_id', 'created_at')
+                ->with('category')
+                ->where('user_id', $userId)
+                ->where('content_type', 'like', '%image%')
+                ->whereHas('category', function($query) {
+                    $query->where('is_visible', 1);
+                })
+                ->get();
+
+            foreach ($query as $item) {
+                $item['base64'] = base64_encode(file_get_contents(storage_path('app/' . $item->url)));
+            }
+            return response()->json($query, 200);
+        }
+        catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
     public function categoriesList()
     {
         try {
-            $getCategories = FileCategory::select('id', 'name_ru', 'name_kz')->get();
-            return response()->json([$getCategories], 200);
+            $getCategories = FileCategory::select('id', 'name_ru', 'name_kz')->where('is_visible', 1)->get();
+            return response()->json($getCategories, 200);
         }
         catch (\Exception $e) {
             return response()->json(['message' => 'Категории не найдены'], 401);
@@ -101,20 +128,19 @@ class FileController extends Controller
             Storage::put($fileUrl, file_get_contents($file));
 
             $fileModel = new File();
-            $fileModel->name = $request->upload_name ? $request->upload_name : $fileName;
+            $fileModel->name = $request->name ? $request->name . '.' . $file->getClientOriginalExtension() : $file->getClientOriginalName();
             $fileModel->url = $fileUrl;
             $fileModel->extension = $fileExt;
             $fileModel->content_type = $file->getClientMimeType();
             $fileModel->size = $file->getClientSize();
             $fileModel->hash = $fileName;
-            $fileModel->category_id = $request->upload_category;
-            $fileModel->description = $request->upload_description;
+            $fileModel->category_id = $request->category;
+            $fileModel->description = $request->description;
             $fileModel->user_id = $userId;
             $fileModel->save();
         }
         catch (\Exception $e) {
             return response()->json(['message' => 'Во время загрузки произошла ошибка'], 401);
         }
-
     }
 }
