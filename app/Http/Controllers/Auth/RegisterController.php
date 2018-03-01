@@ -51,8 +51,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'iin' => 'required|string|max:255|unique:users',
+            'name' => 'string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -80,10 +79,12 @@ class RegisterController extends Controller
             $data = $request->all();
 
             $user = User::create([
-                'name' => $data['name'],
+                'name' => $data['bin'] ? $data['bin'] : $data['iin'],
                 'email' => $data['email'],
                 'first_name' => $data['first_name'],
+                'middle_name' => $data['middle_name'],
                 'last_name' => $data['last_name'],
+                'company_name' => $data['company_name'],
                 'iin' => $data['iin'],
                 'bin' => $data['bin'],
                 'password' => bcrypt($data['password']),
@@ -97,8 +98,8 @@ class RegisterController extends Controller
                 'grant_type'    => 'password',
                 'client_id'     => $client->id,
                 'client_secret' => $client->secret,
-                'username'      => $data['iin'],
-                'password'      => $data['password'],
+                'username'      => $user->name,
+                'password'      => $user->password,
                 'scope'         => null,
             ];
 
@@ -108,7 +109,7 @@ class RegisterController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return response()->json(['error' => $e], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

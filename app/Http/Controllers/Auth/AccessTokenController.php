@@ -22,7 +22,7 @@ class AccessTokenController extends ATC
             $username = $request->getParsedBody()['username'];
 
             //get user
-            $user = User::where('iin', '=', $username)->first();
+            $user = User::where('name', '=', $username)->first();
 
             if (!$user) {
                 throw new ModelNotFoundException();
@@ -61,15 +61,15 @@ class AccessTokenController extends ATC
         }
         catch (ModelNotFoundException $e) { // email notfound
             DB::rollback();
-            return response(["message" => "User not found"], 500);
+            return response(["message" => "User not found"], 400);
         }
         catch (OAuthServerException $e) { //password not correct..token not granted
             DB::rollback();
-            return response(["message" => "The user credentials were incorrect.', 6, 'invalid_credentials"], 500);
+            return response(["message" => "The user credentials were incorrect.', 6, 'invalid_credentials"], 400);
         }
         catch (Exception $e) {
             DB::rollback();
-            return response(["message" => "Internal server error"], 500);
+            return response(["message" => "Internal server error"], 400);
         }
     }
 }

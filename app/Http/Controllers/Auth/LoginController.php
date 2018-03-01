@@ -48,7 +48,7 @@ class LoginController extends Controller
      */
     public function username()
     {
-        return 'iin';
+        return 'name';
     }
 
     /**
@@ -99,7 +99,7 @@ class LoginController extends Controller
         }
 
         $json = [
-            'iin' => Auth::guard('api')->user()->iin
+            'name' => Auth::guard('api')->user()->name
         ];
 
         return response()->json($json, '200');

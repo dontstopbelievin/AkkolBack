@@ -138,32 +138,34 @@ class ApzHeadController extends Controller
                 $region_state->save();
             }
 
-            $file_name = md5($file_request->getClientOriginalName() . microtime());
-            $file_ext = $file_request->getClientOriginalExtension();
-            $file_url = 'head_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+            if ($file_request) {
+                $file_name = md5($file_request->getClientOriginalName() . microtime());
+                $file_ext = $file_request->getClientOriginalExtension();
+                $file_url = 'head_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
 
-            Storage::put($file_url, file_get_contents($file_request));
+                Storage::put($file_url, file_get_contents($file_request));
 
-            if (!Storage::disk('local')->exists($file_url)) {
-                throw new \Exception('Файл не сохранен');
+                if (!Storage::disk('local')->exists($file_url)) {
+                    throw new \Exception('Файл не сохранен');
+                }
+
+                $file = new File();
+                $file->name = $file_request->getClientOriginalName();
+                $file->url = $file_url;
+                $file->extension = $file_request->getClientOriginalExtension();
+                $file->content_type = $file_request->getClientMimeType();
+                $file->size = $file_request->getClientSize();
+                $file->hash = $file_name;
+                $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
+                $file->user_id = Auth::user()->id;
+                $file->save();
+
+                $file_item = new FileItem();
+                $file_item->file_id = $file->id;
+                $file_item->item_id = $response->id;
+                $file_item->item_type_id = FileItemType::HEAD_RESPONSE;
+                $file_item->save();
             }
-
-            $file = new File();
-            $file->name = $file_request->getClientOriginalName();
-            $file->url = $file_url;
-            $file->extension = $file_request->getClientOriginalExtension();
-            $file->content_type = $file_request->getClientMimeType();
-            $file->size = $file_request->getClientSize();
-            $file->hash = $file_name;
-            $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
-            $file->user_id = Auth::user()->id;
-            $file->save();
-
-            $file_item = new FileItem();
-            $file_item->file_id = $file->id;
-            $file_item->item_id = $response->id;
-            $file_item->item_type_id = FileItemType::HEAD_RESPONSE;
-            $file_item->save();
 
             DB::commit();
             return response()->json(['message' => 'Заявка успешно отправлена'], 200);
