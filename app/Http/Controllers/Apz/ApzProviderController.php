@@ -165,7 +165,12 @@ class ApzProviderController extends Controller
 
         switch ($provider) {
             case 'water':
-                $response = new ApzProviderWaterResponse();
+                $response = ApzProviderWaterResponse::where(['commission_id' => $apz->commission->id])->first();
+
+                if (!$response) {
+                    $response = new ApzProviderWaterResponse();
+                }
+
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
@@ -179,6 +184,15 @@ class ApzProviderController extends Controller
                 $response->recommendation = $request['Recomendation'];
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
+
+                $old_file = FileItem::where(['item_type_id' => FileItemType::WATER_RESPONSE, 'item_id' => $response->id])->first();
+
+                if ($old_file) {
+                    Storage::delete($old_file->file->url);
+
+                    $old_file->file->delete();
+                    $old_file->delete();
+                }
 
                 $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
                 $file_ext = $request->file('file')->getClientOriginalExtension();
@@ -211,7 +225,12 @@ class ApzProviderController extends Controller
                 return response()->json($response, 200);
 
             case 'electro':
-                $response = new ApzProviderElectricityResponse();
+                $response = ApzProviderElectricityResponse::where(['commission_id' => $apz->commission->id])->first();
+
+                if (!$response) {
+                    $response = new ApzProviderElectricityResponse();
+                }
+
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
@@ -223,6 +242,15 @@ class ApzProviderController extends Controller
                 $response->recommendation = $request['Recomendation'];
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
+
+                $old_file = FileItem::where(['item_type_id' => FileItemType::ELECTRICITY_RESPONSE, 'item_id' => $response->id])->first();
+
+                if ($old_file) {
+                    Storage::delete($old_file->file->url);
+
+                    $old_file->file->delete();
+                    $old_file->delete();
+                }
 
                 $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
                 $file_ext = $request->file('file')->getClientOriginalExtension();
@@ -255,7 +283,12 @@ class ApzProviderController extends Controller
                 return response()->json($response, 200);
 
             case 'gas':
-                $response = new ApzProviderGasResponse();
+                $response = ApzProviderGasResponse::where(['commission_id' => $apz->commission->id])->first();
+
+                if (!$response) {
+                    $response = new ApzProviderGasResponse();
+                }
+
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
@@ -266,6 +299,15 @@ class ApzProviderController extends Controller
                 $response->reconsideration = $request['Reconsideration'];
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
+
+                $old_file = FileItem::where(['item_type_id' => FileItemType::GAS_RESPONSE, 'item_id' => $response->id])->first();
+
+                if ($old_file) {
+                    Storage::delete($old_file->file->url);
+
+                    $old_file->file->delete();
+                    $old_file->delete();
+                }
 
                 $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
                 $file_ext = $request->file('file')->getClientOriginalExtension();
@@ -298,7 +340,12 @@ class ApzProviderController extends Controller
                 return response()->json($response, 200);
 
             case 'heat':
-                $response = new ApzProviderHeatResponse();
+                $response = ApzProviderHeatResponse::where(['commission_id' => $apz->commission->id])->first();
+
+                if (!$response) {
+                    $response = new ApzProviderHeatResponse();
+                }
+
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
@@ -313,6 +360,15 @@ class ApzProviderController extends Controller
                 $response->addition = $request['Addition'];
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
+
+                $old_file = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->first();
+
+                if ($old_file) {
+                    Storage::delete($old_file->file->url);
+
+                    $old_file->file->delete();
+                    $old_file->delete();
+                }
 
                 $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
                 $file_ext = $request->file('file')->getClientOriginalExtension();
@@ -345,7 +401,12 @@ class ApzProviderController extends Controller
                 return response()->json($response, 200);
 
             case 'phone':
-                $response = new ApzProviderPhoneResponse();
+                $response = ApzProviderPhoneResponse::where(['commission_id' => $apz->commission->id])->first();
+
+                if (!$response) {
+                    $response = new ApzProviderPhoneResponse();
+                }
+
                 $response->commission_id = $apz->commission->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
@@ -356,6 +417,15 @@ class ApzProviderController extends Controller
                 $response->client_wishes = $request['ResponseClientWishes'];
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
+
+                $old_file = FileItem::where(['item_type_id' => FileItemType::PHONE_RESPONSE, 'item_id' => $response->id])->first();
+
+                if ($old_file) {
+                    Storage::delete($old_file->file->url);
+
+                    $old_file->file->delete();
+                    $old_file->delete();
+                }
 
                 $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
                 $file_ext = $request->file('file')->getClientOriginalExtension();
