@@ -22,6 +22,10 @@ Route::post('logout', 'Auth\LoginController@logout');
 Route::post('register', ['as' => 'register', 'uses' => 'Auth\RegisterController@create'])->middleware('cors');
 Route::get('/user_info', 'Auth\LoginController@userInfo');
 
+Route::group(['prefix' => 'system_files'], function () {
+    Route::get('/category/{name}', 'FileController@getFromSystemCategory');
+    Route::get('/download/{type}/{id}', 'FileController@downloadSystemFile');
+});
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => '/apz'], function () {
@@ -79,6 +83,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('categoriesList', 'FileController@categoriesList');
         Route::get('download/{id}', 'FileController@download');
         Route::post('upload', 'FileController@upload');
+        Route::post('delete/{id}', 'FileController@delete');
     });
 
     Route::group(['prefix' => '/photoreport'], function () {

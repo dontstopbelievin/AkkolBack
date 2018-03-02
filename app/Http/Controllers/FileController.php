@@ -2,9 +2,8 @@
 namespace App\Http\Controllers;
 use App\File;
 use App\FileCategory;
+use App\Role;
 use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
@@ -59,11 +58,56 @@ class FileController extends Controller
     public function categoriesList()
     {
         try {
-            $getCategories = FileCategory::select('id', 'name_ru', 'name_kz')->where('is_visible', 1)->get();
-            return response()->json($getCategories, 200);
+            $query = FileCategory::select('id', 'name_ru', 'name_kz')->where('is_visible', 1);
+
+            if (!Auth::user()->hasRole('Admin')) {
+                $query->where('role_id', '<>', Role::ADMIN);
+            }
+
+            return response()->json($query->get(), 200);
         }
         catch (\Exception $e) {
-            return response()->json(['message' => 'Категории не найдены'], 401);
+            return response()->json(['message' => 'Категории не найдены'], 404);
+        }
+    }
+
+    public function getFromSystemCategory($name)
+    {
+        try {
+            switch ($name) {
+                case 'budget':
+                    $files = File::where('category_id', FileCategory::BUDGET_PLAN)->get();
+                    break;
+
+                default:
+                    return response()->json(['message' => 'Категория не найдена'], 404);
+            }
+
+            return response()->json($files, 200);
+        }
+        catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function downloadSystemFile($type, $id)
+    {
+        try {
+            switch ($type) {
+                case 'budget':
+                    $file = File::where(['id' => $id, 'category_id' => FileCategory::BUDGET_PLAN])->first();
+                    break;
+
+                default:
+                    return response()->json(['message' => 'Категория не найдена'], 404);
+            }
+
+            $filePath = storage_path('app/' . $file->url);
+
+            return response()->json(['file' => base64_encode(file_get_contents($filePath)), 'file_name' => $file->name], 200);
+        }
+        catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -141,6 +185,27 @@ class FileController extends Controller
         }
         catch (\Exception $e) {
             return response()->json(['message' => 'Во время загрузки произошла ошибка'], 401);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            if (!Auth::user()->hasRole('Admin')) {
+                throw new \Exception('Недостаточно прав');
+            }
+
+            $file = File::where('id', $id)->first();
+
+            if (!$file) {
+                throw new \Exception('Файл не найден');
+            }
+
+            $file->delete();
+
+            return response()->json(['message' => 'Файл успешно удален'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Не удалось удалить файл'], 401);
         }
     }
 }
