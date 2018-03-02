@@ -20,6 +20,7 @@ use App\FileItemType;
 use App\Http\Controllers\Controller;
 use App\File;
 use App\FileCategory;
+use App\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -43,6 +44,8 @@ class ApzProviderController extends Controller
                     'status_id' => ApzStatus::PROVIDER
                 ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
                     $query->whereIn('state_id', [ApzState::WATER_APPROVED, ApzState::WATER_DECLINED]);
+                })->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::WATER);
                 })->get();
 
                 $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
@@ -60,6 +63,8 @@ class ApzProviderController extends Controller
                     'status_id' => ApzStatus::PROVIDER
                 ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
                     $query->whereIn('state_id', [ApzState::GAS_APPROVED, ApzState::GAS_DECLINED]);
+                })->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::GAS);
                 })->get();
 
                 $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
@@ -77,6 +82,8 @@ class ApzProviderController extends Controller
                     'status_id' => ApzStatus::PROVIDER
                 ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
                     $query->whereIn('state_id', [ApzState::ELECTRICITY_APPROVED, ApzState::ELECTRICITY_DECLINED]);
+                })->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::ELECTRICITY);
                 })->get();
 
                 $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
@@ -94,6 +101,8 @@ class ApzProviderController extends Controller
                     'status_id' => ApzStatus::PROVIDER
                 ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
                     $query->whereIn('state_id', [ApzState::PHONE_APPROVED, ApzState::PHONE_DECLINED]);
+                })->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::PHONE);
                 })->get();
 
                 $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
@@ -111,6 +120,8 @@ class ApzProviderController extends Controller
                     'status_id' => ApzStatus::PROVIDER
                 ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
                     $query->whereIn('state_id', [ApzState::HEAT_APPROVED, ApzState::HEAT_DECLINED]);
+                })->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::HEAT);
                 })->get();
 
                 $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
@@ -141,7 +152,46 @@ class ApzProviderController extends Controller
      */
     public function show($provider, $id)
     {
-        $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+        $query = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList());
+
+        switch ($provider) {
+            case 'Water':
+                $query->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::WATER);
+                });
+
+                break;
+
+            case 'Gas':
+                $query->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::GAS);
+                });
+
+                break;
+
+            case 'Electricity':
+                $query->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::ELECTRICITY);
+                });
+
+                break;
+
+            case 'Heat':
+                $query->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::HEAT);
+                });
+
+                break;
+
+            case 'Phone':
+                $query->whereHas('commission.users', function($query) {
+                    $query->where('role_id', Role::PHONE);
+                });
+
+                break;
+        }
+
+        $apz = $query->first();
 
         if (!$apz) {
             return response()->json(['message' => 'Заявка не найдена'], 404);
