@@ -51,8 +51,8 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'iin' => 'required|string|max:255|unique:users',
+            'iin' => 'string|max:255|unique:users',
+            'bin' => 'string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -80,12 +80,13 @@ class RegisterController extends Controller
             $data = $request->all();
 
             $user = User::create([
-                'name' => $data['name'],
+                'name' => implode(' ', [$data['last_name'], $data['first_name'], $data['middle_name']]),
                 'email' => $data['email'],
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
-                'iin' => $data['iin'],
-                'bin' => $data['bin'],
+                'middle_name' => $data['middle_name'],
+                'iin' => isset($data['iin']) ? $data['iin'] : null,
+                'bin' => isset($data['bin']) ? $data['bin'] : null,
                 'password' => bcrypt($data['password']),
             ]);
 
@@ -97,7 +98,7 @@ class RegisterController extends Controller
                 'grant_type'    => 'password',
                 'client_id'     => $client->id,
                 'client_secret' => $client->secret,
-                'username'      => $data['iin'],
+                'username'      => isset($data['bin']) ? $data['bin'] : $data['iin'],
                 'password'      => $data['password'],
                 'scope'         => null,
             ];
@@ -108,7 +109,7 @@ class RegisterController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return response()->json(['error' => $e], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

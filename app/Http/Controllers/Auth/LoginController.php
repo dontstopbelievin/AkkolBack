@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use GuzzleHttp\Client;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,49 @@ class LoginController extends Controller
     public function username()
     {
         return 'iin';
+    }
+
+    public function getTokenXml()
+    {
+        $client = new Client();
+
+        $response = $client->get('http://89.218.17.203:3380/getTokenXml');
+
+        return response(json_decode($response->getBody()), 200);
+    }
+
+    public function loginWithCert(Request $request)
+    {
+        $client = new Client();
+
+        $response = $client->post('http://89.218.17.203:3380/loginWithECP', [
+            'form_params' => [
+                'XmlDoc' => $request->XmlDoc
+            ],
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+        $result = [];
+
+        $iin_pos = strpos($data['KC_CERTPROP_SUBJECT_DN'], 'IIN');
+        $bin_pos = strpos($data['KC_CERTPROP_SUBJECT_DN'], 'BIN');
+        $email_pos = strpos($data['KC_CERTPROP_SUBJECT_DN'], 'emailAddress=');
+        $name = explode(' ', substr($data['KC_CERTPROP_SUBJECT_COMMONNAME'], 3));
+
+        $result['first_name'] = mb_convert_case($name[1], MB_CASE_TITLE);
+        $result['last_name'] = mb_convert_case($name[0], MB_CASE_TITLE);
+        $result['middle_name'] = mb_convert_case(substr($data['KC_CERTPROP_SUBJECT_GIVENNAME'], 3), MB_CASE_TITLE);
+        $result['email'] = mb_strtolower(substr($data['KC_CERTPROP_SUBJECT_DN'], $email_pos + strlen('emailAddress=')));
+
+        if ($bin_pos) {
+            $result['bin'] = substr($data['KC_CERTPROP_SUBJECT_DN'], $bin_pos + 3, 12);
+        } else if ($iin_pos) {
+            $result['iin'] = substr($data['KC_CERTPROP_SUBJECT_DN'], $iin_pos + 3, 12);
+        } else {
+            return response(['message' => 'ИИН/БИН не найден'], 404);
+        }
+
+        return response($result, 200);
     }
 
     /**
