@@ -51,7 +51,8 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'string|max:255',
+            'iin' => 'string|max:255|unique:users',
+            'bin' => 'string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -79,14 +80,14 @@ class RegisterController extends Controller
             $data = $request->all();
 
             $user = User::create([
-                'name' => $data['bin'] ? $data['bin'] : $data['iin'],
+                'name' => implode(' ', [$data['last_name'], $data['first_name'], $data['middle_name']]),
                 'email' => $data['email'],
                 'first_name' => $data['first_name'],
                 'middle_name' => $data['middle_name'],
                 'last_name' => $data['last_name'],
-                'company_name' => $data['company_name'],
-                'iin' => $data['iin'],
-                'bin' => $data['bin'],
+                'company_name' => isset($data['company_name']) ? $data['company_name'] : null,
+                'iin' => isset($data['iin']) ? $data['iin'] : null,
+                'bin' => isset($data['bin']) ? $data['bin'] : null,
                 'password' => bcrypt($data['password']),
             ]);
 
@@ -98,8 +99,8 @@ class RegisterController extends Controller
                 'grant_type'    => 'password',
                 'client_id'     => $client->id,
                 'client_secret' => $client->secret,
-                'username'      => $user->name,
-                'password'      => $user->password,
+                'username'      => isset($data['bin']) ? $data['bin'] : $data['iin'],
+                'password'      => $data['password'],
                 'scope'         => null,
             ];
 
