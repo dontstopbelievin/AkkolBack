@@ -6,6 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 /**
+ * App\Commission
+ *
+ * @property int $id
+ * @property int $apz_id ИД АПЗ
+ * @property int|null $user_id ИД пользователя
+ * @property int|null $status_id ИД статуса
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\Apz $apz
+ * @property-read \App\ApzProviderElectricityResponse $apzElectricityResponse
+ * @property-read \App\ApzProviderGasResponse $apzGasResponse
+ * @property-read \App\ApzProviderHeatResponse $apzHeatResponse
+ * @property-read \App\ApzProviderPhoneResponse $apzPhoneResponse
+ * @property-read \App\ApzProviderWaterResponse $apzWaterResponse
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CommissionUser[] $users
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Commission whereApzId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Commission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Commission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Commission whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Commission whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Commission whereUserId($value)
+ * @mixin \Eloquent
  */
 class Commission extends Model
 {

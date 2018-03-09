@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Apz;
 
 use App\Apz;
+use App\ApzHeadResponse;
 use App\ApzProviderElectricityResponse;
 use App\ApzProviderGasResponse;
 use App\ApzProviderHeatResponse;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Controller;
 use App\File;
 use App\FileCategory;
 use App\Role;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -222,6 +224,7 @@ class ApzProviderController extends Controller
                 }
 
                 $response->commission_id = $apz->commission->id;
+                $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
@@ -282,6 +285,7 @@ class ApzProviderController extends Controller
                 }
 
                 $response->commission_id = $apz->commission->id;
+                $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
@@ -340,6 +344,7 @@ class ApzProviderController extends Controller
                 }
 
                 $response->commission_id = $apz->commission->id;
+                $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
@@ -397,6 +402,7 @@ class ApzProviderController extends Controller
                 }
 
                 $response->commission_id = $apz->commission->id;
+                $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
@@ -458,6 +464,7 @@ class ApzProviderController extends Controller
                 }
 
                 $response->commission_id = $apz->commission->id;
+                $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
@@ -668,6 +675,172 @@ class ApzProviderController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => 'Не удалось отправить заявку'], 500);
+        }
+    }
+
+    public function generateXml($provider, $id)
+    {
+        $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+
+        if (!$apz) {
+            return response()->json(['message' => 'Заявка не найдена'], 404);
+        }
+
+        if (!in_array($provider, ['water', 'electricity', 'gas', 'heat', 'phone'])) {
+            return response()->json(['message' => 'Провайдер не найден'], 404);
+        }
+
+        $output = view('xml_templates.' . $provider . '_provider', ['apz' => $apz])->render();
+        $xml = "<?xml version=\"1.0\" ?>\n" . $output;
+
+        return response($xml, 200)->header('Content-Type', 'text/plain');
+    }
+
+    public function saveXml(Request $request, $role, $id)
+    {
+        try {
+            $apz =  Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+
+            if (!$apz) {
+                throw new \Exception('АПЗ не найден');
+            }
+
+            $output = view('xml_templates.' . $role . '_provider', ['apz' => $apz])->render();
+            $server_xml = simplexml_load_string("<?xml version=\"1.0\" ?>\n" . $output);
+
+            $current_xml = simplexml_load_string($request->xml);
+
+            if ($server_xml->content->asXML() != $current_xml->content->asXML()) {
+                throw new \Exception('Некорректный XML');
+            }
+
+            $client = new Client();
+            $user = Auth::user();
+
+            $response = $client->post('http://89.218.17.203:3380/validate_xml', [
+                'form_params' => [
+                    'xml' => $request->xml
+                ],
+            ]);
+
+            if (!$response->getStatusCode() == 200) {
+                throw new \Exception('Не удалось пройти валидацию');
+            }
+
+            $iin = json_decode($response->getBody(), true);
+
+            if ($iin != $user->iin) {
+                return response()->json(['message' => 'Выбран ключ другого пользователя'], 500);
+            }
+
+            switch ($role) {
+                case 'water':
+                    $provider = ApzProviderWaterResponse::where(['apz_id' => $apz->id])->first();
+
+                    if (!$provider) {
+                        return response()->json(['message' => 'Не найден ответ от провайдера'], 500);
+                    }
+
+                    $file = File::addXmlItem('water_xml', FileCategory::XML_WATER, 'sign_files/' . $apz->id, $request->xml);
+
+                    if (!$file) {
+                        throw new \Exception('Не удалось сохранить модель File');
+                    }
+
+                    $file_item = FileItem::addItem($file, $provider->id, FileItemType::WATER_RESPONSE);
+
+                    if (!$file_item) {
+                        throw new \Exception('Не удалось сохранить модель FileItem');
+                    }
+                    break;
+
+                case 'gas':
+                    $provider = ApzProviderGasResponse::where(['apz_id' => $apz->id])->first();
+
+                    if (!$provider) {
+                        return response()->json(['message' => 'Не найден ответ от провайдера'], 500);
+                    }
+
+                    $file = File::addXmlItem('gas_xml', FileCategory::XML_GAS, 'sign_files/' . $id, $request->xml);
+
+                    if (!$file) {
+                        throw new \Exception('Не удалось сохранить модель File');
+                    }
+
+                    $file_item = FileItem::addItem($file, $provider->id, FileItemType::GAS_RESPONSE);
+
+                    if (!$file_item) {
+                        throw new \Exception('Не удалось сохранить модель FileItem');
+                    }
+                    break;
+
+                case 'electricity':
+                    $provider = ApzProviderElectricityResponse::where(['apz_id' => $apz->id])->first();
+
+                    if (!$provider) {
+                        return response()->json(['message' => 'Не найден ответ от провайдера'], 500);
+                    }
+
+                    $file = File::addXmlItem('electricity_xml', FileCategory::XML_ELECTRICITY, 'sign_files/' . $apz->id, $request->xml);
+
+                    if (!$file) {
+                        throw new \Exception('Не удалось сохранить модель File');
+                    }
+
+                    $file_item = FileItem::addItem($file, $provider->id, FileItemType::ELECTRICITY_RESPONSE);
+
+                    if (!$file_item) {
+                        throw new \Exception('Не удалось сохранить модель FileItem');
+                    }
+                    break;
+
+                case 'heat':
+                    $provider = ApzProviderHeatResponse::where(['apz_id' => $apz->id])->first();
+
+                    if (!$provider) {
+                        return response()->json(['message' => 'Не найден ответ от провайдера'], 500);
+                    }
+
+                    $file = File::addXmlItem('heat_xml', FileCategory::XML_HEAT, 'sign_files/' . $apz->id, $request->xml);
+
+                    if (!$file) {
+                        throw new \Exception('Не удалось сохранить модель File');
+                    }
+
+                    $file_item = FileItem::addItem($file, $provider->id, FileItemType::HEAT_RESPONSE);
+
+                    if (!$file_item) {
+                        throw new \Exception('Не удалось сохранить модель FileItem');
+                    }
+                    break;
+
+                case 'phone':
+                    $provider = ApzProviderPhoneResponse::where(['apz_id' => $apz->id])->first();
+
+                    if (!$provider) {
+                        return response()->json(['message' => 'Не найден ответ от провайдера'], 500);
+                    }
+
+                    $file = File::addXmlItem('phone_xml', FileCategory::XML_PHONE, 'sign_files/' . $apz->id, $request->xml);
+
+                    if (!$file) {
+                        throw new \Exception('Не удалось сохранить модель File');
+                    }
+
+                    $file_item = FileItem::addItem($file, $provider->id, FileItemType::PHONE_RESPONSE);
+
+                    if (!$file_item) {
+                        throw new \Exception('Не удалось сохранить модель FileItem');
+                    }
+                    break;
+
+                default:
+                    throw new \Exception('Роль не найдена');
+            }
+
+            return response()->json(['status' => true], '200');
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

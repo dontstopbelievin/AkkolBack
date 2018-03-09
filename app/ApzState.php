@@ -6,6 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 /**
+ * App\ApzState
+ *
+ * @property int $id
+ * @property string $code Код
+ * @property string $name Название
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzState whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzState whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzState whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzState whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzState whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class ApzState extends Model
 {

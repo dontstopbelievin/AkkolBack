@@ -13,6 +13,60 @@ use Illuminate\Support\Facades\Auth;
  * @property integer $id
  * @property string $created_at
  * @property string $updated_at
+ * @property int|null $user_id ИД пользователя
+ * @property string|null $region Район
+ * @property string|null $project_type Тип проекта
+ * @property string|null $applicant Наименование заявителя
+ * @property string|null $address Адрес
+ * @property string|null $phone Телефон
+ * @property string|null $customer Заказчик
+ * @property string|null $designer Проектировщик №ГСЛ, категория
+ * @property string|null $object_type Тип объекта
+ * @property string|null $object_level Этажность
+ * @property string|null $object_client Заказчик
+ * @property string|null $object_area Площадь здания (кв.м)
+ * @property string|null $object_rooms Количество квартир (номеров, кабинетов)
+ * @property string|null $object_term Срок строительства по нормам
+ * @property string|null $project_name Наименование проектируемого объекта
+ * @property string|null $project_address Адрес проектируемого объекта
+ * @property string|null $project_address_coordinates Координаты проектируемого объекта
+ * @property string|null $cadastral_number Кадастровый номер
+ * @property int|null $status_id ИД статуса
+ * @property-read \App\ApzElectricity $apzElectricity
+ * @property-read \App\ApzGas $apzGas
+ * @property-read \App\ApzHeadResponse $apzHeadResponse
+ * @property-read \App\ApzHeat $apzHeat
+ * @property-read \App\ApzPhone $apzPhone
+ * @property-read \App\ApzSewage $apzSewage
+ * @property-read \App\ApzStatus $apzStatus
+ * @property-read \App\ApzWater $apzWater
+ * @property-read \App\Commission $commission
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\File[] $files
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ApzStateHistory[] $stateHistory
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereApplicant($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereCadastralNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereCustomer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereDesigner($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereObjectArea($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereObjectClient($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereObjectLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereObjectRooms($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereObjectTerm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereProjectAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereProjectAddressCoordinates($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereProjectName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereProjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereRegion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Apz whereUserId($value)
+ * @mixin \Eloquent
  */
 class Apz extends Model
 {

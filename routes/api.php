@@ -54,6 +54,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         });
 
         Route::group(['prefix' => '/provider', 'middleware' => 'role:provider'], function () {
+            Route::get('/get_xml/{provider}/{id}', 'Apz\ApzProviderController@generateXml');
+            Route::post('/save_xml/{provider}/{id}', 'Apz\ApzProviderController@saveXml');
             Route::get('/{provider}', 'Apz\ApzProviderController@all');
             Route::get('/{provider}/{id}', 'Apz\ApzProviderController@show');
             Route::post('/{provider}/{id}/save', 'Apz\ApzProviderController@save');
@@ -61,12 +63,16 @@ Route::group(['middleware' => 'auth:api'], function () {
         });
 
         Route::group(['prefix' => '/apz_department', 'middleware' => 'role:apzdepartment'], function () {
+            Route::get('/get_xml/{id}', 'Apz\ApzDepartmentController@generateXml');
+            Route::post('/save_xml/{id}', 'Apz\ApzDepartmentController@saveXml');
             Route::get('/', 'Apz\ApzDepartmentController@all');
             Route::get('/detail/{id}', 'Apz\ApzDepartmentController@show');
             Route::post('/status/{id}', 'Apz\ApzDepartmentController@decision');
         });
 
         Route::group(['prefix' => '/head', 'middleware' => 'role:head'], function () {
+            Route::get('/get_xml/{id}', 'Apz\ApzHeadController@generateXml');
+            Route::post('/save_xml/{id}', 'Apz\ApzHeadController@saveXml');
             Route::get('/', 'Apz\ApzHeadController@all');
             Route::get('/detail/{id}', 'Apz\ApzHeadController@show');
             Route::post('status/{id}', 'Apz\ApzHeadController@decision');
