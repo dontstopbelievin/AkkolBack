@@ -12,6 +12,7 @@ use App\FileItemType;
 use App\Http\Controllers\Controller;
 use App\File;
 use App\FileCategory;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -94,14 +95,7 @@ class ApzHeadController extends Controller
         return response()->json($apz, 200);
     }
 
-    /**
-     * Region decision
-     *
-     * @param Request $request
-     * @param integer $id
-     * @return \Illuminate\Http\Response
-     */
-    public function decision(Request $request, $id)
+    public function save(Request $request, $id)
     {
         $apz = Apz::where('id', $id)->first();
         $file_request = $request->file('file');
@@ -114,9 +108,6 @@ class ApzHeadController extends Controller
         DB::beginTransaction();
 
         try {
-            $apz->status_id = $request["Response"] == "true" ? ApzStatus::ACCEPTED : ApzStatus::DECLINED;
-            $apz->save();
-
             $response = new ApzHeadResponse();
             $response->apz_id = $apz->id;
             $response->user_id = Auth::user()->id;
@@ -124,19 +115,6 @@ class ApzHeadController extends Controller
             $response->response = ($request["Response"] == "true") ? true : false;
             $response->doc_number = $request["DocNumber"];
             $response->save();
-
-            if ($request["Response"] == "true") {
-                $region_state = new ApzStateHistory();
-                $region_state->apz_id = $apz->id;
-                $region_state->state_id = ApzState::HEAD_APPROVED;
-                $region_state->save();
-            } else {
-                $region_state = new ApzStateHistory();
-                $region_state->apz_id = $apz->id;
-                $region_state->state_id = ApzState::HEAD_DECLINED;
-                $region_state->comment = $request["Message"];
-                $region_state->save();
-            }
 
             if ($file_request) {
                 $file_name = md5($file_request->getClientOriginalName() . microtime());
@@ -168,10 +146,127 @@ class ApzHeadController extends Controller
             }
 
             DB::commit();
+            return response()->json($response, 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['message' => $e->getTrace()], 500);
+        }
+    }
+
+    /**
+     * Region decision
+     *
+     * @param Request $request
+     * @param integer $id
+     * @return \Illuminate\Http\Response
+     */
+    public function decision(Request $request, $id)
+    {
+        $apz = Apz::where('id', $id)->first();
+
+        if (!$apz) {
+            return response()->json(['message' => 'Заявка не найдена'], 404);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $apz->status_id = $request["Response"] == "true" ? ApzStatus::ACCEPTED : ApzStatus::DECLINED;
+            $apz->save();
+
+            if ($request["Response"] == "true") {
+                $region_state = new ApzStateHistory();
+                $region_state->apz_id = $apz->id;
+                $region_state->state_id = ApzState::HEAD_APPROVED;
+                $region_state->save();
+            } else {
+                $region_state = new ApzStateHistory();
+                $region_state->apz_id = $apz->id;
+                $region_state->state_id = ApzState::HEAD_DECLINED;
+                $region_state->comment = $request["Message"];
+                $region_state->save();
+            }
+
+            DB::commit();
             return response()->json(['message' => 'Заявка успешно отправлена'], 200);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => $e->getTrace()], 500);
+        }
+    }
+
+    public function generateXml($id)
+    {
+        $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+
+        if (!$apz) {
+            return response()->json(['message' => 'Заявка не найдена'], 404);
+        }
+
+        $output = view('xml_templates.head_response', ['apz' => $apz, 'user' => Auth::user()])->render();
+        $xml = "<?xml version=\"1.0\" ?>\n" . $output;
+
+        return response($xml, 200)->header('Content-Type', 'text/plain');
+    }
+
+    public function saveXml(Request $request, $id)
+    {
+        try {
+            $apz =  Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+
+            if (!$apz) {
+                throw new \Exception('АПЗ не найден');
+            }
+
+            $output = view('xml_templates.head_response', ['apz' => $apz, 'user' => Auth::user()])->render();
+            $server_xml = simplexml_load_string("<?xml version=\"1.0\" ?>\n" . $output);
+
+            $current_xml = simplexml_load_string($request->xml);
+
+            if ($server_xml->content->asXML() != $current_xml->content->asXML()) {
+                throw new \Exception('Некорректный XML');
+            }
+
+            $client = new Client();
+            $user = Auth::user();
+
+            $response = $client->post('http://89.218.17.203:3380/validate_xml', [
+                'form_params' => [
+                    'xml' => $request->xml
+                ],
+            ]);
+
+            if (!$response->getStatusCode() == 200) {
+                throw new \Exception('Не удалось пройти валидацию');
+            }
+
+            $iin = json_decode($response->getBody(), true);
+
+            if ($iin != $user->iin) {
+                return response()->json(['message' => 'Выбран ключ другого пользователя'], 500);
+            }
+
+            $head_response = ApzHeadResponse::where(['apz_id' => $apz->id])->first();
+
+            if (!$head_response) {
+                return response()->json(['message' => 'Не найден ответ от провайдера'], 500);
+            }
+
+            $file = File::addXmlItem('head_xml', FileCategory::XML_HEAD, 'sign_files/' . $apz->id, $request->xml);
+
+            if (!$file) {
+                throw new \Exception('Не удалось сохранить модель File');
+            }
+
+            $file_item = FileItem::addItem($file, $head_response->id, FileItemType::HEAD_RESPONSE);
+
+            if (!$file_item) {
+                throw new \Exception('Не удалось сохранить модель FileItem');
+            }
+
+            return response()->json(['status' => true], '200');
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }
