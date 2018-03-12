@@ -58,10 +58,10 @@ class FileController extends Controller
     public function categoriesList()
     {
         try {
-            $query = FileCategory::select('id', 'name_ru', 'name_kz')->where('is_visible', 1);
+            $query = FileCategory::select(['id', 'name_ru', 'name_kz'])->where('is_visible', 1);
 
             if (!Auth::user()->hasRole('Admin')) {
-                $query->where('role_id', '<>', Role::ADMIN);
+                $query->where('role_id', null);
             }
 
             return response()->json($query->get(), 200);
