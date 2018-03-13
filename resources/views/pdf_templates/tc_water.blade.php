@@ -242,5 +242,9 @@
             <b>3.5	Технические условия действительны на нормативный срок строительства с момента их подписания и регистрации в производственно-техническом управлении Предприятия. Нормативный срок строительства определяется Управлением Архитектуры и Градостроительства города Алматы согласно архитектурно-планировочного задания.</b>
         </div>
     </div>
+
+    <p style="text-align: center;">
+        <barcode code="{{ implode(' ', [$apz->commission->apzWaterResponse->user->last_name, $apz->commission->apzWaterResponse->user->first_name, $apz->commission->apzWaterResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+    </p>
 </body>
 </html>

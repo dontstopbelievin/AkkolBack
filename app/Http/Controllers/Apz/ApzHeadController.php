@@ -95,6 +95,13 @@ class ApzHeadController extends Controller
         return response()->json($apz, 200);
     }
 
+    /**
+     * Save decision
+     *
+     * @param Request $request
+     * @param integer $id
+     * @return \Illuminate\Http\Response
+     */
     public function save(Request $request, $id)
     {
         $apz = Apz::where('id', $id)->first();
@@ -195,6 +202,12 @@ class ApzHeadController extends Controller
         }
     }
 
+    /**
+     * Generate XML
+     *
+     * @param integer $id
+     * @return \Illuminate\Http\Response
+     */
     public function generateXml($id)
     {
         $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
@@ -209,6 +222,13 @@ class ApzHeadController extends Controller
         return response($xml, 200)->header('Content-Type', 'text/plain');
     }
 
+    /**
+     * Save XML
+     *
+     * @param Request $request
+     * @param integer $id
+     * @return \Illuminate\Http\Response
+     */
     public function saveXml(Request $request, $id)
     {
         try {

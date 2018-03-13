@@ -455,6 +455,10 @@
         <br/>
         <p>Сәулет-жоспарлау тапсырмасы (СЖТ) және техникалық талаптар жобалау (жобалау-сметалық) құжаттарының құрамында бекітілген құрылыстың бүкіл нормативтік ұзақтылығы мерзімі ішінде қолданылады.</p>
         <br/>
+        <p style="text-align: center;">
+            <barcode code="{{ implode(' ', [$apz->apzHeadResponse->user->last_name, $apz->apzHeadResponse->user->first_name, $apz->apzHeadResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+            <barcode code="{{ implode(' ', [$apz_sign->user->last_name, $apz_sign->user->first_name, $apz_sign->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+        </p>
         <p><b>Алматы қаласы 2017 жыл</b></p>
     </div>
 </body>

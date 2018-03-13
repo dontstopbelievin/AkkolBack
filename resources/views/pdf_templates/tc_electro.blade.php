@@ -128,10 +128,11 @@
                 <td><p>{{ $apz->commission->apzElectricityResponse->recommendation }}</p></td>
             </tr>
         </table>
-
         <br/>
         <p>Технические условия (ТУ) действуют в течение всего срока нормативной продолжительности строительства, утвержденной в составе проектной (проектно-сметной) документации</p>
-        <br/>
+        <p style="text-align: center;">
+            <barcode code="{{ implode(' ', [$apz->commission->apzElectricityResponse->user->last_name, $apz->commission->apzElectricityResponse->user->first_name, $apz->commission->apzElectricityResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+        </p>
         <p>
             <b>город Алматы 2017 год</b>
         </p>

@@ -43,6 +43,14 @@ class ApzHeadResponse extends Model
     }
 
     /**
+     * Get user
+     */
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    /**
      * Get files
      */
     public function files()

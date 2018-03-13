@@ -91,4 +91,12 @@ class File extends Model
     {
         return $this->hasOne(FileCategory::class, 'id', 'category_id');
     }
+
+    /**
+     * Get user
+     */
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }
