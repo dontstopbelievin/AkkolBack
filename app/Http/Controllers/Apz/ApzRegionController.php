@@ -59,7 +59,7 @@ class ApzRegionController extends Controller
                 return $value->state_id == ApzState::REGION_DECLINED;
             });
 
-            if (sizeof($in_process) == 0) {
+            if (sizeof($in_process) == 0 || $item->status_id == ApzStatus::ARCHITECT) {
                 $result['in_process'][] = $item;
                 continue;
             }

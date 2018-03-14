@@ -609,7 +609,19 @@ class ApzProviderController extends Controller
             $commission_user->status_id = $response->response ? CommissionUserStatus::ACCEPTED : CommissionUserStatus::DECLINED;
             $commission_user->save();
 
-            if (sizeof($commission->users()->where('status_id', '<>', CommissionUserStatus::IN_PROCESS)->get()) == sizeof($commission->users)) {
+            if (!$response->response) {
+                $apz->status_id = ApzStatus::ARCHITECT;
+                $apz->save();
+
+                $commission->status_id = CommissionStatus::FINISHED;
+                $commission->save();
+
+                $engineer_state = new ApzStateHistory();
+                $engineer_state->apz_id = $apz->id;
+                $engineer_state->state_id = ApzState::TO_REGION;
+                $engineer_state->comment = $response->response_text;
+                $engineer_state->save();
+            } elseif (sizeof($commission->users()->where('status_id', '<>', CommissionUserStatus::IN_PROCESS)->get()) == sizeof($commission->users)) {
                 $apz->status_id = ApzStatus::ENGINEER;
                 $apz->save();
 

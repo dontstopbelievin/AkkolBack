@@ -170,27 +170,34 @@ class ApzHeadController extends Controller
     public function decision(Request $request, $id)
     {
         $apz = Apz::where('id', $id)->first();
+        $response = ApzHeadResponse::where(['apz_id' => $id])->first();
 
-        if (!$apz) {
+        if (!$apz || !$response) {
             return response()->json(['message' => 'Заявка не найдена'], 404);
         }
 
         DB::beginTransaction();
 
         try {
-            $apz->status_id = $request["Response"] == "true" ? ApzStatus::ACCEPTED : ApzStatus::DECLINED;
+            $apz->status_id = $request["Response"] == "true" ? ApzStatus::ACCEPTED : ApzStatus::ARCHITECT;
             $apz->save();
 
             if ($request["Response"] == "true") {
-                $region_state = new ApzStateHistory();
-                $region_state->apz_id = $apz->id;
-                $region_state->state_id = ApzState::HEAD_APPROVED;
-                $region_state->save();
+                $head_state = new ApzStateHistory();
+                $head_state->apz_id = $apz->id;
+                $head_state->state_id = ApzState::HEAD_APPROVED;
+                $head_state->save();
             } else {
+                $head_state = new ApzStateHistory();
+                $head_state->apz_id = $apz->id;
+                $head_state->state_id = ApzState::HEAD_DECLINED;
+                $head_state->comment = $response->response;
+                $head_state->save();
+
                 $region_state = new ApzStateHistory();
                 $region_state->apz_id = $apz->id;
-                $region_state->state_id = ApzState::HEAD_DECLINED;
-                $region_state->comment = $request["Message"];
+                $region_state->state_id = ApzState::TO_REGION;
+                $region_state->comment = $response->response_text;
                 $region_state->save();
             }
 

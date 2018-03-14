@@ -24,27 +24,39 @@ class ApzEngineerController extends Controller
      */
     public function all()
     {
-        /**
-         * TODO Переделать запросы. Временное решение
-         */
-        $process = Apz::whereIn('status_id', [ApzStatus::ENGINEER, ApzStatus::PROVIDER])
-            ->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-                $query->whereIn('state_id', [ApzState::ENGINEER_APPROVED, ApzState::ENGINEER_DECLINED]);
-            })->get();
+        $data = Apz::with(Apz::getApzBaseRelationList())->get();
+        $result = ['in_process' => [], 'accepted' => [], 'declined' => []];
 
-        $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-            $query->where('state_id', ApzState::ENGINEER_APPROVED);
-        })->get();
+        foreach ($data as $item) {
+            $in_process = $item->stateHistory->filter(function ($value) {
+                return in_array($value->state_id, [ApzState::ENGINEER_APPROVED, ApzState::ENGINEER_DECLINED]);
+            });
 
-        $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-            $query->where('state_id', ApzState::ENGINEER_DECLINED);
-        })->get();
+            $accepted = $item->stateHistory->filter(function ($value) {
+                return $value->state_id == ApzState::ENGINEER_APPROVED;
+            });
 
-        return response()->json([
-            'in_process' => $process,
-            'accepted' => $accepted,
-            'declined' => $declined
-        ], 200);
+            $declined = $item->stateHistory->filter(function ($value) {
+                return $value->state_id == ApzState::ENGINEER_DECLINED;
+            });
+
+            if (sizeof($in_process) == 0 && in_array($item->status_id, [ApzStatus::ENGINEER, ApzStatus::PROVIDER])) {
+                $result['in_process'][] = $item;
+                continue;
+            }
+
+            if (sizeof($accepted) > 0) {
+                $result['accepted'][] = $item;
+                continue;
+            }
+
+            if (sizeof($declined) > 0) {
+                $result['declined'][] = $item;
+                continue;
+            }
+        }
+
+        return response()->json($result, 200);
     }
 
     /**
@@ -199,7 +211,7 @@ class ApzEngineerController extends Controller
         DB::beginTransaction();
 
         try {
-            $apz->status_id = $request["response"] == "true" ? ApzStatus::APZ_DEPARTMENT : ApzStatus::DECLINED;
+            $apz->status_id = $request["response"] == "true" ? ApzStatus::APZ_DEPARTMENT : ApzStatus::ARCHITECT;
             $apz->save();
 
             if ($request["response"] == "true") {
@@ -220,6 +232,12 @@ class ApzEngineerController extends Controller
                 $region_state->state_id = ApzState::ENGINEER_DECLINED;
                 $region_state->comment = $request["message"];
                 $region_state->save();
+
+                $engineer_state = new ApzStateHistory();
+                $engineer_state->apz_id = $apz->id;
+                $engineer_state->state_id = ApzState::TO_REGION;
+                $engineer_state->comment = $request["message"];
+                $engineer_state->save();
             }
 
             DB::commit();

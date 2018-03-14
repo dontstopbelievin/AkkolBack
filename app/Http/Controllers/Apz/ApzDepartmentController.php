@@ -25,23 +25,39 @@ class ApzDepartmentController extends Controller
      */
     public function all()
     {
-        /**
-         * TODO Переделать запросы. Временное решение
-         */
-        $process = Apz::where([
-            'status_id' => ApzStatus::APZ_DEPARTMENT
-        ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-            $query->whereIn('state_id', [ApzState::APZ_APPROVED, ApzState::APZ_DECLINED]);
-        })->get();
+        $data = Apz::with(Apz::getApzBaseRelationList())->get();
+        $result = ['in_process' => [], 'accepted' => [], 'declined' => []];
 
-        $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-            $query->where('state_id', ApzState::APZ_APPROVED);
-        })->get();
+        foreach ($data as $item) {
+            $in_process = $item->stateHistory->filter(function ($value) {
+                return in_array($value->state_id, [ApzState::APZ_APPROVED, ApzState::APZ_DECLINED]);
+            });
 
-        return response()->json([
-            'in_process' => $process,
-            'accepted' => $accepted,
-        ], 200);
+            $accepted = $item->stateHistory->filter(function ($value) {
+                return $value->state_id == ApzState::APZ_APPROVED;
+            });
+
+            $declined = $item->stateHistory->filter(function ($value) {
+                return $value->state_id == ApzState::APZ_DECLINED;
+            });
+
+            if (sizeof($in_process) == 0 || $item->status_id == ApzStatus::APZ_DEPARTMENT) {
+                $result['in_process'][] = $item;
+                continue;
+            }
+
+            if (sizeof($accepted) > 0) {
+                $result['accepted'][] = $item;
+                continue;
+            }
+
+            if (sizeof($declined) > 0) {
+                $result['declined'][] = $item;
+                continue;
+            }
+        }
+
+        return response()->json($result, 200);
     }
 
     /**
@@ -64,9 +80,10 @@ class ApzDepartmentController extends Controller
      * Region decision
      *
      * @param integer $id
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function decision($id)
+    public function decision(Request $request, $id)
     {
         $apz = Apz::where('id', $id)->first();
 
@@ -77,17 +94,18 @@ class ApzDepartmentController extends Controller
         DB::beginTransaction();
 
         try {
-            $apz->status_id = ApzStatus::CHIEF_ARCHITECT;
+            $apz->status_id = $request['response'] == 'true' ? ApzStatus::CHIEF_ARCHITECT : ApzStatus::ARCHITECT ;
             $apz->save();
 
             $region_state = new ApzStateHistory();
             $region_state->apz_id = $apz->id;
-            $region_state->state_id = ApzState::APZ_APPROVED;
+            $region_state->state_id = $request['response'] == 'true' ? ApzState::APZ_APPROVED : ApzState::APZ_DECLINED;
             $region_state->save();
 
             $engineer_state = new ApzStateHistory();
             $engineer_state->apz_id = $apz->id;
-            $engineer_state->state_id = ApzState::TO_HEAD;
+            $engineer_state->state_id = $request['response'] == 'true' ? ApzState::TO_HEAD : ApzState::TO_REGION;
+            $engineer_state->comment = $request["message"];
             $engineer_state->save();
 
             DB::commit();
