@@ -38,6 +38,9 @@ use Illuminate\Support\Facades\Storage;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\File whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\File whereUserId($value)
  * @mixin \Eloquent
+ * @property int $is_signed Подписан
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\File whereIsSigned($value)
  */
 class File extends Model
 {

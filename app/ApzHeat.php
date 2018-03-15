@@ -34,6 +34,8 @@ use Illuminate\Http\Request;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzHeat whereVentilation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzHeat whereWater($value)
  * @mixin \Eloquent
+ * @property float|null $water_max Горячее водоснабжение (макс/ч)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzHeat whereWaterMax($value)
  */
 class ApzHeat extends Model
 {
@@ -54,6 +56,7 @@ class ApzHeat extends Model
         $this->main = $request->HeatMain;
         $this->ventilation = $request->HeatVentilation;
         $this->water = $request->HeatWater;
+        $this->water_max = $request->HeatWaterMax;
         $this->tech = $request->HeatTech;
         $this->distribution = $request->HeatDistribution;
         $this->saving = $request->HeatSaving;

@@ -47,6 +47,8 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzProviderWaterResponse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzProviderWaterResponse whereUserId($value)
  * @mixin \Eloquent
+ * @property int|null $apz_id ИД АПЗ
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzProviderWaterResponse whereApzId($value)
  */
 class ApzProviderWaterResponse extends Model
 {

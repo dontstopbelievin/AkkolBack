@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzHeadResponse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzHeadResponse whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \App\User $user
  */
 class ApzHeadResponse extends Model
 {

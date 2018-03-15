@@ -415,6 +415,36 @@ class ApzProviderController extends Controller
                 $response->connection_point = $request['ConnectionPoint'];
                 $response->addition = $request['Addition'];
                 $response->doc_number = $request['DocNumber'];
+
+                $response->name = $request["Name"];
+                $response->area = $request["Area"];
+                $response->transporter = $request["Transporter"];
+                $response->two_pipe_pressure_in_tc = $request["Two_pipe_pressure_in_tc"];
+                $response->two_pipe_pressure_in_sc = $request["Two_pipe_pressure_in_sc"];
+                $response->two_pipe_pressure_in_rc = $request["Two_pipe_pressure_in_rc"];
+                $response->heat_four_pipe_pressure_in_tc = $request["Heat_four_pipe_pressure_in_tc"];
+                $response->heat_four_pipe_pressure_in_sc = $request["Heat_four_pipe_pressure_in_sc"];
+                $response->heat_four_pipe_pressure_in_rc = $request["Heat_four_pipe_pressure_in_rc"];
+                $response->water_four_pipe_pressure_in_tc = $request["Water_four_pipe_pressure_in_tc"];
+                $response->water_four_pipe_pressure_in_sc = $request["Water_four_pipe_pressure_in_sc"];
+                $response->water_four_pipe_pressure_in_rc = $request["Water_four_pipe_pressure_in_rc"];
+                $response->temperature_chart = $request["Temperature_chart"];
+                $response->reconcile_connections_with = $request["Reconcile_connections_with"];
+                $response->connection_terms = $request["Connection_terms"];
+                $response->heating_networks_design = $request["Heating_networks_design"];
+                $response->final_heat_loads = $request["Final_heat_loads"];
+                $response->heat_networks_relaying = $request["Heat_networks_relaying"];
+                $response->condensate_return = $request["Condensate_return"];
+                $response->thermal_energy_meters = $request["Thermal_energy_meters"];
+                $response->heat_supply_system = $request["Heat_supply_system"];
+                $response->heat_supply_system_note = $request["Heat_supply_system_note"];
+                $response->connection_scheme = $request["Connection_scheme"];
+                $response->connection_scheme_note = $request["Connection_scheme_note"];
+                $response->after_control_unit_installation = $request["After_control_unit_installation"];
+                $response->negotiation = $request["Negotiation"];
+                $response->technical_conditions_terms = $request["Technical_conditions_terms"];
+                $response->water_in_contract_max = $request["Water_in_contract_max"];
+
                 $response->save();
 
                 $old_file = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->first();

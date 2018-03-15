@@ -38,6 +38,9 @@ use Illuminate\Http\Request;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzProviderPhoneResponse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzProviderPhoneResponse whereUserId($value)
  * @mixin \Eloquent
+ * @property int|null $apz_id ИД АПЗ
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzProviderPhoneResponse whereApzId($value)
  */
 class ApzProviderPhoneResponse extends Model
 {

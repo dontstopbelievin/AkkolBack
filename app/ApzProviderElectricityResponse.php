@@ -40,6 +40,9 @@ use Illuminate\Http\Request;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzProviderElectricityResponse whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzProviderElectricityResponse whereUserId($value)
  * @mixin \Eloquent
+ * @property int|null $apz_id ИД АПЗ
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzProviderElectricityResponse whereApzId($value)
  */
 class ApzProviderElectricityResponse extends Model
 {
