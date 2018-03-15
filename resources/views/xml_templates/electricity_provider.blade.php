@@ -74,6 +74,7 @@
                 <main>{{ $apz->apzHeat->main }}</main>
                 <ventilation>{{ $apz->apzHeat->ventilation }}</ventilation>
                 <water>{{ $apz->apzHeat->water }}</water>
+                <water_max>{{ $apz->apzHeat->water_max }}</water_max>
                 <tech>{{ $apz->apzHeat->tech }}</tech>
                 <distribution>{{ $apz->apzHeat->distribution }}</distribution>
                 <saving>{{ $apz->apzHeat->saving }}</saving>

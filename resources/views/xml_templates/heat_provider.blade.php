@@ -74,6 +74,7 @@
                 <main>{{ $apz->apzHeat->main }}</main>
                 <ventilation>{{ $apz->apzHeat->ventilation }}</ventilation>
                 <water>{{ $apz->apzHeat->water }}</water>
+                <water_max>{{ $apz->apzHeat->water_max }}</water_max>
                 <tech>{{ $apz->apzHeat->tech }}</tech>
                 <distribution>{{ $apz->apzHeat->distribution }}</distribution>
                 <saving>{{ $apz->apzHeat->saving }}</saving>
@@ -120,8 +121,36 @@
                 <main_in_contract>{{ $apz->commission->apzHeatResponse->main_in_contract }}</main_in_contract>
                 <ven_in_contract>{{ $apz->commission->apzHeatResponse->ven_in_contract }}</ven_in_contract>
                 <water_in_contract>{{ $apz->commission->apzHeatResponse->water_in_contract }}</water_in_contract>
+                <water_in_contract_max>{{ $apz->commission->apzHeatResponse->water_in_contract_max }}</water_in_contract_max>
                 <connection_point>{{ $apz->commission->apzHeatResponse->connection_point }}</connection_point>
                 <addition>{{ $apz->commission->apzHeatResponse->addition }}</addition>
+                <heat_name>{{ $apz->commission->apzHeatResponse->name }}</heat_name>
+                <heat_area>{{ $apz->commission->apzHeatResponse->area }}</heat_area>
+                <transporter>{{ $apz->commission->apzHeatResponse->transporter }}</transporter>
+                <two_pipe_pressure_in_tc>{{ $apz->commission->apzHeatResponse->two_pipe_pressure_in_tc }}</two_pipe_pressure_in_tc>
+                <two_pipe_pressure_in_sc>{{ $apz->commission->apzHeatResponse->two_pipe_pressure_in_sc }}</two_pipe_pressure_in_sc>
+                <two_pipe_pressure_in_rc>{{ $apz->commission->apzHeatResponse->two_pipe_pressure_in_rc }}</two_pipe_pressure_in_rc>
+                <heat_four_pipe_pressure_in_tc>{{ $apz->commission->apzHeatResponse->heat_four_pipe_pressure_in_tc }}</heat_four_pipe_pressure_in_tc>
+                <heat_four_pipe_pressure_in_sc>{{ $apz->commission->apzHeatResponse->heat_four_pipe_pressure_in_sc }}</heat_four_pipe_pressure_in_sc>
+                <heat_four_pipe_pressure_in_rc>{{ $apz->commission->apzHeatResponse->heat_four_pipe_pressure_in_rc }}</heat_four_pipe_pressure_in_rc>
+                <water_four_pipe_pressure_in_tc>{{ $apz->commission->apzHeatResponse->water_four_pipe_pressure_in_tc }}</water_four_pipe_pressure_in_tc>
+                <water_four_pipe_pressure_in_sc>{{ $apz->commission->apzHeatResponse->water_four_pipe_pressure_in_sc }}</water_four_pipe_pressure_in_sc>
+                <water_four_pipe_pressure_in_rc>{{ $apz->commission->apzHeatResponse->water_four_pipe_pressure_in_rc }}</water_four_pipe_pressure_in_rc>
+                <temperature_chart>{{ $apz->commission->apzHeatResponse->temperature_chart }}</temperature_chart>
+                <reconcile_connections_with>{{ $apz->commission->apzHeatResponse->reconcile_connections_with }}</reconcile_connections_with>
+                <connection_terms>{{ $apz->commission->apzHeatResponse->connection_terms }}</connection_terms>
+                <heating_networks_design>{{ $apz->commission->apzHeatResponse->heating_networks_design }}</heating_networks_design>
+                <final_heat_loads>{{ $apz->commission->apzHeatResponse->final_heat_loads }}</final_heat_loads>
+                <heat_networks_relaying>{{ $apz->commission->apzHeatResponse->heat_networks_relaying }}</heat_networks_relaying>
+                <condensate_return>{{ $apz->commission->apzHeatResponse->condensate_return }}</condensate_return>
+                <thermal_energy_meters>{{ $apz->commission->apzHeatResponse->thermal_energy_meters }}</thermal_energy_meters>
+                <heat_supply_system>{{ $apz->commission->apzHeatResponse->heat_supply_system }}</heat_supply_system>
+                <heat_supply_system_note>{{ $apz->commission->apzHeatResponse->heat_supply_system_note }}</heat_supply_system_note>
+                <connection_scheme>{{ $apz->commission->apzHeatResponse->connection_scheme }}</connection_scheme>
+                <connection_scheme_note>{{ $apz->commission->apzHeatResponse->connection_scheme_note }}</connection_scheme_note>
+                <after_control_unit_installation>{{ $apz->commission->apzHeatResponse->after_control_unit_installation }}</after_control_unit_installation>
+                <negotiation>{{ $apz->commission->apzHeatResponse->negotiation }}</negotiation>
+                <technical_conditions_terms>{{ $apz->commission->apzHeatResponse->technical_conditions_terms }}</technical_conditions_terms>
             @else
                 <response_text>{{ $apz->commission->apzHeatResponse->response_text }}</response_text>
                 <comments>{{ $apz->commission->apzHeatResponse->comments }}</comments>
