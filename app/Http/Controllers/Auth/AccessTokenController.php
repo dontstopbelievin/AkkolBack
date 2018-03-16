@@ -22,7 +22,7 @@ class AccessTokenController extends ATC
             $username = $request->getParsedBody()['username'];
 
             //get user
-            $user = User::where('name', '=', $username)->first();
+            $user = User::where('bin', '=', $username)->orWhere('iin', '=', $username)->first();
 
             if (!$user) {
                 throw new ModelNotFoundException();
