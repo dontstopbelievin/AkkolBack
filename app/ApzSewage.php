@@ -11,9 +11,13 @@ use Illuminate\Http\Request;
  * @property int $id
  * @property int|null $apz_id ИД АПЗ
  * @property float $amount Общее количество сточных вод
+ * @property float $amount_hour Общее количество сточных вод (м3/час макс)
  * @property float|null $feksal Фекcальных
+ * @property float|null $feksal_hour Фекальных (м3/час макс)
  * @property float|null $production Производственно-загрязненных
+ * @property float|null $production_hour Производственно-загрязненных(м3/час макс)
  * @property float|null $to_city Условно-чистых сбрасываемых на городскую канализацию
+ * @property float|null $to_city_hour Условно-чистых сбрасываемых на городскую сеть (м3/час макс)
  * @property string|null $client_wishes Пожелание заказчика
  * @property int $status Статус (0-declined, 1-accepted, 2-active)
  * @property \Carbon\Carbon|null $created_at
@@ -47,9 +51,13 @@ class ApzSewage extends Model
     {
         $this->apz_id = $apz_id;
         $this->amount = $request->SewageAmount;
+        $this->amount_hour = $request->SewageAmountHour;
         $this->feksal = $request->SewageFeksal;
+        $this->feksal_hour = $request->SewageFeksalHour;
         $this->production = $request->SewageProduction;
+        $this->production_hour = $request->SewageProductionHour;
         $this->to_city = $request->SewageToCity;
+        $this->to_city_hour = $request->SewageToCityHour;
         $this->client_wishes = $request->SewageClientWishes;
         $this->save();
 

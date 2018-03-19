@@ -10,9 +10,15 @@ use Illuminate\Http\Request;
  *
  * @property int $id
  * @property int|null $apz_id ИД АПЗ
- * @property float $requirement Общая потребность в воде
- * @property float|null $drinking На хозпитьевые нужды
- * @property float|null $production На производственные нужды
+ * @property float $requirement Общая потребность (м3/сутки)
+ * @property float $requirement_hour Общая потребность (м3/час питьевой воды)
+ * @property float $requirement_sec Общая потребность (л/сек макс)
+ * @property float|null $drinking Хозпитьевые нужды (м3/сутки)
+ * @property float|null $drinking_hour Хозпитьевые нужды (м3/час)
+ * @property float|null $drinking_sec Хозпитьевые нужды (л/сек макс)
+ * @property float|null $production Производственные нужды (м3/сутки)
+ * @property float|null $production_hour Производственные нужды (м3/час)
+ * @property float|null $production_sec Производственные нужды (л/сек макс)
  * @property float|null $fire_fighting Потребные расходы наружного пожаротушения
  * @property float $sewage Канализация
  * @property int $status Статус (0-declined, 1-accepted, 2-active)
@@ -47,8 +53,14 @@ class ApzWater extends Model
     {
         $this->apz_id = $apz_id;
         $this->requirement = $request->WaterRequirement;
+        $this->requirement_hour = $request->WaterRequirementHour;
+        $this->requirement_sec = $request->WaterRequirementSec;
         $this->drinking = $request->WaterDrinking;
+        $this->drinking_hour = $request->WaterDrinkingHour;
+        $this->drinking_sec = $request->WaterDrinkingSec;
         $this->production = $request->WaterProduction;
+        $this->production_hour = $request->WaterProductionHour;
+        $this->production_sec = $request->WaterProductionSec;
         $this->fire_fighting = $request->WaterFireFighting;
         $this->sewage = $request->WaterSewage;
         $this->save();

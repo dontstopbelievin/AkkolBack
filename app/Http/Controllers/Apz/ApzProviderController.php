@@ -154,7 +154,7 @@ class ApzProviderController extends Controller
      */
     public function show($provider, $id)
     {
-        $query = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList());
+        $query = Apz::where(['id' => $id])->with(Apz::getApzProviderRelationList());
 
         switch ($provider) {
             case 'Water':

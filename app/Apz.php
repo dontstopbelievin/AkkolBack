@@ -130,6 +130,15 @@ class Apz extends Model
         return $base_array;
     }
 
+    public static function getApzProviderRelationList()
+    {
+        $base_array = self::getApzBaseRelationList();
+
+        array_push($base_array, 'user');
+
+        return $base_array;
+    }
+
     /**
      * Get electricity
      */
