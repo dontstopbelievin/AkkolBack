@@ -8,7 +8,10 @@
     <title></title>
 
     <style type="text/css">
-        p, table {text-align: center}
+        p {text-align: center;}
+        .inform p{
+            text-align: left;
+        }
         .row
         {
             display: flex;
@@ -16,6 +19,15 @@
             margin-right: 10px;
             margin-left: 30px;
         }
+        .logo{
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        img{
+            height: 130px;
+        }
+
+
         .col-6
         {
             flex: 0 0 50%;
@@ -29,13 +41,17 @@
 </head>
 <body>
     <div id="root">
+        <div class="logo">
+            <img src="../public/images/Almatytelecom.jpg" alt="telephone_logo">
+        </div>
         <p>
             <b>ТЕХНИЧЕСКИЕ УСЛОВИЯ «НА ТЕЛЕФОНИЗАЦИЮ»</b>
         </p>
         <p>
-            № {{ $apz->commission->apzPhoneResponse->doc_number }} от {{ date('d-m-Y', strtotime($apz->commission->apzPhoneResponse->created_at)) }}
+            {{--№ {{ $apz->commission->apzPhoneResponse->doc_number }} от {{ date('d-m-Y', strtotime($apz->commission->apzPhoneResponse->created_at)) }}--}}
         </p>
         <br/>
+        <div class="inform">
         <p>
             <b>Наименование объекта</b>: {{ $apz->project_name }}
         </p>
@@ -57,6 +73,7 @@
         <p>
             <b>Дата и время заявления</b>: {{ date('d-m-Y', strtotime($apz->created_at)) }}
         </p>
+        </div>
         <br />
         <div class="row">
             <p>
@@ -66,8 +83,8 @@
 
         <table width="100%">
             <tr>
-                <td width="50%"><p>1. Количество ОТА и услуг в разбивке физ.лиц и юр.лиц</p></td>
-                <td><p>{{ $apz->apzPhone->service_num }}</p></td>
+                <td width="80%"><p>1. Количество ОТА и услуг в разбивке физ.лиц и юр.лиц</p></td>
+                {{--<td><p>{{ $apz->apzPhone->service_num }}</p></td>--}}
             </tr>
 
             <tr>
@@ -95,29 +112,29 @@
         <table width="100%">
             <tr>
                 <td width="50%"><p>1. Количество ОТА и услуг в разбивке физ.лиц и юр.лиц</p></td>
-                <td><p>{{ $apz->commission->apzPhoneResponse->service_num }}</p></td>
+                {{--<td><p>{{ $apz->commission->apzPhoneResponse->service_num }}</p></td>--}}
             </tr>
 
             <tr>
                 <td><p>2. Телефонная емкость</p></td>
-                <td><p>{{ $apz->commission->apzPhoneResponse->capacity }}</p></td>
+                {{--<td><p>{{ $apz->commission->apzPhoneResponse->capacity }}</p></td>--}}
             </tr>
 
             <tr>
                 <td><p>3. Планируемая телефонная канализация</p></td>
-                <td><p>{{ $apz->commission->apzPhoneResponse->sewage }}</p></td>
+                {{--<td><p>{{ $apz->commission->apzPhoneResponse->sewage }}</p></td>--}}
             </tr>
 
             <tr>
                 <td><p>4. Пожелания заказчика (тип оборудования, тип кабеля и др.)</p></td>
-                <td>{{ $apz->commission->apzPhoneResponse->client_wishes }}</td>
+                {{--<td>{{ $apz->commission->apzPhoneResponse->client_wishes }}</td>--}}
             </tr>
         </table>
 
         <br/>
         <p>Технические условия (ТУ) действуют в течение всего срока нормативной продолжительности строительства, утвержденной в составе проектной (проектно-сметной) документации</p>
         <p style="text-align: center;">
-            <barcode code="{{ implode(' ', [$apz->commission->apzPhoneResponse->user->last_name, $apz->commission->apzPhoneResponse->user->first_name, $apz->commission->apzPhoneResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+            {{--<barcode code="{{ implode(' ', [$apz->commission->apzPhoneResponse->user->last_name, $apz->commission->apzPhoneResponse->user->first_name, $apz->commission->apzPhoneResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />--}}
         </p>
         <p>
             <b>город Алматы 2017 год</b>
