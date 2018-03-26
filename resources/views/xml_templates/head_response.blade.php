@@ -1,6 +1,6 @@
 <root>
     <content>
-        <user id="{{ $apz->user->id }}">
+        <user user_id="{{ $apz->user->id }}">
             <name>{{ $apz->user->name }}></name>
             <email>{{ $apz->user->email }}</email>
 
@@ -19,7 +19,7 @@
             <created_at>{{ $apz->user->created_at }}</created_at>
         </user>
 
-        <apz id="{{ $apz->id }}">
+        <apz apz_id="{{ $apz->id }}">
             <region>{{ $apz->region }}</region>
             <project_type>{{ $apz->project_type }}</project_type>
             <applicant>{{ $apz->applicant }}</applicant>
@@ -99,7 +99,7 @@
             </sewage>
         </apz>
 
-        <head id="{{ $user->id }}">
+        <head head_id="{{ $user->id }}">
             <name>{{ $user->name }}</name>
             <email>{{ $user->email }}</email>
 

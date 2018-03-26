@@ -1,6 +1,6 @@
 <root>
     <content>
-        <user id="{{ $apz->user->id }}">
+        <user user_id="{{ $apz->user->id }}">
             <name>{{ $apz->user->name }}></name>
             <email>{{ $apz->user->email }}</email>
 
@@ -19,7 +19,7 @@
             <created_at>{{ $apz->user->created_at }}</created_at>
         </user>
 
-        <apz id="{{ $apz->id }}">
+        <apz apz_id="{{ $apz->id }}">
             <region>{{ $apz->region }}</region>
             <project_type>{{ $apz->project_type }}</project_type>
             <applicant>{{ $apz->applicant }}</applicant>
@@ -99,7 +99,7 @@
             </sewage>
         </apz>
 
-        <provider id="{{ $apz->commission->apzElectricityResponse->user->id }}" type="electricity">
+        <provider provider_id="{{ $apz->commission->apzElectricityResponse->user->id }}" type="electricity">
             <name>{{ $apz->commission->apzElectricityResponse->user->name }}</name>
             <email>{{ $apz->commission->apzElectricityResponse->user->email }}</email>
 
@@ -114,7 +114,7 @@
             <created_at>{{ $apz->commission->apzElectricityResponse->user->created_at }}</created_at>
         </provider>
 
-        <provider_answer id="{{ $apz->commission->apzElectricityResponse->id }}" type="electricity">
+        <provider_answer response_id="{{ $apz->commission->apzElectricityResponse->id }}" type="electricity">
             @if($apz->commission->apzElectricityResponse->response)
                 <req_power>{{ $apz->commission->apzElectricityResponse->req_power }}</req_power>
                 <phase>{{ $apz->commission->apzElectricityResponse->phase }}</phase>

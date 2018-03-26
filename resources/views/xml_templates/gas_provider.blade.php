@@ -1,6 +1,6 @@
 <root>
     <content>
-        <user id="{{ $apz->user->id }}">
+        <user user_id="{{ $apz->user->id }}">
             <name>{{ $apz->user->name }}></name>
             <email>{{ $apz->user->email }}</email>
 
@@ -19,7 +19,7 @@
             <created_at>{{ $apz->user->created_at }}</created_at>
         </user>
 
-        <apz id="{{ $apz->id }}">
+        <apz apz_id="{{ $apz->id }}">
             <region>{{ $apz->region }}</region>
             <project_type>{{ $apz->project_type }}</project_type>
             <applicant>{{ $apz->applicant }}</applicant>
@@ -99,7 +99,7 @@
             </sewage>
         </apz>
 
-        <provider id="{{ $apz->commission->apzGasResponse->user->id }}" type="gas">
+        <provider provider_id="{{ $apz->commission->apzGasResponse->user->id }}" type="gas">
             <name>{{ $apz->commission->apzGasResponse->user->name }}</name>
             <email>{{ $apz->commission->apzGasResponse->user->email }}</email>
 
@@ -114,7 +114,7 @@
             <created_at>{{ $apz->commission->apzGasResponse->user->created_at }}</created_at>
         </provider>
 
-        <provider_answer id="{{ $apz->commission->apzGasResponse->id }}" type="gas">
+        <provider_answer response_id="{{ $apz->commission->apzGasResponse->id }}" type="gas">
             @if($apz->commission->apzGasResponse->response)
                 <connection_point>{{ $apz->commission->apzGasResponse->connection_point }}</connection_point>
                 <gas_pipe_diameter>{{ $apz->commission->apzGasResponse->gas_pipe_diameter }}</gas_pipe_diameter>

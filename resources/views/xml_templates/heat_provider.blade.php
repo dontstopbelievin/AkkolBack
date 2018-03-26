@@ -1,6 +1,6 @@
 <root>
     <content>
-        <user id="{{ $apz->user->id }}">
+        <user user_id="{{ $apz->user->id }}">
             <name>{{ $apz->user->name }}></name>
             <email>{{ $apz->user->email }}</email>
 
@@ -19,7 +19,7 @@
             <created_at>{{ $apz->user->created_at }}</created_at>
         </user>
 
-        <apz id="{{ $apz->id }}">
+        <apz apz_id="{{ $apz->id }}">
             <region>{{ $apz->region }}</region>
             <project_type>{{ $apz->project_type }}</project_type>
             <applicant>{{ $apz->applicant }}</applicant>
@@ -99,7 +99,7 @@
             </sewage>
         </apz>
 
-        <provider id="{{ $apz->commission->apzHeatResponse->user->id }}" type="heat">
+        <provider provider_id="{{ $apz->commission->apzHeatResponse->user->id }}" type="heat">
             <name>{{ $apz->commission->apzHeatResponse->user->name }}</name>
             <email>{{ $apz->commission->apzHeatResponse->user->email }}</email>
 
@@ -114,7 +114,7 @@
             <created_at>{{ $apz->commission->apzHeatResponse->user->created_at }}</created_at>
         </provider>
 
-        <provider_answer id="{{ $apz->commission->apzHeatResponse->id }}" type="heat">
+        <provider_answer response_id="{{ $apz->commission->apzHeatResponse->id }}" type="heat">
             @if($apz->commission->apzHeatResponse->response)
                 <trans_pressure>{{ $apz->commission->apzHeatResponse->trans_pressure }}</trans_pressure>
                 <load_contract_num>{{ $apz->commission->apzHeatResponse->load_contract_num }}</load_contract_num>

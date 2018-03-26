@@ -1,6 +1,6 @@
 <root>
     <content>
-        <user id="{{ $apz->user->id }}">
+        <user user_id="{{ $apz->user->id }}">
             <name>{{ $apz->user->name }}></name>
             <email>{{ $apz->user->email }}</email>
 
@@ -19,7 +19,7 @@
             <created_at>{{ $apz->user->created_at }}</created_at>
         </user>
 
-        <apz id="{{ $apz->id }}">
+        <apz apz_id="{{ $apz->id }}">
             <region>{{ $apz->region }}</region>
             <project_type>{{ $apz->project_type }}</project_type>
             <applicant>{{ $apz->applicant }}</applicant>
@@ -99,7 +99,7 @@
             </sewage>
         </apz>
 
-        <provider id="{{ $apz->commission->apzWaterResponse->user->id }}" type="water">
+        <provider provider_id="{{ $apz->commission->apzWaterResponse->user->id }}" type="water">
             <name>{{ $apz->commission->apzWaterResponse->user->name }}</name>
             <email>{{ $apz->commission->apzWaterResponse->user->email }}</email>
 
@@ -114,7 +114,7 @@
             <created_at>{{ $apz->commission->apzWaterResponse->user->created_at }}</created_at>
         </provider>
 
-        <provider_answer id="{{ $apz->commission->apzWaterResponse->id }}" type="water">
+        <provider_answer response_id="{{ $apz->commission->apzWaterResponse->id }}" type="water">
             @if($apz->commission->apzWaterResponse->response)
                 <gen_water_req>{{ $apz->commission->apzWaterResponse->gen_water_req }}</gen_water_req>
                 <drinking_water>{{ $apz->commission->apzWaterResponse->drinking_water }}</drinking_water>

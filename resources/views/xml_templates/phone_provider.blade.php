@@ -1,6 +1,6 @@
 <root>
     <content>
-        <user id="{{ $apz->user->id }}">
+        <user user_id="{{ $apz->user->id }}">
             <name>{{ $apz->user->name }}></name>
             <email>{{ $apz->user->email }}</email>
 
@@ -19,7 +19,7 @@
             <created_at>{{ $apz->user->created_at }}</created_at>
         </user>
 
-        <apz id="{{ $apz->id }}">
+        <apz apz_id="{{ $apz->id }}">
             <region>{{ $apz->region }}</region>
             <project_type>{{ $apz->project_type }}</project_type>
             <applicant>{{ $apz->applicant }}</applicant>
@@ -99,7 +99,7 @@
             </sewage>
         </apz>
 
-        <provider id="{{ $apz->commission->apzPhoneResponse->user->id }}" type="phone">
+        <provider provider_id="{{ $apz->commission->apzPhoneResponse->user->id }}" type="phone">
             <name>{{ $apz->commission->apzPhoneResponse->user->name }}</name>
             <email>{{ $apz->commission->apzPhoneResponse->user->email }}</email>
 
@@ -114,7 +114,7 @@
             <created_at>{{ $apz->commission->apzPhoneResponse->user->created_at }}</created_at>
         </provider>
 
-        <provider_answer id="{{ $apz->commission->apzPhoneResponse->id }}" type="phone">
+        <provider_answer response_id="{{ $apz->commission->apzPhoneResponse->id }}" type="phone">
             @if($apz->commission->apzPhoneResponse->response)
                 <service_num>{{ $apz->commission->apzPhoneResponse->service_num }}</service_num>
                 <capacity>{{ $apz->commission->apzPhoneResponse->capacity }}</capacity>
