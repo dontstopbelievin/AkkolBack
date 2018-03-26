@@ -80,6 +80,14 @@ class ApzPrintController extends Controller
                 $template = 'pdf_templates.tc_heat';
                 break;
 
+            case 'wastewater':
+                $template = 'pdf_templates.tc_wastewater';
+                break;
+
+            case 'wastewater2':
+                $template = 'pdf_templates.tc_wastewater2';
+                break;
+
             default:
                 return response()->json(['message' => 'Роль не найдена'], 404);
         }
@@ -123,7 +131,13 @@ class ApzPrintController extends Controller
             case 'heat':
                 $template = 'pdf_templates.tc_heat';
                 break;
+            case 'wastewater':
+                $template = 'pdf_templates.tc_wastewater';
+                break;
 
+            case 'wastewater2':
+                $template = 'pdf_templates.tc_wastewater2';
+                break;
             default:
                 return response()->json(['message' => 'ТУ не найдена'], 404);
         }
