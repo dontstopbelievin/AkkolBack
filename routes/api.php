@@ -47,7 +47,6 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => '/engineer', 'middleware' => 'role:engineer'], function () {
             Route::get('/', 'Apz\ApzEngineerController@all');
             Route::get('/detail/{id}', 'Apz\ApzEngineerController@show');
-            Route::get('/get_providers', 'Apz\ApzEngineerController@getProviders');
             Route::get('/get_commission/{id}', 'Apz\ApzEngineerController@getCommission');
             Route::post('/create_commission/{id}', 'Apz\ApzEngineerController@createCommission');
             Route::post('/status/{id}', 'Apz\ApzEngineerController@decision');
@@ -60,6 +59,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/{provider}/{id}', 'Apz\ApzProviderController@show');
             Route::post('/{provider}/{id}/save', 'Apz\ApzProviderController@save');
             Route::get('/{provider}/{id}/update', 'Apz\ApzProviderController@update');
+            Route::post('/{provider}/{id}/response', 'Apz\ApzProviderController@headDecision');
         });
 
         Route::group(['prefix' => '/apz_department', 'middleware' => 'role:apzdepartment'], function () {

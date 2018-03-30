@@ -101,44 +101,6 @@ class ApzEngineerController extends Controller
     }
 
     /**
-     * Get providers
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getProviders()
-    {
-        $providers = [];
-
-        $users = User::whereHas('roles', function ($q) {
-            $q->where('roles.id', Role::PROVIDER);
-        })->with('roles')->get();
-
-        foreach ($users as $item) {
-            if ($item->hasRole('Water')) {
-                $providers['water'] = $item;
-            }
-
-            if ($item->hasRole('Heat')) {
-                $providers['heat'] = $item;
-            }
-
-            if ($item->hasRole('Gas')) {
-                $providers['gas'] = $item;
-            }
-
-            if ($item->hasRole('Electricity')) {
-                $providers['electro'] = $item;
-            }
-
-            if ($item->hasRole('Phone')) {
-                $providers['phone'] = $item;
-            }
-        }
-
-        return response()->json($providers, 200);
-    }
-
-    /**
      * Create commission
      *
      * @param Request $request
@@ -169,12 +131,11 @@ class ApzEngineerController extends Controller
             $commission->user_id = Auth::user()->id;
             $commission->save();
 
-            foreach ($request['commission_users'] as $key => $value) {
-                $role = Role::where(['name' => $key])->first();
+            foreach ($request['commission_users'] as $value) {
+                $role = Role::where(['name' => $value])->first();
 
                 $commission_user = new CommissionUser();
                 $commission_user->commission_id = $commission->id;
-                $commission_user->user_id = $value;
                 $commission_user->role_id = $role->id;
                 $commission_user->save();
             }

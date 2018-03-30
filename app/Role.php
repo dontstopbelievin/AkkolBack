@@ -53,6 +53,22 @@ class Role extends Model
     const PHOTOREPORTER     = 24;
     const APZ_DEPARTMENT    = 25;
 
+    const GAS_PERFORMER         = 26;
+    const GAS_HEAD              = 27;
+    const GAS_DIRECTOR          = 28;
+    const WATER_PERFORMER       = 29;
+    const WATER_HEAD            = 30;
+    const WATER_DIRECTOR        = 31;
+    const HEAT_PERFORMER        = 32;
+    const HEAT_HEAD             = 33;
+    const HEAT_DIRECTOR         = 34;
+    const PHONE_PERFORMER       = 35;
+    const PHONE_HEAD            = 36;
+    const PHONE_DIRECTOR        = 37;
+    const ELECTRICITY_PERFORMER = 38;
+    const ELECTRICITY_HEAD      = 39;
+    const ELECTRICITY_DIRECTOR  = 40;
+
     /**
      * Get users
      */

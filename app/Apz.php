@@ -135,6 +135,8 @@ class Apz extends Model
         $base_array = self::getApzBaseRelationList();
 
         array_push($base_array, 'user');
+        array_push($base_array, 'apzProviderHeadResponse');
+        array_push($base_array, 'apzProviderHeadResponse.user');
 
         return $base_array;
     }
@@ -201,6 +203,14 @@ class Apz extends Model
     public function apzHeadResponse()
     {
         return $this->hasOne(ApzHeadResponse::class, 'apz_id', 'id');
+    }
+
+    /**
+     * Get provider head responses
+     */
+    public function apzProviderHeadResponse()
+    {
+        return $this->hasMany(ApzProviderHeadResponse::class, 'apz_id', 'id');
     }
 
     /**

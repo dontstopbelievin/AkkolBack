@@ -103,6 +103,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get role
+     */
+    public function getRole($role)
+    {
+        return $this->roles()->where('name', $role)->first();
+    }
+
+    /**
      * Get roles
      */
     public function roles()

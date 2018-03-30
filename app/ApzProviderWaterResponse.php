@@ -95,7 +95,7 @@ class ApzProviderWaterResponse extends Model
      */
     public function commissionUser()
     {
-        return $this->hasOne(CommissionUser::class, 'commission_id', 'commission_id')->where('user_id', 'user_id');
+        return $this->hasOne(CommissionUser::class, 'commission_id', 'commission_id')->where('role_id', Role::WATER);
     }
 
     /**

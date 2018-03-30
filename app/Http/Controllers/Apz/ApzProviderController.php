@@ -6,6 +6,7 @@ use App\Apz;
 use App\ApzHeadResponse;
 use App\ApzProviderElectricityResponse;
 use App\ApzProviderGasResponse;
+use App\ApzProviderHeadResponse;
 use App\ApzProviderHeatResponse;
 use App\ApzProviderPhoneResponse;
 use App\ApzProviderWaterResponse;
@@ -23,6 +24,7 @@ use App\File;
 use App\FileCategory;
 use App\Role;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +35,7 @@ class ApzProviderController extends Controller
     /**
      * Show apz list for region
      *
+     * @param string $provider
      * @return \Illuminate\Http\Response
      */
     public function all($provider)
@@ -150,6 +153,8 @@ class ApzProviderController extends Controller
     /**
      * Show apz for region
      *
+     * @param string $provider
+     * @param integer $id
      * @return \Illuminate\Http\Response
      */
     public function show($provider, $id)
@@ -205,6 +210,9 @@ class ApzProviderController extends Controller
     /**
      * Save apz
      *
+     * @param Request $request
+     * @param string $provider
+     * @param integer $id
      * @return \Illuminate\Http\Response
      */
     public function save(Request $request, $provider, $id)
@@ -254,7 +262,7 @@ class ApzProviderController extends Controller
                 Storage::put($file_url, file_get_contents($request->file('file')));
 
                 if (!Storage::disk('local')->exists($file_url)) {
-                    throw new \Exception('Файл не сохранен');
+                    return response()->json(['message' => 'Файл не сохранен'], 500);
                 }
 
                 $file = new File();
@@ -313,7 +321,7 @@ class ApzProviderController extends Controller
                 Storage::put($file_url, file_get_contents($request->file('file')));
 
                 if (!Storage::disk('local')->exists($file_url)) {
-                    throw new \Exception('Файл не сохранен');
+                    return response()->json(['message' => 'Файл не сохранен'], 500);
                 }
 
                 $file = new File();
@@ -371,7 +379,7 @@ class ApzProviderController extends Controller
                 Storage::put($file_url, file_get_contents($request->file('file')));
 
                 if (!Storage::disk('local')->exists($file_url)) {
-                    throw new \Exception('Файл не сохранен');
+                    return response()->json(['message' => 'Файл не сохранен'], 500);
                 }
 
                 $file = new File();
@@ -463,7 +471,7 @@ class ApzProviderController extends Controller
                 Storage::put($file_url, file_get_contents($request->file('file')));
 
                 if (!Storage::disk('local')->exists($file_url)) {
-                    throw new \Exception('Файл не сохранен');
+                    return response()->json(['message' => 'Файл не сохранен'], 500);
                 }
 
                 $file = new File();
@@ -521,7 +529,7 @@ class ApzProviderController extends Controller
                 Storage::put($file_url, file_get_contents($request->file('file')));
 
                 if (!Storage::disk('local')->exists($file_url)) {
-                    throw new \Exception('Файл не сохранен');
+                    return response()->json(['message' => 'Файл не сохранен'], 500);
                 }
 
                 $file = new File();
@@ -550,8 +558,40 @@ class ApzProviderController extends Controller
     }
 
     /**
+     * ApzHead decision
+     *
+     * @param Request $request
+     * @param string $role
+     * @param integer $id
+     * @return \Illuminate\Http\Response
+     */
+    public function headDecision(Request $request, $role, $id)
+    {
+        $user = Auth::user();
+        $apz = Apz::where(['id' => $id])->first();
+
+        if (!$apz || !$user->hasRole($role)) {
+            return response()->json(['message' => 'Заявка не найдена'], 404);
+        }
+
+        $decision = new ApzProviderHeadResponse();
+        $decision->apz_id = $apz->id;
+        $decision->user_id = $user->id;
+        $decision->role_id = $user->getRole($role)->id;
+        $decision->comments = $request->comment;
+
+        if (!$decision->save()) {
+            return response()->json(['message' => 'Не удалось сохранить ответ'], 500);
+        }
+
+        return response()->json(['message' => 'Ответ успешно сохранен'], 200);
+    }
+
+    /**
      * Save apz
      *
+     * @param string $provider
+     * @param integer $id
      * @return \Illuminate\Http\Response
      */
     public function update($provider, $id)
@@ -569,6 +609,7 @@ class ApzProviderController extends Controller
             switch ($provider) {
                 case 'water':
                     $response = ApzProviderWaterResponse::where(['commission_id' => $commission->id])->first();
+                    $role = Role::WATER;
 
                     $apz->apzWater->status = $response->response ? 1 : 0 ;
                     $apz->apzWater->save();
@@ -581,6 +622,7 @@ class ApzProviderController extends Controller
 
                 case 'electro':
                     $response = ApzProviderElectricityResponse::where(['commission_id' => $commission->id])->first();
+                    $role = Role::ELECTRICITY;
 
                     $apz->apzElectricity->status = $response->response ? 1 : 0 ;
                     $apz->apzElectricity->save();
@@ -593,6 +635,7 @@ class ApzProviderController extends Controller
 
                 case 'gas':
                     $response = ApzProviderGasResponse::where(['commission_id' => $commission->id])->first();
+                    $role = Role::GAS;
 
                     $apz->apzGas->status = $response->response ? 1 : 0 ;
                     $apz->apzGas->save();
@@ -605,6 +648,7 @@ class ApzProviderController extends Controller
 
                 case 'heat':
                     $response = ApzProviderHeatResponse::where(['commission_id' => $commission->id])->first();
+                    $role = Role::HEAT;
 
                     $apz->apzHeat->status = $response->response ? 1 : 0 ;
                     $apz->apzHeat->save();
@@ -617,6 +661,7 @@ class ApzProviderController extends Controller
 
                 case 'phone':
                     $response = ApzProviderPhoneResponse::where(['commission_id' => $commission->id])->first();
+                    $role = Role::PHONE;
 
                     $apz->apzPhone->status = $response->response ? 1 : 0 ;
                     $apz->apzPhone->save();
@@ -635,7 +680,7 @@ class ApzProviderController extends Controller
                 return response()->json(['message' => 'Ответ не найден'], 404);
             }
 
-            $commission_user = CommissionUser::where(['commission_id' => $commission->id, 'user_id' => $response->user_id])->first();
+            $commission_user = CommissionUser::where(['commission_id' => $commission->id, 'role_id' => $role])->first();
             $commission_user->status_id = $response->response ? CommissionUserStatus::ACCEPTED : CommissionUserStatus::DECLINED;
             $commission_user->save();
 
@@ -673,53 +718,13 @@ class ApzProviderController extends Controller
     }
 
     /**
-     * Region decision
+     * Generate xml
      *
-     * @param Request $request
+     * @param string $provider
      * @param integer $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function decision(Request $request, $id)
-    {
-        $apz = Apz::where('id', $id)->first();
-        $request = $request->all();
-
-        if (!$apz) {
-            return response()->json(['message' => 'Заявка не найдена'], 404);
-        }
-
-        DB::beginTransaction();
-
-        try {
-            $apz->status_id = $request["response"] ? ApzStatus::ENGINEER : ApzStatus::DECLINED;
-            $apz->save();
-
-            if ($request["response"]) {
-                $region_state = new ApzStateHistory();
-                $region_state->apz_id = $apz->id;
-                $region_state->state_id = ApzState::REGION_APPROVED;
-                $region_state->save();
-
-                $engineer_state = new ApzStateHistory();
-                $engineer_state->apz_id = $apz->id;
-                $engineer_state->state_id = ApzState::TO_ENGINEER;
-                $engineer_state->save();
-            } else {
-                $region_state = new ApzStateHistory();
-                $region_state->apz_id = $apz->id;
-                $region_state->state_id = ApzState::REGION_DECLINED;
-                $region_state->comment = $request["message"];
-                $region_state->save();
-            }
-
-            DB::commit();
-            return response()->json(['message' => 'Заявка успешно отправлена'], 200);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json(['message' => 'Не удалось отправить заявку'], 500);
-        }
-    }
-
     public function generateXml($provider, $id)
     {
         $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
@@ -738,10 +743,19 @@ class ApzProviderController extends Controller
         return response($xml, 200)->header('Content-Type', 'text/plain');
     }
 
+    /**
+     * Save generated xml
+     *
+     * @param Request $request
+     * @param string $role
+     * @param integer $id
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function saveXml(Request $request, $role, $id)
     {
         try {
-            $apz =  Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+            $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
 
             if (!$apz) {
                 throw new \Exception('АПЗ не найден');
@@ -757,7 +771,6 @@ class ApzProviderController extends Controller
             }
 
             $client = new Client();
-            $user = Auth::user();
 
             $response = $client->post('http://89.218.17.203:3380/validate_xml', [
                 'form_params' => [
@@ -769,11 +782,12 @@ class ApzProviderController extends Controller
                 throw new \Exception('Не удалось пройти валидацию');
             }
 
-            $iin = json_decode($response->getBody(), true);
-
-            if ($iin != $user->iin) {
-                return response()->json(['message' => 'Выбран ключ другого пользователя'], 500);
-            }
+//            $user = Auth::user();
+//            $iin = json_decode($response->getBody(), true);
+//
+//            if ($iin != $user->iin) {
+//                return response()->json(['message' => 'Выбран ключ другого пользователя'], 500);
+//            }
 
             switch ($role) {
                 case 'water':
@@ -881,6 +895,8 @@ class ApzProviderController extends Controller
             }
 
             return response()->json(['status' => true], '200');
+        } catch (RequestException $e) {
+            return response()->json(['message' => json_decode($e->getResponse(), true)], 500);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
