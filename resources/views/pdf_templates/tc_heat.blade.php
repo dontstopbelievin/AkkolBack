@@ -143,7 +143,7 @@
             </div>
 
             <div class="number">
-                <p><span>_________________</span>№<span>_________________</span></p>
+                <p><span></span>№<span>{{ $apz->commission->apzHeatResponse->doc_number }}</span></p>
                 <p class="underline">на  № 312&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;от&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20.11.2018</p>
                 <p class="third">вх.№ 22878&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;от&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 21.11.2018 </p>
 
@@ -155,22 +155,18 @@
         </header>
 
         <div class="section">
-            <h3>ТЕХНИЧЕСКИЕ УСЛОВИЯ<br />
-                на подключение к тепловым сетям …(S<span>от</span>≈     S<span>общ</span>≈  м2),<br />
-                расположенного по адресу: мкр./ул. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;, дом<br />
-                <span style="color: black; font-size: 14px">(кадастровый номер земельного участка ______)</span>
-            </h3>
+
             <div>
                 <ol>
                     <li>Теплоснабжение осуществляется от источников</li>
-                    <li>Точка подключения: ______________. Дополнительные условия и место подключения согласовать с ЦЭР ТОО «АлТС»  (тел. 274-04-47).<br/>
+                    <li>Точка подключения: {{ $apz->commission->apzHeatResponse->connection_point }}. Дополнительные условия и место подключения согласовать с ЦЭР ТОО «АлТС»  (тел. 274-04-47).<br/>
                         <span style="color: #00b050">- Подключение выполнить по технологии присоединения к предызолированным трубопроводам.<br/>
                         - <b>Размещение зданий и сооружений Вашего объекта предусмотреть на расстоянии с учетом соблюдения охранной зоны тепловых сетей 2dy_____ мм,
                         проложенных __________ Вашего объекта. В противном случае выполнить их вынос из-под пятна застройки с переключением существующих потребителей.
                                 Проект выноса тепловых сетей согласовать с ТОО «АлТС».</b></span><br />
                         Регулирование отпуска тепла: качественное по температурному графику –<sup>о</sup>С.
                     </li>
-                    <li>Давление теплоносителя в тепловой камере _____:<br/>
+                    <li>Давление теплоносителя в тепловой камере {{ $apz->commission->apzHeatResponse->two_pipe_pressure_in_tc }}:<br/>
                         <span>- в подающем водоводе 	 _,_ ати<br/>
                               - в обратном водоводе 	 _,_ ати</span>
                     </li>
@@ -266,8 +262,8 @@
                 <h3 style="text-align:left;float: left;width: 350px;color: #000;">Главный инженер</h3>
                 <h3  style="color: #000;">Д. Кирдяйкин</h3>
                 <h2 style="color: red">Долг перед ТОО «АлТС»:</h2>
-                <p>Исп. _________________<br/>
-                    тел.: 378-07-00 вн. _____
+                <p>Исп. {{ $apz->commission->apzHeatResponse->user->name }}<br/>
+                    тел.: 378-07-00 вн.{{ $apz->phone }}
                 </p>
             </div>
 

@@ -60,14 +60,15 @@
     <div class="logo">
         <img src="../public/images/kaztransgaz.png" alt="gaz_logo">
     </div>
+    <p>
+        <b>ТЕХНИЧЕСКИЕ УСЛОВИЯ на АПЗ <br />№ {{ $apz->commission->apzGasResponse->doc_number }} <br />на проектирование и подключение к газораспределительным сетям</b>
+    </p>
     <div class="top">
-        <p><i>вх. № {{ $apz->commission->apzGasResponse->doc_number }} от {{ date('d-m-Y', strtotime($apz->commission->apzGasResponse->created_at)) }}г.</i></p>
+        {{--<p><i>вх. № {{ $apz->commission->apzGasResponse->doc_number }} от {{ date('d-m-Y', strtotime($apz->commission->apzGasResponse->created_at)) }}г.</i></p>--}}
         <p><b>{{ $apz->applicant }}</b></p>
     </div>
     <div id="root">
-        <p>
-            <b>ТЕХНИЧЕСКИЕ УСЛОВИЯ на АПЗ <br />№ _______________________________ <br />на проектирование и подключение к газораспределительным сетям</b>
-        </p>
+
         <br/>
         <div class="inform">
         <ol>

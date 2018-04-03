@@ -34,10 +34,11 @@
 <body>
     <div>
         <div class="row border-visible">
+            <p><b>Т Е Х Н И Ч Е С К И Е У С Л О В И Я «НА ВОДОСНАБЖЕНИЕ»</b></p>
             <div class="col-2">
-                <p>
-                    № {{ $apz->commission->apzWaterResponse->doc_number }}
-                </p>
+                {{--<p>--}}
+                    {{--№ {{ $apz->commission->apzWaterResponse->doc_number }}--}}
+                {{--</p>--}}
             </div>
             <div class="col-4"></div>
             <div class="col-6">
@@ -56,7 +57,7 @@
             </div>
         </div>
 
-        <p><b>Т Е Х Н И Ч Е С К И Е У С Л О В И Я «НА ВОДОСНАБЖЕНИЕ»</b></p>
+
 
         <div class="row">
             <p>
@@ -149,8 +150,11 @@
 
     <div style="page-break-after:always; vertical-align: top;">
         <table width="100%">
+            <p>
+                <b>ТЕХНИЧЕСКИЕ УСЛОВИЯ «НА ВОДООТВЕДЕНИЕ»</b>
+            </p>
             <tr>
-                <td width="20%"><p>№ {{ $apz->commission->apzWaterResponse->doc_number }}</p></td>
+                {{--<td width="20%"><p>№ {{ $apz->commission->apzWaterResponse->doc_number }}</p></td>--}}
                 <td width="10%"></td>
                 <td width="70%"><p>СОГЛАСОВАНО Государственное коммунальное предприятие на праве хозяйственного ведения «Алматы Су» Управления энергетики и коммунального хозяйства города Алматы (далее-Предприятие)</p></td>
             </tr>
@@ -166,9 +170,7 @@
             </table>
         </div>
 
-        <p>
-            <b>ТЕХНИЧЕСКИЕ УСЛОВИЯ «НА ВОДООТВЕДЕНИЕ»</b>
-        </p>
+
 
         <div class="row">
             <p>

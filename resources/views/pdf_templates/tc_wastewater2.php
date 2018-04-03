@@ -66,8 +66,9 @@
 <body>
 <div>
     <div class="header">
+        <p><b>Т Е Х Н И Ч Е С К И Е У С Л О В И Я «НА ВОДОСНАБЖЕНИЕ»</b></p><br />
         <div class="left">
-            <p><b>№ {{ $apz->commission->apzWasteWater2Response->doc_number }}</b></p>
+<!--            <p><b>№ {{ $apz->commission->apzWasteWater2Response->doc_number }}</b></p>-->
             <p><i>05/3-7777-x от 22.12.2017</i></p>
         </div>
         <div class="right ">
@@ -90,7 +91,7 @@
         </div>
     </div>
 
-    <p><b>Т Е Х Н И Ч Е С К И Е У С Л О В И Я «НА ВОДОСНАБЖЕНИЕ»</b></p><br />
+
 
     <div style="height: 80px;" class="container-fluid">
         <p class="text-left">
@@ -187,9 +188,10 @@
 
 <div class="header">
     <div class="left">
-        <p><b>№ {{ $apz->commission->apzWasteWaterResponse->doc_number }}</b></p>
+<!--        <p><b>№ {{ $apz->commission->apzWasteWaterResponse->doc_number }}</b></p>-->
         <p><i>05/3-5555-x от 22.12.2017</i></p>
     </div>
+    <p><b>Т Е Х Н И Ч Е С К И Е У С Л О В И Я «НА ВОДООТВЕДЕНИЕ»</b></p><br />
     <div class="right ">
         <p>СОГЛАСОВАНО<br />
             Государственное коммунальное<br />
@@ -210,7 +212,7 @@
     </div>
 </div>
 
-<p><b>Т Е Х Н И Ч Е С К И Е У С Л О В И Я «НА ВОДООТВЕДЕНИЕ»</b></p><br />
+
 
 <div style="height: 80px;" class="container-fluid">
     <p class="text-left">
