@@ -605,7 +605,7 @@
 
         <br />
 
-        @if($apz->apzWater)
+        @if($apz->commission->apzWaterResponse)
             <table border="1" width="100%">
                 <tr>
                     <th colspan="2">Сумен жабдықтау бойынша мәлімет</th>
@@ -651,7 +651,7 @@
 
         <br />
 
-        @if($apz->apzHeat)
+        @if($apz->commission->apzHeatResponse)
             <table border="1" width="100%">
                 <tr>
                     <th colspan="2">Жылумен жабдықтау бойынша мәлімет</th>
