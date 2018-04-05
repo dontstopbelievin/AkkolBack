@@ -11,9 +11,6 @@ use Illuminate\Http\Request;
  * @property int $id
  * @property int|null $apz_id ИД АПЗ
  * @property float|null $general Общая тепловая нагрузка
- * @property float|null $main Отопление
- * @property float|null $ventilation Вентиляция
- * @property float|null $water Горячее водоснабжение
  * @property float|null $tech Технологические нужды
  * @property string|null $distribution Разделить нагрузку по жилью и по встроенным помещениям
  * @property string|null $saving Энергосберегающее мероприятие
@@ -34,8 +31,6 @@ use Illuminate\Http\Request;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzHeat whereVentilation($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzHeat whereWater($value)
  * @mixin \Eloquent
- * @property float|null $water_max Горячее водоснабжение (макс/ч)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\ApzHeat whereWaterMax($value)
  */
 class ApzHeat extends Model
 {
@@ -53,14 +48,21 @@ class ApzHeat extends Model
     {
         $this->apz_id = $apz_id;
         $this->general = $request->HeatGeneral;
-        $this->main = $request->HeatMain;
-        $this->ventilation = $request->HeatVentilation;
-        $this->water = $request->HeatWater;
-        $this->water_max = $request->HeatWaterMax;
         $this->tech = $request->HeatTech;
         $this->distribution = $request->HeatDistribution;
         $this->saving = $request->HeatSaving;
         $this->save();
+
+        if ($request->HeatBlocks) {
+            foreach ($request->HeatBlocks as $item) {
+                $block = new ApzHeatBlock();
+                $block->apz_id = $apz_id;
+                $block->main = $item['HeatMain'];
+                $block->ventilation = $item['HeatVentilation'];
+                $block->water = $item['HeatWater'];
+                $block->save();
+            }
+        }
 
         return $this;
     }
@@ -71,5 +73,13 @@ class ApzHeat extends Model
     public function apz()
     {
         return $this->hasOne(Apz::class, 'id', 'apz_id');
+    }
+
+    /**
+     * Get blocks
+     */
+    public function blocks()
+    {
+        return $this->hasMany(ApzHeatBlock::class, 'apz_id', 'apz_id');
     }
 }

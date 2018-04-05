@@ -153,4 +153,12 @@ class ApzProviderHeatResponse extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+
+    /**
+     * Get blocks
+     */
+    public function blocks()
+    {
+        return $this->hasMany(ApzProviderHeatBlockResponse::class, 'response_id', 'id');
+    }
 }

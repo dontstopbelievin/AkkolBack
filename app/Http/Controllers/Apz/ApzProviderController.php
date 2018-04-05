@@ -7,6 +7,7 @@ use App\ApzHeadResponse;
 use App\ApzProviderElectricityResponse;
 use App\ApzProviderGasResponse;
 use App\ApzProviderHeadResponse;
+use App\ApzProviderHeatBlockResponse;
 use App\ApzProviderHeatResponse;
 use App\ApzProviderPhoneResponse;
 use App\ApzProviderWaterResponse;
@@ -417,13 +418,9 @@ class ApzProviderController extends Controller
                 $response->resource = $request['HeatResource'];
                 $response->trans_pressure = $request['HeatTransPressure'];
                 $response->load_contract_num = $request['HeatLoadContractNum'];
-                $response->main_in_contract = $request['HeatMainInContract'];
-                $response->ven_in_contract = $request['HeatVenInContract'];
-                $response->water_in_contract = $request['HeatWaterInContract'];
                 $response->connection_point = $request['ConnectionPoint'];
                 $response->addition = $request['Addition'];
                 $response->doc_number = $request['DocNumber'];
-
                 $response->name = $request["Name"];
                 $response->area = $request["Area"];
                 $response->transporter = $request["Transporter"];
@@ -451,9 +448,24 @@ class ApzProviderController extends Controller
                 $response->after_control_unit_installation = $request["After_control_unit_installation"];
                 $response->negotiation = $request["Negotiation"];
                 $response->technical_conditions_terms = $request["Technical_conditions_terms"];
-                $response->water_in_contract_max = $request["Water_in_contract_max"];
-
                 $response->save();
+
+                if (json_decode($request['heatBlocks'])) {
+                    if ($response->blocks) {
+                        ApzProviderHeatBlockResponse::where(['response_id' => $response->id])->delete();
+                    }
+
+                    foreach (json_decode($request['heatBlocks']) as $item) {
+                        $block = new ApzProviderHeatBlockResponse();
+                        $block->response_id = $response->id;
+                        $block->block_id = $item->id;
+                        $block->main_in_contract = $item->main;
+                        $block->ven_in_contract = $item->ven;
+                        $block->water_in_contract = $item->water;
+                        $block->water_in_contract_max = $item->waterMax;
+                        $block->save();
+                    }
+                }
 
                 $old_file = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->first();
 
@@ -896,7 +908,7 @@ class ApzProviderController extends Controller
 
             return response()->json(['status' => true], '200');
         } catch (RequestException $e) {
-            return response()->json(['message' => json_decode($e->getResponse(), true)], 500);
+            return response()->json(['message' => json_decode($e->getResponse()->getBody(), true)], 500);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
