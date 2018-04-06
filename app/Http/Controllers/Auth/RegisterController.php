@@ -89,7 +89,7 @@ class RegisterController extends Controller
                 'password' => bcrypt($request->input('password')),
             ]);
 
-            $user->roles()->attach(Role::where('id', Role::TEMPORARY)->first());
+            $user->roles()->attach(Role::where('id', Role::CITIZEN)->first());
 
             $client = DB::table('oauth_clients')->where('password_client', 1)->first();
 
