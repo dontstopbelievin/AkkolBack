@@ -267,11 +267,11 @@ class ApzHeadController extends Controller
                 throw new \Exception('Не удалось пройти валидацию');
             }
 
-            $iin = json_decode($response->getBody(), true);
-
-            if ($iin != $user->iin) {
-                return response()->json(['message' => 'Выбран ключ другого пользователя'], 500);
-            }
+//            $iin = json_decode($response->getBody(), true);
+//
+//            if ($iin != $user->iin) {
+//                return response()->json(['message' => 'Выбран ключ другого пользователя'], 500);
+//            }
 
             $head_response = ApzHeadResponse::where(['apz_id' => $apz->id])->first();
 

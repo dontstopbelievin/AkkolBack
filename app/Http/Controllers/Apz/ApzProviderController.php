@@ -459,10 +459,14 @@ class ApzProviderController extends Controller
                         $block = new ApzProviderHeatBlockResponse();
                         $block->response_id = $response->id;
                         $block->block_id = $item->id;
-                        $block->main_in_contract = $item->main;
-                        $block->ven_in_contract = $item->ven;
-                        $block->water_in_contract = $item->water;
-                        $block->water_in_contract_max = $item->waterMax;
+                        $block->main = $item->main;
+                        $block->ven = $item->ven;
+                        $block->water = $item->water;
+                        $block->water_max = $item->waterMax;
+                        $block->main_in_contract = $item->main_in_contract;
+                        $block->ven_in_contract = $item->ven_in_contract;
+                        $block->water_in_contract = $item->water_in_contract;
+                        $block->water_in_contract_max = $item->water_max_in_contract;
                         $block->save();
                     }
                 }

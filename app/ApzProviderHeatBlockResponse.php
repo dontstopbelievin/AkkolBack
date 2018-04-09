@@ -12,10 +12,14 @@ use Illuminate\Http\Request;
  * @property int $id
  * @property int|null $response_id ИД ответа
  * @property int|null $block_id ИД блока
- * @property string|null $main_in_contract Отопление
- * @property string|null $ven_in_contract Вентиляция
- * @property string|null $water_in_contract Горячее водоснабжение
- * @property string|null $water_in_contract_max Горячее водоснабжение (макс/ч)
+ * @property string|null $main Отопление
+ * @property string|null $ven Вентиляция
+ * @property string|null $water Горячее водоснабжение
+ * @property string|null $water_max Горячее водоснабжение (макс/ч)
+ * @property string|null $main_in_contract Отопление по договору
+ * @property string|null $ven_in_contract Вентиляция по договору
+ * @property string|null $water_in_contract Горячее водоснабжение по договору
+ * @property string|null $water_in_contract_max Горячее водоснабжение по договору (макс/ч)
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @mixin \Eloquent

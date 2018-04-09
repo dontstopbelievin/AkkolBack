@@ -161,11 +161,11 @@ class ApzDepartmentController extends Controller
                 throw new \Exception('Не удалось пройти валидацию');
             }
 
-            $iin = json_decode($response->getBody(), true);
-
-            if ($iin != $user->iin) {
-                return response()->json(['message' => 'Выбран ключ другого пользователя'], 500);
-            }
+//            $iin = json_decode($response->getBody(), true);
+//
+//            if ($iin != $user->iin) {
+//                return response()->json(['message' => 'Выбран ключ другого пользователя'], 500);
+//            }
 
             $file = File::addXmlItem('apz_xml', FileCategory::XML_APZ, 'sign_files/' . $apz->id, $request->xml);
 
