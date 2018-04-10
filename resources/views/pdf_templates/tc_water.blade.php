@@ -149,10 +149,10 @@
     </div>
 
     <div style="page-break-after:always; vertical-align: top;">
+        <p>
+            <b>ТЕХНИЧЕСКИЕ УСЛОВИЯ «НА ВОДООТВЕДЕНИЕ»</b>
+        </p>
         <table width="100%">
-            <p>
-                <b>ТЕХНИЧЕСКИЕ УСЛОВИЯ «НА ВОДООТВЕДЕНИЕ»</b>
-            </p>
             <tr>
                 {{--<td width="20%"><p>№ {{ $apz->commission->apzWaterResponse->doc_number }}</p></td>--}}
                 <td width="10%"></td>

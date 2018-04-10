@@ -113,43 +113,49 @@
             </tr>
         </table>
 
-        <div class="row">
-            <p>
-                <b>2. Требования по техническим условиям</b>
-            </p>
-        </div>
+        @if ($apz->commission->apzElectricityResponse)
+            <div class="row">
+                <p>
+                    <b>2. Требования по техническим условиям</b>
+                </p>
+            </div>
 
-        <table width="100%">
-            <tr>
-                <td width="50%"><p>1. Требуемая мощность</p></td>
-                {{--<td><p>{{ $apz->commission->apzElectricityResponse->req_power }} кВт</p></td>--}}
-            </tr>
+            <table width="100%">
+                <tr>
+                    <td width="80%"><p>1. Требуемая мощность</p></td>
+                    <td><p>{{ $apz->commission->apzElectricityResponse->req_power }} кВт</p></td>
+                </tr>
 
-            <tr>
-                <td><p>2. Характер нагрузки (фаза)</p></td>
-                {{--<td><p>{{ $apz->commission->apzElectricityResponse->phase }}</p></td>--}}
-            </tr>
+                <tr>
+                    <td><p>2. Характер нагрузки (фаза)</p></td>
+                    <td><p>{{ $apz->commission->apzElectricityResponse->phase }}</p></td>
+                </tr>
 
-            <tr>
-                <td><p>3. Категория по надежности</p></td>
-                {{--<td><p>{{ $apz->commission->apzElectricityResponse->safe_category }} кВт</p></td>--}}
-            </tr>
+                <tr>
+                    <td><p>3. Категория по надежности</p></td>
+                    <td><p>{{ $apz->commission->apzElectricityResponse->safe_category }} кВт</p></td>
+                </tr>
 
-            <tr>
-                <td><p>4. Точка подключения</p></td>
-                {{--<td><p>{{ $apz->commission->apzElectricityResponse->connection_point }}</p></td>--}}
-            </tr>
+                <tr>
+                    <td><p>4. Точка подключения</p></td>
+                    <td><p>{{ $apz->commission->apzElectricityResponse->connection_point }}</p></td>
+                </tr>
 
-            <tr>
-                <td><p>5. Рекомендация</p></td>
-                {{--<td><p>{{ $apz->commission->apzElectricityResponse->recommendation }}</p></td>--}}
-            </tr>
-        </table>
+                <tr>
+                    <td><p>5. Рекомендация</p></td>
+                    <td><p>{{ $apz->commission->apzElectricityResponse->recommendation }}</p></td>
+                </tr>
+            </table>
+        @endif
+
         <br/>
         <p>Технические условия (ТУ) действуют в течение всего срока нормативной продолжительности строительства, утвержденной в составе проектной (проектно-сметной) документации</p>
-        <p style="text-align: center;">
-            {{--<barcode code="{{ implode(' ', [$apz->commission->apzElectricityResponse->user->last_name, $apz->commission->apzElectricityResponse->user->first_name, $apz->commission->apzElectricityResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />--}}
-        </p>
+
+        @if ($apz->commission && $apz->commission->apzElectricityResponse && $apz->commission->apzElectricityResponse->user)
+            <p style="text-align: center;">
+                <barcode code="{{ implode(' ', [$apz->commission->apzElectricityResponse->user->last_name, $apz->commission->apzElectricityResponse->user->first_name, $apz->commission->apzElectricityResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+            </p>
+        @endif
         <p>
             <b>город Алматы 2017 год</b>
         </p>
