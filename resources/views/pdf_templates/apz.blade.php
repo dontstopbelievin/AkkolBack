@@ -463,13 +463,6 @@
                     </tr>
                 @endif
 
-                @if ($apz->commission->apzHeatResponse->after_control_unit_installation)
-                    <tr>
-                        <td>По завершении монтажа узла управления</td>
-                        <td>{{ $apz->commission->apzHeatResponse->after_control_unit_installation }}</td>
-                    </tr>
-                @endif
-
                 @if ($apz->commission->apzHeatResponse->negotiation)
                     <tr>
                         <td>Согласование</td>
@@ -877,13 +870,6 @@
                     <tr>
                         <td>Примечание к схеме подключения</td>
                         <td>{{ $apz->commission->apzHeatResponse->connection_scheme_note }}</td>
-                    </tr>
-                @endif
-
-                @if ($apz->commission->apzHeatResponse->after_control_unit_installation)
-                    <tr>
-                        <td>По завершении монтажа узла управления</td>
-                        <td>{{ $apz->commission->apzHeatResponse->after_control_unit_installation }}</td>
                     </tr>
                 @endif
 

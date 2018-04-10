@@ -118,10 +118,6 @@
             @if($apz->commission->apzHeatResponse->response)
                 <trans_pressure>{{ $apz->commission->apzHeatResponse->trans_pressure }}</trans_pressure>
                 <load_contract_num>{{ $apz->commission->apzHeatResponse->load_contract_num }}</load_contract_num>
-                <main_in_contract>{{ $apz->commission->apzHeatResponse->main_in_contract }}</main_in_contract>
-                <ven_in_contract>{{ $apz->commission->apzHeatResponse->ven_in_contract }}</ven_in_contract>
-                <water_in_contract>{{ $apz->commission->apzHeatResponse->water_in_contract }}</water_in_contract>
-                <water_in_contract_max>{{ $apz->commission->apzHeatResponse->water_in_contract_max }}</water_in_contract_max>
                 <connection_point>{{ $apz->commission->apzHeatResponse->connection_point }}</connection_point>
                 <addition>{{ $apz->commission->apzHeatResponse->addition }}</addition>
                 <heat_name>{{ $apz->commission->apzHeatResponse->name }}</heat_name>
@@ -148,7 +144,6 @@
                 <heat_supply_system_note>{{ $apz->commission->apzHeatResponse->heat_supply_system_note }}</heat_supply_system_note>
                 <connection_scheme>{{ $apz->commission->apzHeatResponse->connection_scheme }}</connection_scheme>
                 <connection_scheme_note>{{ $apz->commission->apzHeatResponse->connection_scheme_note }}</connection_scheme_note>
-                <after_control_unit_installation>{{ $apz->commission->apzHeatResponse->after_control_unit_installation }}</after_control_unit_installation>
                 <negotiation>{{ $apz->commission->apzHeatResponse->negotiation }}</negotiation>
                 <technical_conditions_terms>{{ $apz->commission->apzHeatResponse->technical_conditions_terms }}</technical_conditions_terms>
             @else

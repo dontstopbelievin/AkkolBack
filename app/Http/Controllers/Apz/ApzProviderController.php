@@ -448,7 +448,6 @@ class ApzProviderController extends Controller
                 $response->heat_supply_system_note = $request["Heat_supply_system_note"];
                 $response->connection_scheme = $request["Connection_scheme"];
                 $response->connection_scheme_note = $request["Connection_scheme_note"];
-                $response->after_control_unit_installation = $request["After_control_unit_installation"];
                 $response->negotiation = $request["Negotiation"];
                 $response->technical_conditions_terms = $request["Technical_conditions_terms"];
                 $response->save();
@@ -474,42 +473,44 @@ class ApzProviderController extends Controller
                     }
                 }
 
-                $old_file = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->first();
+                if ($request->file('file')) {
+                    $old_file = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->first();
 
-                if ($old_file) {
-                    Storage::delete($old_file->file->url);
+                    if ($old_file) {
+                        Storage::delete($old_file->file->url);
 
-                    $old_file->file->delete();
-                    $old_file->delete();
+                        $old_file->file->delete();
+                        $old_file->delete();
+                    }
+
+                    $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
+                    $file_ext = $request->file('file')->getClientOriginalExtension();
+                    $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                    Storage::put($file_url, file_get_contents($request->file('file')));
+
+                    if (!Storage::disk('local')->exists($file_url)) {
+                        return response()->json(['message' => 'Файл не сохранен'], 500);
+                    }
+
+                    $file = new File();
+                    $file->name = $request->file('file')->getClientOriginalName();
+                    $file->url = $file_url;
+                    $file->extension = $request->file('file')->getClientOriginalExtension();
+                    $file->content_type = $request->file('file')->getClientMimeType();
+                    $file->size = $request->file('file')->getClientSize();
+                    $file->hash = $file_name;
+                    $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
+                    $file->user_id = Auth::user()->id;
+                    $file->save();
+
+                    $file_item = new FileItem();
+                    $file_item->file_id = $file->id;
+                    $file_item->item_id = $response->id;
+                    $file_item->item_type_id = FileItemType::HEAT_RESPONSE;
+                    $file_item->save();
+                    $response->files;
                 }
-
-                $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
-                $file_ext = $request->file('file')->getClientOriginalExtension();
-                $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
-
-                Storage::put($file_url, file_get_contents($request->file('file')));
-
-                if (!Storage::disk('local')->exists($file_url)) {
-                    return response()->json(['message' => 'Файл не сохранен'], 500);
-                }
-
-                $file = new File();
-                $file->name = $request->file('file')->getClientOriginalName();
-                $file->url = $file_url;
-                $file->extension = $request->file('file')->getClientOriginalExtension();
-                $file->content_type = $request->file('file')->getClientMimeType();
-                $file->size = $request->file('file')->getClientSize();
-                $file->hash = $file_name;
-                $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
-                $file->user_id = Auth::user()->id;
-                $file->save();
-
-                $file_item = new FileItem();
-                $file_item->file_id = $file->id;
-                $file_item->item_id = $response->id;
-                $file_item->item_type_id = FileItemType::HEAT_RESPONSE;
-                $file_item->save();
-                $response->files;
 
                 return response()->json($response, 200);
 
