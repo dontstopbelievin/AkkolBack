@@ -416,7 +416,7 @@ class ApzProviderController extends Controller
                 $response->response_text = $request['Message'];
                 $response->response = ($request["Response"] == "true") ? true : false;
                 $response->resource = $request['HeatResource'];
-                $response->trans_pressure = $request['HeatTransPressure'];
+                $response->second_resource = $request['HeatSecondResource'];
                 $response->load_contract_num = $request['HeatLoadContractNum'];
                 $response->connection_point = $request['ConnectionPoint'];
                 $response->addition = $request['Addition'];
@@ -424,9 +424,12 @@ class ApzProviderController extends Controller
                 $response->name = $request["Name"];
                 $response->area = $request["Area"];
                 $response->transporter = $request["Transporter"];
+                $response->two_pipe_tc_name = $request["Two_pipe_tc_name"];
                 $response->two_pipe_pressure_in_tc = $request["Two_pipe_pressure_in_tc"];
                 $response->two_pipe_pressure_in_sc = $request["Two_pipe_pressure_in_sc"];
                 $response->two_pipe_pressure_in_rc = $request["Two_pipe_pressure_in_rc"];
+                $response->heat_four_pipe_tc_name = $request["Heat_four_pipe_tc_name"];
+                $response->heat_four_pipe_sc_name = $request["Heat_four_pipe_sc_name"];
                 $response->heat_four_pipe_pressure_in_tc = $request["Heat_four_pipe_pressure_in_tc"];
                 $response->heat_four_pipe_pressure_in_sc = $request["Heat_four_pipe_pressure_in_sc"];
                 $response->heat_four_pipe_pressure_in_rc = $request["Heat_four_pipe_pressure_in_rc"];

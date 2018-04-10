@@ -60,6 +60,7 @@ class ApzHeat extends Model
                 $block->main = $item['HeatMain'];
                 $block->ventilation = $item['HeatVentilation'];
                 $block->water = $item['HeatWater'];
+                $block->water_max = $item['HeatWaterMax'];
                 $block->save();
             }
         }

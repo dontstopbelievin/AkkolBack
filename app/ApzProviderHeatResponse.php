@@ -16,11 +16,9 @@ use Illuminate\Http\Request;
  * @property string|null $comments Комментарий
  * @property int $response Флаг принятие
  * @property string|null $resource Источник
+ * @property string|null $second_resource Второй источник
  * @property string|null $trans_pressure Давление теплоносителя в тепловой камере
  * @property string|null $load_contract_num Тепловые нагрузки по договору
- * @property string|null $main_in_contract Отопление
- * @property string|null $ven_in_contract Вентиляция
- * @property string|null $water_in_contract Горячее водоснабжение
  * @property string|null $connection_point Точка подключения
  * @property string|null $addition Дополнительное
  * @property string $doc_number Номер документа
@@ -31,9 +29,12 @@ use Illuminate\Http\Request;
  * @property string|null $water_in_contract_max Горячее водоснабжение (макс/ч)
  * @property string|null $area Отапливаемая площадь
  * @property string|null $transporter Транспортировка тепловой энергии осуществляется по
+ * @property string|null $two_pipe_tc_name Название ТК (2-трубной схеме)
  * @property string|null $two_pipe_pressure_in_tc Давление теплоносителя в ТК (2-трубной схеме)
  * @property string|null $two_pipe_pressure_in_sc Давление в подающем водоводе (2-трубной схеме)
  * @property string|null $two_pipe_pressure_in_rc Давление в обратном водоводе (2-трубной схеме)
+ * @property string|null $heat_four_pipe_tc_name Название ТК (4-трубной схеме, отопление)
+ * @property string|null $heat_four_pipe_sc_name Название ТК (4-трубной схеме, отопление)
  * @property string|null $heat_four_pipe_pressure_in_tc Давление теплоносителя в ТК (4-трубной схеме, отопление)
  * @property string|null $heat_four_pipe_pressure_in_sc Давление в подающем водоводе (4-трубной схеме, отопление)
  * @property string|null $heat_four_pipe_pressure_in_rc Давление в обратном водоводе (4-трубной схеме, отопление)
