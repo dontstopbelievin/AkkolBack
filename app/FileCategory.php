@@ -53,5 +53,6 @@ class FileCategory extends Model
     const XML_PHONE                 = 17; // XML Телефонизация
     const XML_APZ                   = 18; // XML Отдел АПЗ
     const XML_HEAD                  = 19; // XML Главный архитектор
-    const PAYMENT_PHONE             = 20; // Скан оплаты телефонизации
+    const XML_REGION                = 20; // XML регионального архитектора
+    const PAYMENT_PHONE             = 21; // Скан оплаты телефонизации
 }
