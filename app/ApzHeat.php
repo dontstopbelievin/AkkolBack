@@ -53,7 +53,7 @@ class ApzHeat extends Model
         $this->saving = $request->HeatSaving;
         $this->save();
 
-        if ($request->HeatBlocks) {
+        if ($request->HeatBlocks && array_filter(array_slice($request->HeatBlocks, 0, 1)[0])) {
             foreach ($request->HeatBlocks as $item) {
                 $block = new ApzHeatBlock();
                 $block->apz_id = $apz_id;

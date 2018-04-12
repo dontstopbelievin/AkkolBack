@@ -604,7 +604,9 @@ class ApzProviderController extends Controller
             return response()->json(['message' => 'Не удалось сохранить ответ'], 500);
         }
 
-        return response()->json(['message' => 'Ответ успешно сохранен'], 200);
+        $response = ApzProviderHeadResponse::with('user')->where(['apz_id' => $apz->id, 'role_id' => $user->getRole($role)->id])->get();
+
+        return response()->json(['message' => 'Ответ успешно сохранен', 'head_responses' => $response], 200);
     }
 
     /**

@@ -106,7 +106,7 @@
             <p><b>3. Требования к инженерным сетям</b></p>
         </div>
 
-        @if($apz->commission->apzElectricityResponse || $apz->commission->apzGasResponse)
+        @if($apz->commission && ($apz->commission->apzElectricityResponse || $apz->commission->apzGasResponse))
             <table width="100%">
                 <tr>
                     @if($apz->commission->apzElectricityResponse)
@@ -187,7 +187,7 @@
 
         <br />
 
-        @if($apz->commission->apzWaterResponse)
+        @if($apz->commission && $apz->commission->apzWaterResponse)
             <table border="1" width="100%">
                 <tr>
                     <th colspan="2">Водоснабжение</th>
@@ -233,7 +233,7 @@
 
         <br />
 
-        @if($apz->commission->apzHeatResponse)
+        @if($apz->commission && $apz->commission->apzHeatResponse)
             <table border="1" width="100%">
                 <tr>
                     <th colspan="2">Теплоснабжение</th>
@@ -598,7 +598,7 @@
 
         <br />
 
-        @if($apz->commission->apzWaterResponse)
+        @if($apz->commission && $apz->commission->apzWaterResponse)
             <table border="1" width="100%">
                 <tr>
                     <th colspan="2">Сумен жабдықтау бойынша мәлімет</th>
@@ -644,7 +644,7 @@
 
         <br />
 
-        @if($apz->commission->apzHeatResponse)
+        @if($apz->commission && $apz->commission->apzHeatResponse)
             <table border="1" width="100%">
                 <tr>
                     <th colspan="2">Жылумен жабдықтау бойынша мәлімет</th>
@@ -915,6 +915,10 @@
         <p style="text-align: center;">
             <barcode code="{{ implode(' ', [$apz->apzHeadResponse->user->last_name, $apz->apzHeadResponse->user->first_name, $apz->apzHeadResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
             <barcode code="{{ implode(' ', [$apz_sign->user->last_name, $apz_sign->user->first_name, $apz_sign->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+
+            @if ($region_sign)
+                <barcode code="{{ implode(' ', [$region_sign->user->last_name, $region_sign->user->first_name, $region_sign->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+            @endif
         </p>
         <p><b>Алматы қаласы 2017 жыл</b></p>
     </div>

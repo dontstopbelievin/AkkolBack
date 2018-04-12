@@ -42,6 +42,8 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/', 'Apz\ApzRegionController@all');
             Route::get('/detail/{id}', 'Apz\ApzRegionController@show');
             Route::post('/status/{id}', 'Apz\ApzRegionController@decision');
+            Route::get('/get_xml/{id}', 'Apz\ApzRegionController@generateXml');
+            Route::post('/save_xml/{id}', 'Apz\ApzRegionController@saveXml');
         });
 
         Route::group(['prefix' => '/engineer', 'middleware' => 'role:engineer'], function () {

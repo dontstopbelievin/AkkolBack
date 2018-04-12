@@ -25,7 +25,11 @@ class ApzPrintController extends Controller
             return $value->category_id == FileCategory::XML_APZ;
         })->first();
 
-        $content = view('pdf_templates.apz', ['apz' => $apz, 'apz_sign' => $apz_sign])->render();
+        $region_sign = $apz->files->filter(function ($value) {
+            return $value->category_id == FileCategory::XML_REGION;
+        })->first();
+
+        $content = view('pdf_templates.apz', ['apz' => $apz, 'apz_sign' => $apz_sign, 'region_sign' => $region_sign])->render();
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($content);
 
@@ -53,6 +57,10 @@ class ApzPrintController extends Controller
 
         $apz_sign = $apz->files->filter(function ($value) {
             return $value->category_id == FileCategory::XML_APZ;
+        })->first();
+
+        $region_sign = $apz->files->filter(function ($value) {
+            return $value->category_id == FileCategory::XML_REGION;
         })->first();
 
         switch ($role) {
@@ -92,7 +100,7 @@ class ApzPrintController extends Controller
                 return response()->json(['message' => 'Роль не найдена'], 404);
         }
 
-        $content = view($template, ['apz' => $apz, 'apz_sign' => $apz_sign])->render();
+        $content = view($template, ['apz' => $apz, 'apz_sign' => $apz_sign, 'region_sign' => $region_sign])->render();
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($content);
 
