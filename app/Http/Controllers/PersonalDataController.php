@@ -25,8 +25,6 @@ class PersonalDataController extends Controller
     public function update(Request $request, $id)
     {
 
-
-
         $answer =  PersonalData::where('id',$id)->first();
         $answer->first_name = $request['first_name'];
         $answer->last_name = $request['last_name'];
