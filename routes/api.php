@@ -116,5 +116,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => '/personalData'], function () {
         Route::post('/update/{id}', 'PersonalDataController@update');
         Route::get('/edit/{id}', 'PersonalDataController@edit');
+        Route::post('/editPassword/{id}', 'PersonalDataController@editPassword');
+        Route::post('/updatePassword/{id}', 'PersonalDataController@updatePassword');
     });
 });

@@ -16,6 +16,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use \Illuminate\Support\Facades\Hash;
 
 class PersonalDataController extends Controller
 {
@@ -67,6 +68,51 @@ class PersonalDataController extends Controller
         }
 
     }
+
+    public function editPassword(Request $request, $id)
+    {
+
+        $answer =  PersonalData::where('id',$id)->first();
+        $pass = $request['password'];
+
+
+        $condition = Hash::check($pass, $answer->password);
+
+        if ( $condition ){
+            return response()->json([
+                'message' => 'Пароль верный!'
+            ], 200);
+        }else{
+            return response()->json([
+                'message' => 'Пароль не верный!'
+            ], 200);
+        }
+
+
+    }
+
+
+    public function updatePassword(Request $request, $id)
+    {
+
+        $answer =  PersonalData::where('id',$id)->first();
+        $answer->password = Hash::make($request['password']);
+
+
+
+        if ( $answer->save() ){
+            return response()->json([
+                'message' => 'Пароль был сохранен!'
+            ], 200);
+        }else{
+            return response()->json([
+                'message' => 'Пароль не был сохранен!'
+            ], 200);
+        }
+
+
+    }
+
 
 
 
