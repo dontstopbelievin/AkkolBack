@@ -1,3 +1,13 @@
+<?php
+/**
+* @var \App\Apz $apz
+*/
+
+$response = $apz->commission->apzHeatResponse;
+$table = ['main' => 0, 'ven' => 0, 'water_max' => 0];
+$table_result = 0;
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -114,164 +124,264 @@
 <body>
     <div id="root">
 
-    <div class="wrap">
+        <div class="wrap">
 
-        <header>
-            <div class="logo">
-                <img src="../public/images/heat_pdf_logo.png" alt="heat_logo">
-            </div>
+            <header>
+                <div class="logo">
+                    <img src="../public/images/heat_pdf_logo.png" alt="heat_logo">
+                </div>
 
-            <div class="divider"></div>
+                <div class="divider"></div>
 
-            <div class="small_text">
-                <table>
-                    <tr>
-                        <td>050026, Алматы қаласы, Байзақов көшесі, 221,</td>
-                        <td>050026, город Алматы, улица Байзакова, 221,</td>
-                    </tr>
-                    <tr>
-                        <td>СТН 600700574582, БСН 060640007336,</td>
-                        <td>РНН 600700574582, БИН 060640007336,</td>
-                    </tr>
-                    <tr>
-                        <td>тел.: 8(727) 341-07-00, факс: 8(727) 378-06-73</td>
-                        <td>тел.: 8(727) 341-07-00, факс: 8(727) 378-06-73</td>
-                    </tr>
+                <div class="small_text">
+                    <table>
+                        <tr>
+                            <td>050026, Алматы қаласы, Байзақов көшесі, 221,</td>
+                            <td>050026, город Алматы, улица Байзакова, 221,</td>
+                        </tr>
+                        <tr>
+                            <td>СТН 600700574582, БСН 060640007336,</td>
+                            <td>РНН 600700574582, БИН 060640007336,</td>
+                        </tr>
+                        <tr>
+                            <td>тел.: 8(727) 341-07-00, факс: 8(727) 378-06-73</td>
+                            <td>тел.: 8(727) 341-07-00, факс: 8(727) 378-06-73</td>
+                        </tr>
 
-                </table>
+                    </table>
 
-            </div>
+                </div>
 
-            <div class="number">
-                <p><span></span>№<span>{{ $apz->commission->apzHeatResponse->doc_number }}</span></p>
-                <p class="underline">на  № 312&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;от&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20.11.2018</p>
-                <p class="third">вх.№ 22878&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;от&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 21.11.2018 </p>
+                <div class="number">
+                    <p><span></span>№<span>{{ $response->doc_number }}</span> ({{ $apz->id }})</p>
+                    <p class="third">от {{ date('d.m.Y', strtotime($response->created_at)) }}</p>
 
-            </div>
+                </div>
 
-            <div class="too">
-                <h4>ТОО «Asia Prom Resources»  </h4>
-            </div>
-        </header>
+                <div class="too">
+                    <h4>{{ $apz->customer }}</h4>
+                </div>
+            </header>
 
-        <div class="section">
+            <h2 style="text-align: center; margin-bottom: 0;">Технические условия</h2>
 
-            <div>
-                <ol>
-                    <li>Теплоснабжение осуществляется от источников</li>
-                    <li>Точка подключения: {{ $apz->commission->apzHeatResponse->connection_point }}. Дополнительные условия и место подключения согласовать с ЦЭР ТОО «АлТС»  (тел. 274-04-47).<br/>
-                        <span style="color: #00b050">- Подключение выполнить по технологии присоединения к предызолированным трубопроводам.<br/>
-                        - <b>Размещение зданий и сооружений Вашего объекта предусмотреть на расстоянии с учетом соблюдения охранной зоны тепловых сетей 2dy_____ мм,
-                        проложенных __________ Вашего объекта. В противном случае выполнить их вынос из-под пятна застройки с переключением существующих потребителей.
-                                Проект выноса тепловых сетей согласовать с ТОО «АлТС».</b></span><br />
-                        Регулирование отпуска тепла: качественное по температурному графику –<sup>о</sup>С.
-                    </li>
-                    <li>Давление теплоносителя в тепловой камере {{ $apz->commission->apzHeatResponse->two_pipe_pressure_in_tc }}:<br/>
-                        <span>- в подающем водоводе 	 _,_ ати<br/>
-                              - в обратном водоводе 	 _,_ ати</span>
-                    </li>
-                    <li>Тепловые сети запроектировать с применением предварительно изолированных трубопроводов с устройством системы оперативного дистанционного контроля.
-                        Способ прокладки тепловых сетей определить проектом с учетом требований МСН 4.02-02-2004 «Тепловые сети».
-                        После выполнения работ комплект исполнительной документации на бумажном носителе и в электронном исполнении, зарегистрированный в                 КГУ «Управление архитектуры и градостроительства г. Алматы», передать в ТОО «АлТС».
-                    </li>
-                    <li>Тепловые нагрузки, Гкал/ч:
-                        <table class="heat_info">
+            @if($response->load_contract_num)
+                <p style="font-weight: bold; margin: 0">
+
+                    @if(sizeof($response->blocks) > 1)
+                        на реконструкцию системы теплопотребления
+                        {{ $apz->object_level }}-этажных {{ $apz->object_type }}<br />
+                    @else
+                        на подключение к тепловым сетям
+                        {{ $apz->object_level }}-этажного {{ $apz->object_type }}<br />
+                    @endif
+
+                    (S<sub>общ</sub> = {{ $apz->object_area }} м<sup>2</sup>), расположенный по адресу: {{ $apz->project_address  }}<br />
+                    (кадастровый номер земельного участка {{ $apz->cadastral_number  }})</p>
+            @else
+                <p style="font-weight: bold; margin: 0">на подключение к тепловым сетям {{ $apz->object_level }}-этажного {{ $apz->object_type }}<br />, расположенный по адресу: {{ $apz->project_address  }}<br />
+                    (кадастровый номер земельного участка {{ $apz->cadastral_number  }})</p>
+            @endif
+
+            <div class="section">
+
+                <div>
+                    <ol>
+                        @if ($response->second_resource)
+                            <li>Теплоснабжение осуществляется от источников:<br />
+                                - {{ $response->resource }}<br />
+                                - {{ $response->second_resource }}
+                            </li>
+                        @else
+                            <li>Теплоснабжение осуществляется от источников: $response->resource }}.</li>
+                        @endif
+
+                        <li>Точка подключения: {{ $response->connection_point }}. Дополнительные условия и место подключения согласовать с {{ $response->reconcile_connections_with }}<br/>
+                            Регулирование отпуска тепла: качественное по температурному графику {{ $response->temperature_chart }}<sup>о</sup>С.<br />
+                            {{ $response->connection_terms }}
+                        </li>
+                        <li>
+                            @if($response->two_pipe_tc_name)
+                                Давление теплоносителя в тепловой камере {{ $response->two_pipe_pressure_in_tc }}:<br/>
+                                <span>- в подающем водоводе {{ $response->two_pipe_pressure_in_sc }} ати<br/>- в обратном водоводе {{ $response->two_pipe_pressure_in_rc }} ати</span>
+                            @else
+                                Давление теплоносителя в тепловой камере {{ $response->heat_four_pipe_pressure_in_tc }}:<br/>
+                                <span>- в подающем водоводе {{ $response->heat_four_pipe_pressure_in_sc }} ати<br/>- в обратном водоводе {{ $response->heat_four_pipe_pressure_in_rc }} ати</span><br />
+                                Давление теплоносителя в тепловой камере {{ $response->water_four_pipe_pressure_in_tc }}:<br/>
+                                <span>- в подающем водоводе {{ $response->water_four_pipe_pressure_in_sc }} ати<br/>- в обратном водоводе {{ $response->water_four_pipe_pressure_in_rc }} ати</span>
+                            @endif
+                        </li>
+
+                        @if ($response->heating_networks_design)
+                            <li>{{ $response->heating_networks_design }}</li>
+                        @endif
+
+                        <li>Тепловые нагрузки, Гкал/ч:
+                            <table class="heat_info" width="100%">
+                                <tr>
+                                    <td rowspan="2">Наименование нагрузки</td>
+                                    <td colspan="{{ count($response->blocks) }}">Запрашиваемые</td>
+                                    <td rowspan="2">По договору <br />№{{ $response->load_contract_num }}</td>
+                                    <td colspan="2">Прирост</td>
+                                </tr>
+                                <tr>
+                                    @foreach($response->blocks as $key => $value)
+                                        <td class="last-col">Литер {{ $key + 1 }}</td>
+                                    @endforeach
+
+                                    <td class="last-col">Гкал/ч</td>
+                                    <td class="last-col">%</td>
+                                </tr>
+                                <tr>
+                                    <td>Отопление</td>
+
+                                    @foreach($response->blocks as $value)
+                                        @php
+                                            $table['main'] += $value->main;
+                                        @endphp
+
+                                        <td class="last-col">{{ $value->main }}</td>
+                                    @endforeach
+
+                                    <td>{{ $response->main_in_contract }}</td>
+                                    <td class="last-col">{{ $response->main_in_contract ? $response->main_in_contract - $table['main'] : $table['main'] }}
+                                    </td>
+                                    <td class="last-col">
+                                        @if ($response->main_in_contract)
+                                            {{ round((($response->main_in_contract - $table['main']) / $response->main_in_contract) * 100, 2, PHP_ROUND_HALF_DOWN) }}
+                                        @else
+                                            100
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Вентиляция</td>
+
+                                    @foreach($response->blocks as $value)
+                                        @php
+                                            $table['ven'] += $value->main;
+                                        @endphp
+
+                                        <td class="last-col">{{ $value->ven }}</td>
+                                    @endforeach
+
+                                    <td>{{ $response->ven_in_contract }}</td>
+                                    <td class="last-col">{{ $response->ven_in_contract ? $response->ven_in_contract - $table['ven'] : $table['ven'] }}</td>
+                                    <td class="last-col">
+                                        @if ($response->ven_in_contract)
+                                            {{ round((($response->ven_in_contract - $table['ven']) / $response->ven_in_contract) * 100, 2, PHP_ROUND_HALF_DOWN) }}
+                                        @else
+                                            100
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>ГВС, макс/ч</td>
+
+                                    @foreach($response->blocks as $value)
+                                        @php
+                                            $table['water_max'] += $value->main;
+                                        @endphp
+
+                                        <td class="last-col">{{ $value->water_max }}</td>
+                                    @endforeach
+
+                                    <td>{{ $response->water_in_contract_max }}</td>
+                                    <td class="last-col">{{ $response->water_in_contract_max ? $response->water_in_contract_max - $table['water_max'] : $table['water_max'] }}</td>
+                                    <td class="last-col">
+                                        @if ($response->water_in_contract_max)
+                                            {{ round((($response->water_in_contract_max - $table['water_max']) / $response->water_in_contract_max) * 100, 2, PHP_ROUND_HALF_DOWN) }}
+                                        @else
+                                            100
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>ИТОГО:</th>
+
+                                    @foreach($response->blocks as $value)
+                                        @php
+                                            $table_result += $value->main + $value->ven + $value->water;
+                                        @endphp
+
+                                        <th class="last-col">{{ $value->main + $value->ven + $value->water }}</th>
+                                    @endforeach
+
+                                    <th>{{ $response->main_in_contract + $response->ven_in_contract + $response->water_in_contract_max }}</th>
+                                    <th class="last-col">
+                                        @php
+                                            $in_contract = $response->main_in_contract + $response->ven_in_contract + $response->water_in_contract_max;
+                                        @endphp
+
+                                        @if ($in_contract == 0)
+                                            {{ $table_result }}
+                                        @else
+                                            {{ $in_contract - $table_result }}
+                                        @endif
+                                    </th>
+                                    <th class="last-col">{{ round((($in_contract - $table_result) / $table_result) * 100, 2, PHP_ROUND_HALF_DOWN) }}</th>
+                                </tr>
+                            </table>
+                        </li>
+                        <li>{{ $response->final_heat_loads }}</li>
+
+                        @if ($response->second_resource)
+                            <li>
+                                Транспортировка тепловой энергии от котельной {{ $response->resource }} осуществляется по 2-х трубной схеме.<br />
+                                Транспортировка тепловой энергии от котельной {{ $response->second_resource }} осуществляется по 4-х трубной схеме.
+                            </li>
+                        @endif
+
+                        @if ($response->heat_networks_relaying)
+                            <li>{{ $response->heat_networks_relaying }}</li>
+                        @endif
+
+                        @if ($response->condensate_return)
+                            <li>{{ $response->condensate_return }}</li>
+                        @endif
+
+                        @if ($response->thermal_energy_meters)
+                            <li>{{ $response->thermal_energy_meters }}</li>
+                        @endif
+
+                        <li>Система теплоснабжения: {{ $response->heat_supply_system }}<br />
+                            {{ $response->heat_supply_system_note }}
+                        </li>
+
+                        <li>Подключение выполнить через {{ $response->connection_scheme }}<br/>
+                            {{ $response->connection_scheme_note }}
+                        </li>
+
+                        @if ($response->negotiation)
+                            <li>{{ $response->negotiation }}</li>
+                        @endif
+
+                        @if ($response->technical_conditions_terms)
+                            <li><b>Срок действия технических условий:</b> {{ $response->technical_conditions_terms }}</li>
+                        @endif
+                    </ol>
+                </div>
+                <div class="footer" style="position: relative;">
+                    <table width="100%" style="text-align: left;">
+                        <tbody>
                             <tr>
-                                <td rowspan="2">Наименование нагрузки</td>
-                                <td rowspan="2">Запрашиваемые</td>
-                                <td rowspan="2">По договору               №           от            г.</td>
-                                <td colspan="2">Прирост</td>
+                                <td><h3>Главный инженер<br/>Д. Кирдяйкин</h3></td>
+                                <td><barcode code="{{ implode(' ', [$response->user->last_name, $response->user->first_name, $response->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" /></td>
                             </tr>
                             <tr>
-                                <td class="last-col">Гкал/ч</td>
-                                <td class="last-col">%</td>
-                            </tr>
-                            <tr>
-                                <td>Отопление</td>
-                                <td>&nbsp;</td>
-                                <td>см.договор</td>
-                                <td class="last-col">???</td>
-                                <td class="last-col">???</td>
-                            </tr>
-                            <tr>
-                                <td>Вентиляция</td>
+                                <td>
+                                    <p>Исп. {{ $response->user->name }}<br/>
+                                        e-mail.: {{ $response->user->email }}
+                                    </p>
+                                </td>
                                 <td></td>
-                                <td></td>
-                                <td class="last-col">0</td>
-                                <td class="last-col">???</td>
                             </tr>
-                            <tr>
-                                <td>Горячее водоснаб-жение, макс/ч</td>
-                                <td></td>
-                                <td></td>
-                                <td class="last-col">0</td>
-                                <td class="last-col">???</td>
-                            </tr>
-                            <tr>
-                                <td>Горячее водоснаб-жение, ср/ч</td>
-                                <td></td>
-                                <td></td>
-                                <td class="last-col"></td>
-                                <td class="last-col"></td>
-                            </tr>
-                            <tr>
-                                <th>ИТОГО:</th>
-                                <th>000</th>
-                                <th>000</th>
-                                <th class="last-col">???</th>
-                                <th class="last-col">???</th>
-                            </tr>
-                        </table>
-                    </li>
-                    <li>Окончательные тепловые нагрузки уточнить проектом и согласовать с Оперативно-диспетчерским управлением ТОО «АлТС» (тел.: 378-07-00, вн.1007).
-                        Договор на оказание услуг по передаче и распределению тепловой энергии будет заключен на согласованную уточненную тепловую нагрузку.
-                        В соответствии с п. 12.1 СНиП РК 4.02-42-2006 «Отопление, вентиляция и кондиционирование» в системе вентиляции при обосновании предусмотреть
-                        устройства утилизации теплоты вентиляционных выбросов (рекуперация, рециркуляция вытяжного воздуха) с учетом пунктов 12.2, 12.5 СНиП РК 4.02-42-2006
-                        «Отопление, вентиляция и кондиционирование».
-                    </li>
-                    <li style="color: #00b050">В связи с увеличением циркуляционного расхода выполнить перекладку тепловых сетей от ТК ___  до ТК ___ с увеличением диаметра с 2Dу___ мм на 2Dу___ мм.
-                        Реконструируемые тепловые сети в установленном порядке передать на баланс ТОО «АлТС». <br/>
-                        - Выполнить поверочный расчет диаметров трубопроводов внутриплощадочных тепловых сетей с учетом дополнительно подключаемой нагрузки. В случае необходимости – выполнить их замену.
-
-                    </li>
-                    <li style="color: #00b050">Возврат конденсата не предусмотрен.</li>
-                    <li> На вводе <span style="color: #00b050"> для каждой категории абонентов</span> установить <span style="color: #00b050">прибор</span> учета тепловой энергии, оборудованный модемной связью.
-                        <span style="color: #00b050">Системы отопления и горячего водоснабжения каждой квартиры оборудовать индивидуальными приборами учета расхода теплоты и горячей воды с возможностью
-                            дистанционного снятия показаний.</span> Проект на установку системы учета, схему организации учета,
-                        место установки приборов учета  согласовать со Службой контроля приборов учета тепловой энергии ТОО «АлТС» (тел.: 341-07-77, вн. 2140).</li>
-                    <li style="color: #00b050">Система теплоснабжения:<br />
-                        a)открытая. Предусмотреть догрев ГВС в межотопительный период.<br/>
-                        б)закрытая.<br/>
-                        <span style="color: #000;"> Предусмотреть тепловую изоляцию разводящих трубопроводов и стояков системы горячего водоснабжения.</span>
-                        При присоединении распределительной гребенки индивидуальных потребителей к  стояку общедомовой системы горячего водоснабжения предусмотреть установку обратного клапана.
-                    </li>
-                    <li style="color: #00b050">Подключение выполнить через<br/>
-                        а) узел управления с автоматическим регулированием теплопотребления по зависимой схеме. В случае применения в системе отопления трубопроводов из полимерных материалов – проектирование
-                        вести с учетом требований п. 7.1.3 СНиП РК 4.02-42-2006 «Отопление, вентиляция и кондиционирование».<br/>
-                        б) узел управления с автоматическим регулированием теплопотребления по независимой схеме.<br/>
-                        <b style="color: #000;">По завершении монтажа узла управления выполнить пуско-наладочные работы по автоматизации теплового пункта.</b>
-                    </li>
-                    <li>После предварительного согласования с ЦЭР ТОО «АлТС» проектную документацию (чертежи марки ОВ, ТС, сводный план инженерных сетей) согласовать с
-                        Техническим отделом ТОО «АлТС» (тел.: 378-07-00, вн. 1023). Согласованный проект на бумажном и электронном носителях предоставить в ТОО «АлТС».
-                    </li>
-                    <li><b>Срок действия технических условий:</b> нормативный период проектирования и строительства, предусмотренный в проектно-сметной документации.</li>
-                    <li></li>
-                </ol>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="footer">
-                <h3 style="text-align:left;float: left;width: 350px;color: #000;">Главный инженер</h3>
-                <h3  style="color: #000;">Д. Кирдяйкин</h3>
-                <h2 style="color: red">Долг перед ТОО «АлТС»:</h2>
-                <p>Исп. {{ $apz->commission->apzHeatResponse->user->name }}<br/>
-                    тел.: 378-07-00 вн.{{ $apz->phone }}
-                </p>
-            </div>
-
         </div>
     </div>
-    </div>
-    <p style="text-align: center;">
-        <barcode code="{{ implode(' ', [$apz->commission->apzHeatResponse->user->last_name, $apz->commission->apzHeatResponse->user->first_name, $apz->commission->apzHeatResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
-    </p>
+
 </body>
 </html>

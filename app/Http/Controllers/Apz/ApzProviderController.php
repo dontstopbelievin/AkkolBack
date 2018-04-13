@@ -424,6 +424,10 @@ class ApzProviderController extends Controller
                 $response->name = $request["Name"];
                 $response->area = $request["Area"];
                 $response->transporter = $request["Transporter"];
+                $response->main_in_contract = $request['HeatMainInContract'];
+                $response->ven_in_contract = $request['HeatVenInContract'];
+                $response->water_in_contract = $request['HeatWaterInContract'];
+                $response->water_in_contract_max = $request['HeatWaterMaxInContract'];
                 $response->two_pipe_tc_name = $request["Two_pipe_tc_name"];
                 $response->two_pipe_pressure_in_tc = $request["Two_pipe_pressure_in_tc"];
                 $response->two_pipe_pressure_in_sc = $request["Two_pipe_pressure_in_sc"];
@@ -465,10 +469,6 @@ class ApzProviderController extends Controller
                         $block->ven = $item->ven;
                         $block->water = $item->water;
                         $block->water_max = $item->waterMax;
-                        $block->main_in_contract = $item->main_in_contract;
-                        $block->ven_in_contract = $item->ven_in_contract;
-                        $block->water_in_contract = $item->water_in_contract;
-                        $block->water_in_contract_max = $item->water_max_in_contract;
                         $block->save();
                     }
                 }
