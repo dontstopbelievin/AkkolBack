@@ -111,4 +111,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('/update', 'NewsController@update');
         Route::get('/delete/{id}', 'NewsController@delete');
     });
+
+
+    Route::group(['prefix' => '/personalData'], function () {
+        Route::post('/update/{id}', 'PersonalDataController@update');
+        Route::get('/edit/{id}', 'PersonalDataController@edit');
+    });
 });
