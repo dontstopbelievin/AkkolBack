@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \App\Apz $apz
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -10,7 +16,6 @@
     <style type="text/css">
         .logo{
             text-align: center;
-            margin-bottom: 50px;
         }
         img{
             height: 130px;
@@ -42,6 +47,18 @@
         <div class="logo">
             <img src="../public/images/electro.jpg" alt="telephone_logo">
         </div>
+        <hr>
+        <table width="100%">
+            <tr>
+                <td>
+                    <p><span></span>№<span>{{ $apz->commission->apzElectricityResponse->doc_number }}</span> ({{ $apz->id }})<br />
+                        от {{ date('d.m.Y', strtotime($apz->commission->apzElectricityResponse->created_at)) }}</p>
+                </td>
+                <td style="text-align: right;">
+                    <p><b>{{ $apz->applicant }}</b></p>
+                </td>
+            </tr>
+        </table>
         <p>
             <b>ТЕХНИЧЕСКИЕ УСЛОВИЯ «НА ЭЛЕКТРОСНАБЖЕНИЕ»</b>
         </p>

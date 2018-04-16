@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \App\Apz $apz
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -21,7 +27,7 @@
         }
         .logo{
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 0px;
         }
         img{
             height: 130px;
@@ -44,6 +50,18 @@
         <div class="logo">
             <img src="../public/images/Almatytelecom.jpg" alt="telephone_logo">
         </div>
+        <hr>
+        <table width="100%">
+            <tr>
+                <td>
+                    <p><span></span>№<span>{{ $apz->commission->apzPhoneResponse->doc_number }}</span> ({{ $apz->id }})<br />
+                        от {{ date('d.m.Y', strtotime($apz->commission->apzPhoneResponse->created_at)) }}</p>
+                </td>
+                <td style="text-align: right;">
+                    <p><b>{{ $apz->applicant }}</b></p>
+                </td>
+            </tr>
+        </table>
         <p>
             <b>ТЕХНИЧЕСКИЕ УСЛОВИЯ «НА ТЕЛЕФОНИЗАЦИЮ»</b>
         </p>
@@ -134,7 +152,7 @@
         <br/>
         <p>Технические условия (ТУ) действуют в течение всего срока нормативной продолжительности строительства, утвержденной в составе проектной (проектно-сметной) документации</p>
         <p style="text-align: center;">
-            {{--<barcode code="{{ implode(' ', [$apz->commission->apzPhoneResponse->user->last_name, $apz->commission->apzPhoneResponse->user->first_name, $apz->commission->apzPhoneResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />--}}
+            <barcode code="{{ implode(' ', [$apz->commission->apzPhoneResponse->user->last_name, $apz->commission->apzPhoneResponse->user->first_name, $apz->commission->apzPhoneResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
         </p>
         <p>
             <b>город Алматы 2017 год</b>
