@@ -69,7 +69,7 @@ class ApzPrintController extends Controller
                 break;
 
             case 'water':
-                $template = 'pdf_templates.tc_water';
+                $template = $apz->object_type == 'ИЖС' ? 'pdf_templates.tc_water' : 'pdf_templates.tc_water_second';
                 break;
 
             case 'electro':
@@ -121,7 +121,7 @@ class ApzPrintController extends Controller
 
         switch ($tc) {
             case 'water':
-                $template = 'pdf_templates.tc_water';
+                $template = $apz->object_type == 'ИЖС' ? 'pdf_templates.tc_water' : 'pdf_templates.tc_water_second';
                 break;
 
             case 'electro':

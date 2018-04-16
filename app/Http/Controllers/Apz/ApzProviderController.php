@@ -244,6 +244,13 @@ class ApzProviderController extends Controller
                 $response->fire_fighting_water_out = $request['FireFightingWaterOut'];
                 $response->connection_point = $request['ConnectionPoint'];
                 $response->recommendation = $request['Recomendation'];
+                $response->estimated_water_flow_rate = $request['EstimatedWaterFlowRate'];
+                $response->existing_water_consumption = $request['ExistingWaterConsumption'];
+                $response->sewage_estimated_water_flow_rate = $request['SewageEstimatedWaterFlowRate'];
+                $response->sewage_existing_water_consumption = $request['SewageExistingWaterConsumption'];
+                $response->water_pressure = $request['WaterPressure'];
+                $response->water_customer_duties = $request['WaterCustomerDuties'];
+                $response->sewage_customer_duties = $request['SewageCustomerDuties'];
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
