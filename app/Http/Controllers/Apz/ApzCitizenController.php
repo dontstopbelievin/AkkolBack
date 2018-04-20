@@ -14,6 +14,7 @@ use App\File;
 use App\FileCategory;
 use App\FileItem;
 use App\FileItemType;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -148,5 +149,65 @@ class ApzCitizenController extends Controller
         }
 
         return response()->json($apz, 200);
+    }
+
+    /**
+     * Search company
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function companySearch(Request $request)
+    {
+        $client = new Client();
+
+        $response = $client->post('http://www.elicense.kz/LicensingContent/SimpleSearchLicense', [
+            'form_params' => [
+                'IinBinEquality' => '1',
+                'IinBinStr' => $request->bin,
+                'lang' => 'ru'
+            ],
+        ]);
+
+        $body = $response->getBody();
+        $start = strpos($body,"<table class=\"DefaultTablde\">");
+        $end = strpos($body,"table",$start + 10) + 8;
+
+        if ($start == null) {
+            return null;
+        }
+
+        $result = substr($body, $start, $end - $start);
+
+        $sxe = simplexml_load_string($result);
+
+        if ($sxe === false) {
+            echo 'Ошибка при разборе документа';
+            exit;
+        }
+
+        $items = $sxe->xpath("/table/tr");
+        $array = [];
+
+        foreach ($items as $key => $node) {
+            if ($key == 0) {
+                continue;
+            }
+
+            // $key - 1 обязателен. Без него метод будет возвращать объект вместо массива
+            $array[$key - 1] = [
+                'license_number' => (string)$node->td[1],
+                'document_id' => (string)$node->td[2],
+                'nicad' => (string)$node->td[3],
+                'offer_id' => (string)$node->td[4],
+                'offer_nicad' => (string)$node->td[5],
+                'licensor' => (string)$node->td[6],
+                'licensee' => (string)$node->td[7],
+                'kind_of_activity' => (string)$node->td[8],
+                'status' => (string)$node->td[9]->span
+            ];
+        }
+
+        return response()->json(['list' => $array], 200);
     }
 }

@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/detail/{id}', 'Apz\ApzCitizenController@show');
             Route::post('/create', 'Apz\ApzCitizenController@create');
             Route::post('/upload/{id}', 'Apz\ApzCitizenController@upload');
+            Route::post('/company_search', 'Apz\ApzCitizenController@companySearch');
         });
 
         Route::group(['prefix' => '/region', 'middleware' => 'role:region'], function () {
