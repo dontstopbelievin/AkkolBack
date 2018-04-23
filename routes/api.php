@@ -29,6 +29,9 @@ Route::group(['prefix' => 'system_files'], function () {
     Route::get('/download/{type}/{id}', 'FileController@downloadSystemFile');
 });
 
+Auth::routes();
+Route::get('get_email/{email}/{token}', 'GetEmailController@getEmail');
+
 Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => '/apz'], function () {
         Route::group(['prefix' => '/citizen', 'middleware' => 'role:citizen'], function () {
@@ -120,4 +123,6 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('/editPassword/{id}', 'PersonalDataController@editPassword');
         Route::post('/updatePassword/{id}', 'PersonalDataController@updatePassword');
     });
+
+
 });
