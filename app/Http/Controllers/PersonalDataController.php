@@ -26,7 +26,7 @@ class PersonalDataController extends Controller
     public function update(Request $request, $id)
     {
 
-        $answer =  PersonalData::where('id',$id)->first();
+        $answer =  User::where('id',$id)->first();
         $answer->first_name = $request['first_name'];
         $answer->last_name = $request['last_name'];
         $answer->middle_name = $request['middle_name'];
@@ -54,7 +54,7 @@ class PersonalDataController extends Controller
     public function edit($id)
     {
 
-        $answer =  PersonalData::where('id',$id)->get();
+        $answer =  User::where('id',$id)->get();
 
         if ( $answer ){
             return response()->json([
@@ -72,7 +72,7 @@ class PersonalDataController extends Controller
     public function editPassword(Request $request, $id)
     {
 
-        $answer =  PersonalData::where('id',$id)->first();
+        $answer =  User::where('id',$id)->first();
         $pass = $request['password'];
 
 
@@ -95,7 +95,7 @@ class PersonalDataController extends Controller
     public function updatePassword(Request $request, $id)
     {
 
-        $answer =  PersonalData::where('id',$id)->first();
+        $answer =  User::where('id',$id)->first();
         $answer->password = Hash::make($request['password']);
 
 
