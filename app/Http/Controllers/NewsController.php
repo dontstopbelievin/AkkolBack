@@ -120,5 +120,68 @@ class NewsController extends Controller
         ], 200);
     }
 
+    public function lastFresh () {
+        $news = News::where('status',1)->
+                        orderBy('created_at', 'desc')->
+                        limit(4)->
+                        get();
+
+        if($news){
+            return response()->json([
+                'news' => $news
+            ], 200);
+        }else{
+            return response()->json([
+                'error' => 'fail'
+            ], 500);
+        }
+    }
+
+    public function allNews() {
+        $news = News::where('status',1)->
+                        orderBy('created_at', 'desc')->
+                        get();
+
+        if($news){
+            return response()->json([
+                'news' => $news
+            ], 200);
+        }else{
+            return response()->json([
+                'error' => 'fail'
+            ], 500);
+        }
+    }
+
+    public function article($id) {
+        $answer =  News::where('id',$id)->
+                            first();
+
+        if ( $answer ){
+            return response()->json([
+                'article' => $answer
+            ], 200);
+        }else{
+            return response()->json([
+                'error' => 'fail'
+            ], 500);
+        }
+
+    }
+
+    public function dayNews($day) {
+        $answer =  News::whereDate('created_at', $day )->get();
+
+        if ( $answer ){
+            return response()->json([
+                'article' => $answer
+            ], 200);
+        }else{
+            return response()->json([
+                'error' => 'fail'
+            ], 500);
+        }
+    }
+
 
 }

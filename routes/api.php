@@ -126,3 +126,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
 });
+
+Route::group(['prefix' => '/news' ],function() {
+    Route::get( '/lastFresh', 'NewsController@lastFresh');
+    Route::get( '/all', 'NewsController@allNews');
+    Route::get( '/article/{id}', 'NewsController@article');
+    Route::get( '/dayNews/{day}', 'NewsController@dayNews');
+});
