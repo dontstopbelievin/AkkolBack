@@ -170,11 +170,12 @@ class NewsController extends Controller
     }
 
     public function dayNews($day) {
-        $answer =  News::whereDate('created_at', $day )->get();
+        $answer =  News::whereDate('created_at', $day )
+                            ->where('status',1)->get();
 
-        if ( $answer ){
+        if ( $answer != null ){
             return response()->json([
-                'article' => $answer
+                'news' => $answer
             ], 200);
         }else{
             return response()->json([
