@@ -37,32 +37,35 @@ class ApzHeat extends Model
     protected $table = "apz_heats";
 
     /**
-     * Add item in database
+     * Save item in database
      *
      * @param Request $request
      * @param integer $apz_id
      *
      * @return self
      */
-    public function addItem($request, $apz_id)
+    public function saveItem($request, $apz_id)
     {
-        $this->apz_id = $apz_id;
-        $this->general = $request->HeatGeneral;
-        $this->tech = $request->HeatTech;
-        $this->distribution = $request->HeatDistribution;
-        $this->saving = $request->HeatSaving;
-        $this->save();
+        $this->general = $request->heatGeneral;
+        $this->tech = $request->heatTech;
+        $this->distribution = $request->heatDistribution;
+        $this->saving = $request->heatSaving;
 
-        if ($request->HeatBlocks && array_filter(array_slice($request->HeatBlocks, 0, 1)[0])) {
-            foreach ($request->HeatBlocks as $item) {
+        if ($request->blocks && array_filter(array_slice($request->blocks, 0, 1)[0])) {
+            foreach ($request->blocks as $item) {
                 $block = new ApzHeatBlock();
                 $block->apz_id = $apz_id;
-                $block->main = $item['HeatMain'];
-                $block->ventilation = $item['HeatVentilation'];
-                $block->water = $item['HeatWater'];
-                $block->water_max = $item['HeatWaterMax'];
+                $block->main = $item['heatMain'];
+                $block->ventilation = $item['heatVentilation'];
+                $block->water = $item['heatWater'];
+                $block->water_max = $item['heatWaterMax'];
                 $block->save();
             }
+        }
+
+        if (array_filter($this->getAttributes())) {
+            $this->apz_id = $apz_id;
+            $this->save();
         }
 
         return $this;

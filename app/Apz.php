@@ -76,25 +76,25 @@ class Apz extends Model
      * @param Request $request
      * @return self
      */
-    public function addItem($request)
+    public function saveItem($request)
     {
         $this->user_id = Auth::user()->id;
-        $this->region = $request->Region;
-        $this->applicant = $request->Applicant;
-        $this->address = $request->Address;
-        $this->phone = $request->Phone;
-        $this->customer = $request->Customer;
-        $this->designer = $request->Designer;
-        $this->object_type = $request->ObjectType;
-        $this->object_level = $request->ObjectLevel;
-        $this->object_client = $request->ObjectClient;
-        $this->object_area = $request->ObjectArea;
-        $this->object_rooms = $request->OBjectRooms;
-        $this->object_term = $request->ObjectTerm;
-        $this->project_name = $request->ProjectName;
-        $this->project_address = $request->ProjectAddress;
-        $this->project_address_coordinates = $request->ProjectAddressCoordinates;
-        $this->cadastral_number = $request->CadastralNumber;
+        $this->region = $request->region;
+        $this->applicant = $request->applicant;
+        $this->address = $request->address;
+        $this->phone = $request->phone;
+        $this->customer = $request->customer;
+        $this->designer = $request->designer;
+        $this->object_type = $request->objectType;
+        $this->object_level = $request->objectLevel;
+        $this->object_client = $request->objectClient;
+        $this->object_area = $request->objectArea;
+        $this->object_rooms = $request->objectRooms;
+        $this->object_term = $request->objectTerm;
+        $this->project_name = $request->projectName;
+        $this->project_address = $request->projectAddress;
+        $this->project_address_coordinates = $request->projectAddressCoordinates;
+        $this->cadastral_number = $request->cadastralNumber;
         $this->status_id = ApzStatus::ARCHITECT;
         $this->save();
 

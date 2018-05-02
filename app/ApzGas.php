@@ -38,23 +38,26 @@ class ApzGas extends Model
     protected $table = "apz_gases";
 
     /**
-     * Add item in database
+     * Save item in database
      *
      * @param Request $request
      * @param integer $apz_id
      *
      * @return self
      */
-    public function addItem($request, $apz_id)
+    public function saveItem($request, $apz_id)
     {
-        $this->apz_id = $apz_id;
-        $this->general = $request->GasGeneral;
-        $this->cooking = $request->GasCooking;
-        $this->heat = $request->GasHeat;
-        $this->ventilation = $request->GasVentilation;
-        $this->conditioner = $request->GasConditioner;
-        $this->water = $request->GasWater;
-        $this->save();
+        $this->general = $request->gasGeneral;
+        $this->cooking = $request->gasCooking;
+        $this->heat = $request->gasHeat;
+        $this->ventilation = $request->gasVentilation;
+        $this->conditioner = $request->gasConditioner;
+        $this->water = $request->gasWater;
+
+        if (array_filter($this->getAttributes())) {
+            $this->apz_id = $apz_id;
+            $this->save();
+        }
 
         return $this;
     }

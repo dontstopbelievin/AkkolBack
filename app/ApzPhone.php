@@ -41,14 +41,17 @@ class ApzPhone extends Model
      *
      * @return self
      */
-    public function addItem($request, $apz_id)
+    public function saveItem($request, $apz_id)
     {
-        $this->apz_id = $apz_id;
-        $this->service_num = $request->PhoneServiceNum;
-        $this->capacity = $request->PhoneCapacity;
-        $this->sewage = $request->PhoneSewage;
-        $this->client_wishes = $request->PhoneClientWishes;
-        $this->save();
+        $this->service_num = $request->phoneServiceNum;
+        $this->capacity = $request->phoneCapacity;
+        $this->sewage = $request->phoneSewage;
+        $this->client_wishes = $request->phoneClientWishes;
+
+        if (array_filter($this->getAttributes())) {
+            $this->apz_id = $apz_id;
+            $this->save();
+        }
 
         return $this;
     }

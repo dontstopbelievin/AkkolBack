@@ -35,6 +35,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/', 'Apz\ApzCitizenController@all');
             Route::get('/detail/{id}', 'Apz\ApzCitizenController@show');
             Route::post('/create', 'Apz\ApzCitizenController@create');
+            Route::post('/save/{id?}', 'Apz\ApzCitizenController@save');
             Route::post('/upload/{id}', 'Apz\ApzCitizenController@upload');
             Route::post('/company_search', 'Apz\ApzCitizenController@companySearch');
         });
