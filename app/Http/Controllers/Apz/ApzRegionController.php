@@ -118,7 +118,11 @@ class ApzRegionController extends Controller
         DB::beginTransaction();
 
         try {
-            $apz->status_id = $request["response"] == "true" ? ApzStatus::ENGINEER : ApzStatus::DECLINED;
+            $is_final_decision = $apz->stateHistory->filter(function ($value) {
+                return $value->state_id == ApzState::REGION_APPROVED;
+            });
+
+            $apz->status_id = $request["response"] == "true" ? (count($is_final_decision) > 0 ? ApzStatus::APZ_DEPARTMENT : ApzStatus::ENGINEER) : ApzStatus::DECLINED;
             $apz->save();
 
             if ($request["response"] == "true") {
@@ -130,7 +134,7 @@ class ApzRegionController extends Controller
 
                 $engineer_state = new ApzStateHistory();
                 $engineer_state->apz_id = $apz->id;
-                $engineer_state->state_id = ApzState::TO_ENGINEER;
+                $engineer_state->state_id = count($is_final_decision) > 0 ? ApzState::TO_APZ : ApzState::TO_ENGINEER;
                 $engineer_state->comment = $request["message"];
                 $engineer_state->save();
             } else {
