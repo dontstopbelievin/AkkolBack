@@ -17,6 +17,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Auth::routes();
+
 Route::post('token', 'Auth\AccessTokenController@issueToken');
 Route::get('get_token_xml', 'Auth\LoginController@getTokenXml');
 Route::post('login_with_cert', 'Auth\LoginController@loginWithCert');
@@ -29,7 +31,6 @@ Route::group(['prefix' => 'system_files'], function () {
     Route::get('/download/{type}/{id}', 'FileController@downloadSystemFile');
 });
 
-Auth::routes();
 Route::get('get_email/{email}/{token}', 'GetEmailController@getEmail');
 
 Route::group(['middleware' => 'auth:api'], function () {
