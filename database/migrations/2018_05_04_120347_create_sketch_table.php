@@ -47,7 +47,7 @@ class CreateSketchTable extends Migration
             $table->string('phone', 255)->nullable()->comment('Телефон');
             $table->string('project_name', 255)->nullable()->comment('Наименование проектируемого объекта');
             $table->string('project_address', 255)->nullable()->comment('Адрес проектируемого объекта');
-            $table->dateTime('sketchDate')->nullable()->comment('Дата');
+            $table->dateTime('sketch_date')->nullable()->comment('Дата');
 
             $table->integer('reviewer_id')->unsigned()->comment('ИД пользователя')->nullable();
             $table->foreign('reviewer_id')->references('id')->on('users');

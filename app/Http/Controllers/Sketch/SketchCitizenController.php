@@ -33,7 +33,7 @@ class SketchCitizenController extends Controller
             $sketch->phone = $request->phone;
             $sketch->project_name = $request->project_name;
             $sketch->project_address = $request->project_address;
-            $sketch->sketchDate = $request->sketch_date;
+            $sketch->sketch_date = $request->sketch_date;
             $sketch->user_id = Auth::user()->id;
             $sketch->status_id = SketchStatus::IN_PROCESS;
             $sketch->save();
