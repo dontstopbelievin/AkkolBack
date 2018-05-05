@@ -71,6 +71,14 @@ class FileController extends Controller
         }
     }
 
+    public function getFromCategory($id)
+    {
+        $user = Auth::user();
+        $files = File::where(['category_id' => $id, 'user_id' => $user->id])->get();
+
+        return response()->json($files, 200);
+    }
+
     public function getFromSystemCategory($name)
     {
         try {
@@ -182,6 +190,8 @@ class FileController extends Controller
             $fileModel->description = $request->description;
             $fileModel->user_id = $userId;
             $fileModel->save();
+
+            return response()->json($fileModel, 200);
         }
         catch (\Exception $e) {
             return response()->json(['message' => 'Во время загрузки произошла ошибка'], 401);

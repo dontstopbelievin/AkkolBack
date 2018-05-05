@@ -96,6 +96,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/', 'FileController@index');
         Route::get('all', 'FileController@all');
         Route::get('images', 'FileController@images');
+        Route::get('category/{id}', 'FileController@getFromCategory');
         Route::get('categoriesList', 'FileController@categoriesList');
         Route::get('download/{id}', 'FileController@download');
         Route::post('upload', 'FileController@upload');
@@ -117,7 +118,6 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/delete/{id}', 'NewsController@delete');
     });
 
-
     Route::group(['prefix' => '/personalData'], function () {
         Route::post('/update/{id}', 'PersonalDataController@update');
         Route::get('/edit/{id}', 'PersonalDataController@edit');
@@ -125,7 +125,13 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('/updatePassword/{id}', 'PersonalDataController@updatePassword');
     });
 
-
+    Route::group(['prefix' => '/sketch'], function () {
+        Route::group(['prefix' => '/citizen', 'middleware' => 'role:citizen'], function () {
+            Route::get('/', 'Sketch\SketchCitizenController@all');
+            Route::get('/detail/{id}', 'Sketch\SketchCitizenController@show');
+            Route::post('/create', 'Sketch\SketchCitizenController@create');
+        });
+    });
 });
 
 Route::group(['prefix' => '/news' ],function() {
