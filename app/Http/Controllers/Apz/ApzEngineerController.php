@@ -129,6 +129,7 @@ class ApzEngineerController extends Controller
             $commission = new Commission();
             $commission->apz_id = $apz->id;
             $commission->user_id = Auth::user()->id;
+            $commission->comment = $request['comment'];
             $commission->save();
 
             foreach ($request['commission_users'] as $value) {
