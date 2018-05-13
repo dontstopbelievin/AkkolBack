@@ -118,6 +118,15 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/delete/{id}', 'NewsController@delete');
     });
 
+    Route::group(['prefix' => '/userTable', 'middleware' => 'role:admin'], function () {
+        Route::get('/getUsers', 'UserTableController@allUsers');
+        Route::get('/getRoles', 'UserTableController@getRoles');
+        Route::get('/getUserRoles', 'UserTableController@getUserRoles');
+        Route::get('/deleteUser/{id}', 'UserTableController@deleteUsers');
+        Route::post('/addRoleToUser', 'UserTableController@addRoleToUser');
+    });
+
+
     Route::group(['prefix' => '/personalData'], function () {
         Route::post('/update/{id}', 'PersonalDataController@update');
         Route::get('/edit/{id}', 'PersonalDataController@edit');

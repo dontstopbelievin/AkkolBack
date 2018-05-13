@@ -36,13 +36,11 @@ class NewsController extends Controller
 
     public function insert(Request $request)
     {
-        $title = $request['title'];
-        $description = $request['description'];
-        $text = $request['text'];
         $answer = new News();
-        $answer->title = $title;
-        $answer->description = $description;
-        $answer->text = $text;
+        $answer->title = $request['title'];
+        $answer->description = $request['description'];
+        $answer->heading_id = $request['heading_id'];
+        $answer->text = $request['text'];
 
 
         if ( $answer->save() ){
@@ -64,6 +62,7 @@ class NewsController extends Controller
         $title = $request['title'];
         $description = $request['description'];
         $text = $request['text'];
+        $heading_id = $request['heading_id'];
 //        $answer = News::where('id',$id)
 //                        ->update(['title' => $title, 'description' => $description, 'text' => $text ]);
 
@@ -71,6 +70,7 @@ class NewsController extends Controller
         $answer->title = $title;
         $answer->description = $description;
         $answer->text = $text;
+        $answer->heading_id = $heading_id;
 
         if ( $answer->save() ){
             $message = 'Запись была обновлена!';
