@@ -173,7 +173,7 @@ class ApzEngineerController extends Controller
         DB::beginTransaction();
 
         try {
-            $apz->status_id = ApzStatus::ARCHITECT;
+            $apz->status_id = $request['direct'] == 'apz' ? ApzStatus::APZ_DEPARTMENT : ApzStatus::ARCHITECT;
             $apz->save();
 
             if ($request["response"] == "true") {
@@ -185,7 +185,7 @@ class ApzEngineerController extends Controller
 
                 $engineer_state = new ApzStateHistory();
                 $engineer_state->apz_id = $apz->id;
-                $engineer_state->state_id = ApzState::TO_REGION;
+                $engineer_state->state_id = $request['direct'] == 'apz' ? ApzState::TO_APZ : ApzState::TO_REGION;
                 $engineer_state->save();
             } else {
                 $region_state = new ApzStateHistory();
