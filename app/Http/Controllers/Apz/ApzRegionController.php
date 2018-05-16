@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Apz;
 
 use App\Apz;
+use App\ApzAnswerTemplate;
 use App\ApzState;
 use App\ApzStateHistory;
 use App\ApzStatus;
@@ -91,12 +92,13 @@ class ApzRegionController extends Controller
     public function show($id)
     {
         $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+        $answer_templates = ApzAnswerTemplate::where(['user_id' => Auth::user()->id, 'is_active' => 1])->get();
 
         if (!$apz) {
             return response()->json(['message' => 'Заявка не найдена'], 404);
         }
 
-        return response()->json($apz, 200);
+        return response()->json(['apz' => $apz, 'templates' => $answer_templates], 200);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Apz;
+use App\ApzState;
 use App\FileCategory;
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
@@ -151,6 +152,35 @@ class ApzPrintController extends Controller
         }
 
         $content = view($template, ['apz' => $apz])->render();
+        $mpdf = new Mpdf();
+        $mpdf->WriteHTML($content);
+
+        return response()->json(['file' => base64_encode($mpdf->Output('', Destination::STRING_RETURN))], 200);
+    }
+
+    /**
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function printRegionAnswer($id)
+    {
+        $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+
+        if (!$apz) {
+            return response()->json(['message' => 'Заявка не найдена'], 404);
+        }
+
+        $state = $apz->stateHistory->first(function ($value) {
+            return $value->state_id == ApzState::REGION_DECLINED;
+        });
+
+        if (!$state) {
+            return response()->json(['message' => 'Произошла ошибка'], 500);
+        }
+
+        $template = 'pdf_templates.region_decline';
+
+        $content = view($template, ['apz' => $apz, 'state' => $state])->render();
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($content);
 

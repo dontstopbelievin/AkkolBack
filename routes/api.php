@@ -85,11 +85,20 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::post('save/{id}', 'Apz\ApzHeadController@save');
             Route::post('status/{id}', 'Apz\ApzHeadController@decision')->middleware('holiday');
         });
+
+        Route::group(['prefix' => '/answer_template', 'middleware' => 'role:region'], function () {
+            Route::get('/', 'Apz\ApzAnswerTemplateController@all');
+            Route::post('/create', 'Apz\ApzAnswerTemplateController@create');
+            Route::get('/detail/{id}', 'Apz\ApzAnswerTemplateController@show');
+            Route::post('/update/{id}', 'Apz\ApzAnswerTemplateController@update');
+            Route::post('/delete/{id}', 'Apz\ApzAnswerTemplateController@delete');
+        });
     });
 
     Route::group(['prefix' => '/print'], function () {
         Route::get('/apz/{id}', 'ApzPrintController@printApz');
         Route::get('/tc/{tc}/{id}', 'ApzPrintController@printTc');
+        Route::get('/region/{id}', 'ApzPrintController@printRegionAnswer');
     });
 
     Route::group(['prefix' => '/file'], function () {
