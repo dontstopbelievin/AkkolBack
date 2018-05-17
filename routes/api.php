@@ -150,6 +150,15 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::post('/create', 'Sketch\SketchCitizenController@create')->middleware('holiday');
         });
     });
+
+    Route::group(['prefix' => '/addPages', 'middleware' => 'role:admin'], function () {
+        Route::get('/', 'StaticPagesController@all');
+        Route::post('/insert', 'StaticPagesController@insert');
+        Route::get('/show/{id}', 'StaticPagesController@show');
+        Route::post('/update', 'StaticPagesController@update');
+        Route::get('/delete/{id}', 'StaticPagesController@delete');
+    });
+
 });
 
 Route::group(['prefix' => '/news' ],function() {
