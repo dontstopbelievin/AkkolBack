@@ -72,6 +72,12 @@ class ApzEngineerController extends Controller
             return response()->json(['message' => 'Заявка не найдена'], 404);
         }
 
+        if ($apz->commission) {
+            foreach ($apz->commission->users as $user) {
+                $user['days'] = holidayDiffInDays($user->created_at, null, 5);
+            }
+        }
+
         return response()->json($apz, 200);
     }
 

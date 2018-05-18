@@ -33,7 +33,7 @@ class ApzRegionController extends Controller
             return response()->json(['message' => 'У вас недостаточно прав для доступа к данной странице'], 403);
         }
 
-        $query = Apz::where(['region' => $region->name])->with(Apz::getApzBaseRelationList());
+        $query = Apz::where(['region' => $region->name])->whereRaw('DATE(DATE_ADD(created_at, INTERVAL 1 DAY)) < NOW()')->with(Apz::getApzBaseRelationList());
 
         if (Input::get('status')) {
             $query->whereHas('stateHistory', function($query) {
