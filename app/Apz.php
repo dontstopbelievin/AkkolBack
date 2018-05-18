@@ -118,6 +118,7 @@ class Apz extends Model
             'commission.apzWaterResponse.files',
             'apzHeadResponse.files',
             'stateHistory',
+            'stateHistory.state',
             'files'
         ];
     }
