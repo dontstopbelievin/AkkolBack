@@ -161,6 +161,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 });
 
+Route::group(['prefix' => '/getPage'],function (){
+   Route::get('/show/{id}', 'StaticPagesController@show');
+});
+
 Route::group(['prefix' => '/news' ],function() {
     Route::get( '/lastFresh', 'NewsController@lastFresh');
     Route::get( '/all', 'NewsController@allNews');

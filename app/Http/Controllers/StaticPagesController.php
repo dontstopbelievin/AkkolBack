@@ -2,20 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Apz;
-use App\ApzState;
-use App\ApzStateHistory;
-use App\ApzStatus;
-use App\Commission;
-use App\CommissionUser;
-use App\Http\Controllers\Controller;
-use App\News;
-use App\Role;
+
 use App\StaticPages;
-use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+
 
 class StaticPagesController extends Controller
 {
@@ -52,15 +42,17 @@ class StaticPagesController extends Controller
 
     public function show($id)
     {
-        $answer =  StaticPages::where('id',$id)->get();
+        $answer =  StaticPages::where('id',$id)
+            ->where('status',1)
+            ->first();
 
         if ( $answer ){
             return response()->json([
-                'page' => $answer->first()
+                'page' => $answer
             ], 200);
         }else{
             return response()->json([
-                'message' => 'Запись не была обновлена!'
+                'message' => 'Запись не была найдена!'
             ], 500);
         }
 
