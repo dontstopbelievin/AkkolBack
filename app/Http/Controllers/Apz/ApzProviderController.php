@@ -41,114 +41,90 @@ class ApzProviderController extends Controller
      */
     public function all($provider)
     {
-        /**
-         * TODO Переделать запросы. Временное решение
-         */
         switch ($provider) {
             case 'Water':
-                $process = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-                    $query->whereIn('state_id', [ApzState::WATER_APPROVED, ApzState::WATER_DECLINED]);
-                })->whereHas('commission.users', function($query) {
-                    $query->where('role_id', Role::WATER);
-                })->get();
-
-                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::WATER_APPROVED);
-                })->get();
-
-                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::WATER_DECLINED);
-                })->get();
-
+                $base_role = Role::WATER;
+                $approved_state = ApzState::WATER_APPROVED;
+                $declined_state = ApzState::WATER_DECLINED;
+                $response = 'apzWaterResponse';
+                $is_performer = Auth::user()->hasRole('PerformerWater');
                 break;
 
             case 'Gas':
-                $process = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-                    $query->whereIn('state_id', [ApzState::GAS_APPROVED, ApzState::GAS_DECLINED]);
-                })->whereHas('commission.users', function($query) {
-                    $query->where('role_id', Role::GAS);
-                })->get();
-
-                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::GAS_APPROVED);
-                })->get();
-
-                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::GAS_DECLINED);
-                })->get();
-
+                $base_role = Role::GAS;
+                $approved_state = ApzState::GAS_APPROVED;
+                $declined_state = ApzState::GAS_DECLINED;
+                $response = 'apzGasResponse';
+                $is_performer = Auth::user()->hasRole('PerformerGas');
                 break;
 
             case 'Electricity':
-                $process = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-                    $query->whereIn('state_id', [ApzState::ELECTRICITY_APPROVED, ApzState::ELECTRICITY_DECLINED]);
-                })->whereHas('commission.users', function($query) {
-                    $query->where('role_id', Role::ELECTRICITY);
-                })->get();
-
-                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::ELECTRICITY_APPROVED);
-                })->get();
-
-                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::ELECTRICITY_DECLINED);
-                })->get();
-
+                $base_role = Role::ELECTRICITY;
+                $approved_state = ApzState::ELECTRICITY_APPROVED;
+                $declined_state = ApzState::ELECTRICITY_DECLINED;
+                $response = 'apzElectricityResponse';
+                $is_performer = Auth::user()->hasRole('PerformerElectricity');
                 break;
 
             case 'Phone':
-                $process = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-                    $query->whereIn('state_id', [ApzState::PHONE_APPROVED, ApzState::PHONE_DECLINED]);
-                })->whereHas('commission.users', function($query) {
-                    $query->where('role_id', Role::PHONE);
-                })->get();
-
-                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::PHONE_APPROVED);
-                })->get();
-
-                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::PHONE_DECLINED);
-                })->get();
-
+                $base_role = Role::PHONE;
+                $approved_state = ApzState::PHONE_APPROVED;
+                $declined_state = ApzState::PHONE_DECLINED;
+                $response = 'apzPhoneResponse';
+                $is_performer = Auth::user()->hasRole('PerformerPhone');
                 break;
 
             case 'Heat':
-                $process = Apz::where([
-                    'status_id' => ApzStatus::PROVIDER
-                ])->with(Apz::getApzBaseRelationList())->whereDoesntHave('stateHistory', function($query) {
-                    $query->whereIn('state_id', [ApzState::HEAT_APPROVED, ApzState::HEAT_DECLINED]);
-                })->whereHas('commission.users', function($query) {
-                    $query->where('role_id', Role::HEAT);
-                })->get();
-
-                $accepted = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::HEAT_APPROVED);
-                })->get();
-
-                $declined = Apz::with(Apz::getApzBaseRelationList())->whereHas('stateHistory', function($query) {
-                    $query->where('state_id', ApzState::HEAT_DECLINED);
-                })->get();
-
+                $base_role = Role::HEAT;
+                $approved_state = ApzState::HEAT_APPROVED;
+                $declined_state = ApzState::HEAT_DECLINED;
+                $response = 'apzHeatResponse';
+                $is_performer = Auth::user()->hasRole('PerformerHeat');
                 break;
 
             default:
-                return response()->json(['message' => 'Провайдер не найден'], 404);
+                return response()->json(['message' => 'Служба не найдена'], 500);
         }
 
-        return response()->json([
-            'in_process' => $process,
-            'accepted' => $accepted,
-            'declined' => $declined
-        ], 200);
+        $apzs = Apz::where(['status_id' => ApzStatus::PROVIDER])
+            ->with(Apz::getApzBaseRelationList())
+            ->whereHas('commission.users', function($query) use ($base_role) {
+                $query->where('role_id', $base_role);
+            })->get();
+
+        $result = ['in_process' => [], 'awaiting'=> [], 'accepted' => [], 'declined' => []];
+
+        foreach ($apzs as $item) {
+            $accepted = $item->stateHistory->filter(function ($value) use ($approved_state) {
+                return $value->state_id == $approved_state;
+            });
+
+            $declined = $item->stateHistory->filter(function ($value) use ($declined_state) {
+                return $value->state_id == $declined_state;
+            });
+
+            if (sizeof($accepted) > 0) {
+                $result['accepted'][] = $item;
+                continue;
+            }
+
+            if (sizeof($declined) > 0) {
+                $result['declined'][] = $item;
+                continue;
+            }
+
+            if ($item->status_id == ApzStatus::PROVIDER && $item->commission->$response && $is_performer) {
+                $result['awaiting'][] = $item;
+                continue;
+            }
+
+            if ($item->status_id == ApzStatus::PROVIDER) {
+                $result['in_process'][] = $item;
+                continue;
+            }
+        }
+
+        return response()->json($result, 200);
     }
 
     /**

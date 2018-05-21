@@ -25,13 +25,9 @@ class ApzEngineerController extends Controller
     public function all()
     {
         $data = Apz::with(Apz::getApzBaseRelationList())->get();
-        $result = ['in_process' => [], 'accepted' => [], 'declined' => []];
+        $result = ['in_process' => [], 'awaiting'=> [], 'accepted' => [], 'declined' => []];
 
         foreach ($data as $item) {
-            $in_process = $item->stateHistory->filter(function ($value) {
-                return in_array($value->state_id, [ApzState::ENGINEER_APPROVED, ApzState::ENGINEER_DECLINED]);
-            });
-
             $accepted = $item->stateHistory->filter(function ($value) {
                 return $value->state_id == ApzState::ENGINEER_APPROVED;
             });
@@ -40,7 +36,12 @@ class ApzEngineerController extends Controller
                 return $value->state_id == ApzState::ENGINEER_DECLINED;
             });
 
-            if (sizeof($in_process) == 0 && in_array($item->status_id, [ApzStatus::ENGINEER, ApzStatus::PROVIDER])) {
+            if ($item->status_id == ApzStatus::PROVIDER) {
+                $result['awaiting'][] = $item;
+                continue;
+            }
+
+            if ($item->status_id == ApzStatus::ENGINEER) {
                 $result['in_process'][] = $item;
                 continue;
             }

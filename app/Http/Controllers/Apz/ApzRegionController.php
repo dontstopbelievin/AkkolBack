@@ -50,13 +50,9 @@ class ApzRegionController extends Controller
         }
 
         $data = $query->get();
-        $result = ['in_process' => [], 'accepted' => [], 'declined' => []];
+        $result = ['in_process' => [], 'awaiting'=> [], 'accepted' => [], 'declined' => []];
 
         foreach ($data as $item) {
-            $in_process = $item->stateHistory->filter(function ($value) {
-                return in_array($value->state_id, [ApzState::REGION_APPROVED, ApzState::REGION_DECLINED]);
-            });
-
             $accepted = $item->stateHistory->filter(function ($value) {
                 return $value->state_id == ApzState::REGION_APPROVED;
             });
@@ -65,7 +61,12 @@ class ApzRegionController extends Controller
                 return $value->state_id == ApzState::REGION_DECLINED;
             });
 
-            if (sizeof($in_process) == 0 || $item->status_id == ApzStatus::ARCHITECT) {
+            if (in_array($item->status_id, [ApzStatus::ENGINEER, ApzStatus::PROVIDER, ApzStatus::APZ_DEPARTMENT, ApzStatus::CHIEF_ARCHITECT])) {
+                $result['awaiting'][] = $item;
+                continue;
+            }
+
+            if ($item->status_id == ApzStatus::ARCHITECT) {
                 $result['in_process'][] = $item;
                 continue;
             }

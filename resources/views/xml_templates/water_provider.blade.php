@@ -40,63 +40,75 @@
             <status>{{ $apz->apzStatus->name }}</status>
             <created_at>{{ $apz->created_at }}</created_at>
 
-            <water>
-                <requirement>{{ $apz->apzWater->requirement }}</requirement>
-                <drinking>{{ $apz->apzWater->drinking }}</drinking>
-                <production>{{ $apz->apzWater->production }}</production>
-                <fire_fighting>{{ $apz->apzWater->fire_fighting }}</fire_fighting>
-                <sewage>{{ $apz->apzWater->sewage }}</sewage>
-                <status>{{ $apz->apzWater->status }}</status>
-            </water>
+            @if ($apz->apzWater)
+                <water>
+                    <requirement>{{ $apz->apzWater->requirement }}</requirement>
+                    <drinking>{{ $apz->apzWater->drinking }}</drinking>
+                    <production>{{ $apz->apzWater->production }}</production>
+                    <fire_fighting>{{ $apz->apzWater->fire_fighting }}</fire_fighting>
+                    <sewage>{{ $apz->apzWater->sewage }}</sewage>
+                    <status>{{ $apz->apzWater->status }}</status>
+                </water>
+            @endif
 
-            <electricity>
-                <required_power>{{ $apz->apzElectricity->required_power }}</required_power>
-                <phase>{{ $apz->apzElectricity->phase }}</phase>
-                <safety_category>{{ $apz->apzElectricity->safety_category }}</safety_category>
-                <max_load_device>{{ $apz->apzElectricity->max_load_device }}</max_load_device>
-                <max_load>{{ $apz->apzElectricity->max_load }}</max_load>
-                <allowed_power>{{ $apz->apzElectricity->allowed_power }}</allowed_power>
-                <status>{{ $apz->apzElectricity->status }}</status>
-            </electricity>
+            @if ($apz->apzElectricity)
+                <electricity>
+                    <required_power>{{ $apz->apzElectricity->required_power }}</required_power>
+                    <phase>{{ $apz->apzElectricity->phase }}</phase>
+                    <safety_category>{{ $apz->apzElectricity->safety_category }}</safety_category>
+                    <max_load_device>{{ $apz->apzElectricity->max_load_device }}</max_load_device>
+                    <max_load>{{ $apz->apzElectricity->max_load }}</max_load>
+                    <allowed_power>{{ $apz->apzElectricity->allowed_power }}</allowed_power>
+                    <status>{{ $apz->apzElectricity->status }}</status>
+                </electricity>
+            @endif
 
-            <gas>
-                <general>{{ $apz->apzGas->general }}</general>
-                <cooking>{{ $apz->apzGas->cooking }}</cooking>
-                <heat>{{ $apz->apzGas->heat }}</heat>
-                <ventilation>{{ $apz->apzGas->ventilation }}</ventilation>
-                <conditioner>{{ $apz->apzGas->conditioner }}</conditioner>
-                <water>{{ $apz->apzGas->water }}</water>
-                <status>{{ $apz->apzGas->status }}</status>
-            </gas>
+            @if ($apz->apzGas)
+                <gas>
+                    <general>{{ $apz->apzGas->general }}</general>
+                    <cooking>{{ $apz->apzGas->cooking }}</cooking>
+                    <heat>{{ $apz->apzGas->heat }}</heat>
+                    <ventilation>{{ $apz->apzGas->ventilation }}</ventilation>
+                    <conditioner>{{ $apz->apzGas->conditioner }}</conditioner>
+                    <water>{{ $apz->apzGas->water }}</water>
+                    <status>{{ $apz->apzGas->status }}</status>
+                </gas>
+            @endif
 
-            <heat>
-                <general>{{ $apz->apzHeat->general }}</general>
-                <main>{{ $apz->apzHeat->main }}</main>
-                <ventilation>{{ $apz->apzHeat->ventilation }}</ventilation>
-                <water>{{ $apz->apzHeat->water }}</water>
-                <water_max>{{ $apz->apzHeat->water_max }}</water_max>
-                <tech>{{ $apz->apzHeat->tech }}</tech>
-                <distribution>{{ $apz->apzHeat->distribution }}</distribution>
-                <saving>{{ $apz->apzHeat->saving }}</saving>
-                <status>{{ $apz->apzHeat->status }}</status>
-            </heat>
+            @if ($apz->apzHeat)
+                <heat>
+                    <general>{{ $apz->apzHeat->general }}</general>
+                    <main>{{ $apz->apzHeat->main }}</main>
+                    <ventilation>{{ $apz->apzHeat->ventilation }}</ventilation>
+                    <water>{{ $apz->apzHeat->water }}</water>
+                    <water_max>{{ $apz->apzHeat->water_max }}</water_max>
+                    <tech>{{ $apz->apzHeat->tech }}</tech>
+                    <distribution>{{ $apz->apzHeat->distribution }}</distribution>
+                    <saving>{{ $apz->apzHeat->saving }}</saving>
+                    <status>{{ $apz->apzHeat->status }}</status>
+                </heat>
+            @endif
 
-            <phone>
-                <service_num>{{ $apz->apzPhone->service_num }}</service_num>
-                <capacity>{{ $apz->apzPhone->capacity }}</capacity>
-                <sewage>{{ $apz->apzPhone->sewage }}</sewage>
-                <client_wishes>{{ $apz->apzPhone->client_wishes }}</client_wishes>
-                <status>{{ $apz->apzPhone->status }}</status>
-            </phone>
+            @if ($apz->apzPhone)
+                <phone>
+                    <service_num>{{ $apz->apzPhone->service_num }}</service_num>
+                    <capacity>{{ $apz->apzPhone->capacity }}</capacity>
+                    <sewage>{{ $apz->apzPhone->sewage }}</sewage>
+                    <client_wishes>{{ $apz->apzPhone->client_wishes }}</client_wishes>
+                    <status>{{ $apz->apzPhone->status }}</status>
+                </phone>
+            @endif
 
-            <sewage>
-                <amount>{{ $apz->apzSewage->amount }}</amount>
-                <feksal>{{ $apz->apzSewage->feksal }}</feksal>
-                <production>{{ $apz->apzSewage->production }}</production>
-                <to_city>{{ $apz->apzSewage->to_city }}</to_city>
-                <client_wishes>{{ $apz->apzSewage->client_wishes }}</client_wishes>
-                <status>{{ $apz->apzSewage->status }}</status>
-            </sewage>
+            @if ($apz->apzSewage)
+                <sewage>
+                    <amount>{{ $apz->apzSewage->amount }}</amount>
+                    <feksal>{{ $apz->apzSewage->feksal }}</feksal>
+                    <production>{{ $apz->apzSewage->production }}</production>
+                    <to_city>{{ $apz->apzSewage->to_city }}</to_city>
+                    <client_wishes>{{ $apz->apzSewage->client_wishes }}</client_wishes>
+                    <status>{{ $apz->apzSewage->status }}</status>
+                </sewage>
+            @endif
         </apz>
 
         <provider provider_id="{{ $apz->commission->apzWaterResponse->user->id }}" type="water">
