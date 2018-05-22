@@ -97,7 +97,7 @@ class ApzCitizenController extends Controller
                 $file->content_type = $value->getClientMimeType();
                 $file->size = $value->getClientSize();
                 $file->hash = $fileName;
-                $file->category_id = $key == 'PersonalIdFile' ? FileCategory::IDENTITY_CARD : ($key == 'ConfirmedTaskFile' ? FileCategory::APPROVED_ASSIGNMENT : ($key == 'TitleDocumentFile' ? FileCategory::TITLE_DOCUMENT : FileCategory::PAYMENT_PHONE));
+                $file->category_id = $key == 'PersonalIdFile' ? FileCategory::IDENTITY_CARD : ($key == 'ConfirmedTaskFile' ? FileCategory::APPROVED_ASSIGNMENT : ($key == 'TitleDocumentFile' ? FileCategory::TITLE_DOCUMENT : ($key == 'PaymentPhotoFile' ? FileCategory::PAYMENT_PHONE : FileCategory::SURVEY)));
                 $file->user_id = $userId;
                 $file->save();
 

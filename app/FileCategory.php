@@ -55,4 +55,5 @@ class FileCategory extends Model
     const XML_HEAD                  = 19; // XML Главный архитектор
     const XML_REGION                = 20; // XML регионального архитектора
     const PAYMENT_PHONE             = 21; // Скан оплаты телефонизации
+    const SURVEY                    = 22; // Топографическая съемка
 }
