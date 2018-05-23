@@ -56,4 +56,5 @@ class FileCategory extends Model
     const XML_REGION                = 20; // XML регионального архитектора
     const PAYMENT_PHONE             = 21; // Скан оплаты телефонизации
     const SURVEY                    = 22; // Топографическая съемка
+    const CUSTOM_TC                 = 23; // Пользовательское ТУ
 }

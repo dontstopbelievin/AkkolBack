@@ -212,7 +212,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = ($request["Response"] == "true") ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
                 $response->gen_water_req = $request['GenWaterReq'];
                 $response->drinking_water = $request['DrinkingWater'];
                 $response->prod_water = $request['ProdWater'];
@@ -230,43 +230,65 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
-                if ($request->file('file')) {
-                    $old_file = FileItem::where(['item_type_id' => FileItemType::WATER_RESPONSE, 'item_id' => $response->id])->first();
+                if ($request['Response'] == 'accept') {
+                    $custom_tc = FileItem::where(['item_type_id' => FileItemType::WATER_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                        $query->where('category_id', FileCategory::CUSTOM_TC);
+                    })->first();
 
-                    if ($old_file) {
-                        Storage::delete($old_file->file->url);
-
-                        $old_file->file->delete();
-                        $old_file->delete();
+                    if ($custom_tc) {
+                        Storage::delete($custom_tc->file->url);
+                        $custom_tc->file->delete();
+                        $custom_tc->delete();
                     }
+                }
 
-                    $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
-                    $file_ext = $request->file('file')->getClientOriginalExtension();
-                    $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+                if ($request->files) {
+                    foreach ($request->files as $key => $value) {
+                        if ($key == 'file') {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::WATER_RESPONSE, 'item_id' => $response->id])->get();
+                        } else {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::WATER_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                                $query->where('category_id', FileCategory::CUSTOM_TC);
+                            })->get();
+                        }
 
-                    Storage::put($file_url, file_get_contents($request->file('file')));
+                        if ($old_files) {
+                            foreach ($old_files as $old_file) {
+                                Storage::delete($old_file->file->url);
 
-                    if (!Storage::disk('local')->exists($file_url)) {
-                        return response()->json(['message' => 'Файл не сохранен'], 500);
+                                $old_file->file->delete();
+                                $old_file->delete();
+                            }
+                        }
+
+                        $file_name = md5($value->getClientOriginalName() . microtime());
+                        $file_ext = $value->getClientOriginalExtension();
+                        $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                        Storage::put($file_url, file_get_contents($value));
+
+                        if (!Storage::disk('local')->exists($file_url)) {
+                            return response()->json(['message' => 'Файл не сохранен'], 500);
+                        }
+
+                        $file = new File();
+                        $file->name = $value->getClientOriginalName();
+                        $file->url = $file_url;
+                        $file->extension = $value->getClientOriginalExtension();
+                        $file->content_type = $value->getClientMimeType();
+                        $file->size = $value->getClientSize();
+                        $file->hash = $file_name;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->user_id = Auth::user()->id;
+                        $file->save();
+
+                        $file_item = new FileItem();
+                        $file_item->file_id = $file->id;
+                        $file_item->item_id = $response->id;
+                        $file_item->item_type_id = FileItemType::WATER_RESPONSE;
+                        $file_item->save();
+                        $response->files;
                     }
-
-                    $file = new File();
-                    $file->name = $request->file('file')->getClientOriginalName();
-                    $file->url = $file_url;
-                    $file->extension = $request->file('file')->getClientOriginalExtension();
-                    $file->content_type = $request->file('file')->getClientMimeType();
-                    $file->size = $request->file('file')->getClientSize();
-                    $file->hash = $file_name;
-                    $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
-                    $file->user_id = Auth::user()->id;
-                    $file->save();
-
-                    $file_item = new FileItem();
-                    $file_item->file_id = $file->id;
-                    $file_item->item_id = $response->id;
-                    $file_item->item_type_id = FileItemType::WATER_RESPONSE;
-                    $file_item->save();
-                    $response->files;
                 }
 
                 return response()->json($response, 200);
@@ -282,7 +304,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = ($request["Response"] == "true") ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
                 $response->req_power = $request['ElecReqPower'];
                 $response->phase = $request['ElecPhase'];
                 $response->safe_category = $request['ElecSafeCategory'];
@@ -291,43 +313,65 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
-                if ($request->file('file')) {
-                    $old_file = FileItem::where(['item_type_id' => FileItemType::ELECTRICITY_RESPONSE, 'item_id' => $response->id])->first();
+                if ($request['Response'] == 'accept') {
+                    $custom_tc = FileItem::where(['item_type_id' => FileItemType::ELECTRICITY_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                        $query->where('category_id', FileCategory::CUSTOM_TC);
+                    })->first();
 
-                    if ($old_file) {
-                        Storage::delete($old_file->file->url);
-
-                        $old_file->file->delete();
-                        $old_file->delete();
+                    if ($custom_tc) {
+                        Storage::delete($custom_tc->file->url);
+                        $custom_tc->file->delete();
+                        $custom_tc->delete();
                     }
+                }
 
-                    $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
-                    $file_ext = $request->file('file')->getClientOriginalExtension();
-                    $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+                if ($request->files) {
+                    foreach ($request->files as $key => $value) {
+                        if ($key == 'file') {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::ELECTRICITY_RESPONSE, 'item_id' => $response->id])->get();
+                        } else {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::ELECTRICITY_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                                $query->where('category_id', FileCategory::CUSTOM_TC);
+                            })->get();
+                        }
 
-                    Storage::put($file_url, file_get_contents($request->file('file')));
+                        if ($old_files) {
+                            foreach ($old_files as $old_file) {
+                                Storage::delete($old_file->file->url);
 
-                    if (!Storage::disk('local')->exists($file_url)) {
-                        return response()->json(['message' => 'Файл не сохранен'], 500);
+                                $old_file->file->delete();
+                                $old_file->delete();
+                            }
+                        }
+
+                        $file_name = md5($value->getClientOriginalName() . microtime());
+                        $file_ext = $value->getClientOriginalExtension();
+                        $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                        Storage::put($file_url, file_get_contents($value));
+
+                        if (!Storage::disk('local')->exists($file_url)) {
+                            return response()->json(['message' => 'Файл не сохранен'], 500);
+                        }
+
+                        $file = new File();
+                        $file->name = $value->getClientOriginalName();
+                        $file->url = $file_url;
+                        $file->extension = $value->getClientOriginalExtension();
+                        $file->content_type = $value->getClientMimeType();
+                        $file->size = $value->getClientSize();
+                        $file->hash = $file_name;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->user_id = Auth::user()->id;
+                        $file->save();
+
+                        $file_item = new FileItem();
+                        $file_item->file_id = $file->id;
+                        $file_item->item_id = $response->id;
+                        $file_item->item_type_id = FileItemType::ELECTRICITY_RESPONSE;
+                        $file_item->save();
+                        $response->files;
                     }
-
-                    $file = new File();
-                    $file->name = $request->file('file')->getClientOriginalName();
-                    $file->url = $file_url;
-                    $file->extension = $request->file('file')->getClientOriginalExtension();
-                    $file->content_type = $request->file('file')->getClientMimeType();
-                    $file->size = $request->file('file')->getClientSize();
-                    $file->hash = $file_name;
-                    $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
-                    $file->user_id = Auth::user()->id;
-                    $file->save();
-
-                    $file_item = new FileItem();
-                    $file_item->file_id = $file->id;
-                    $file_item->item_id = $response->id;
-                    $file_item->item_type_id = FileItemType::ELECTRICITY_RESPONSE;
-                    $file_item->save();
-                    $response->files;
                 }
 
                 return response()->json($response, 200);
@@ -343,7 +387,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = ($request["Response"] == "true") ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
                 $response->connection_point = $request['ConnectionPoint'];
                 $response->gas_pipe_diameter = $request['GasPipeDiameter'];
                 $response->assumed_capacity = $request['AssumedCapacity'];
@@ -351,43 +395,65 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
-                if ($request->file('file')) {
-                    $old_file = FileItem::where(['item_type_id' => FileItemType::GAS_RESPONSE, 'item_id' => $response->id])->first();
+                if ($request['Response'] == 'accept') {
+                    $custom_tc = FileItem::where(['item_type_id' => FileItemType::GAS_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                        $query->where('category_id', FileCategory::CUSTOM_TC);
+                    })->first();
 
-                    if ($old_file) {
-                        Storage::delete($old_file->file->url);
-
-                        $old_file->file->delete();
-                        $old_file->delete();
+                    if ($custom_tc) {
+                        Storage::delete($custom_tc->file->url);
+                        $custom_tc->file->delete();
+                        $custom_tc->delete();
                     }
+                }
 
-                    $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
-                    $file_ext = $request->file('file')->getClientOriginalExtension();
-                    $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+                if ($request->files) {
+                    foreach ($request->files as $key => $value) {
+                        if ($key == 'file') {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::GAS_RESPONSE, 'item_id' => $response->id])->get();
+                        } else {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::GAS_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                                $query->where('category_id', FileCategory::CUSTOM_TC);
+                            })->get();
+                        }
 
-                    Storage::put($file_url, file_get_contents($request->file('file')));
+                        if ($old_files) {
+                            foreach ($old_files as $old_file) {
+                                Storage::delete($old_file->file->url);
 
-                    if (!Storage::disk('local')->exists($file_url)) {
-                        return response()->json(['message' => 'Файл не сохранен'], 500);
+                                $old_file->file->delete();
+                                $old_file->delete();
+                            }
+                        }
+
+                        $file_name = md5($value->getClientOriginalName() . microtime());
+                        $file_ext = $value->getClientOriginalExtension();
+                        $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                        Storage::put($file_url, file_get_contents($value));
+
+                        if (!Storage::disk('local')->exists($file_url)) {
+                            return response()->json(['message' => 'Файл не сохранен'], 500);
+                        }
+
+                        $file = new File();
+                        $file->name = $value->getClientOriginalName();
+                        $file->url = $file_url;
+                        $file->extension = $value->getClientOriginalExtension();
+                        $file->content_type = $value->getClientMimeType();
+                        $file->size = $value->getClientSize();
+                        $file->hash = $file_name;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->user_id = Auth::user()->id;
+                        $file->save();
+
+                        $file_item = new FileItem();
+                        $file_item->file_id = $file->id;
+                        $file_item->item_id = $response->id;
+                        $file_item->item_type_id = FileItemType::GAS_RESPONSE;
+                        $file_item->save();
+                        $response->files;
                     }
-
-                    $file = new File();
-                    $file->name = $request->file('file')->getClientOriginalName();
-                    $file->url = $file_url;
-                    $file->extension = $request->file('file')->getClientOriginalExtension();
-                    $file->content_type = $request->file('file')->getClientMimeType();
-                    $file->size = $request->file('file')->getClientSize();
-                    $file->hash = $file_name;
-                    $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
-                    $file->user_id = Auth::user()->id;
-                    $file->save();
-
-                    $file_item = new FileItem();
-                    $file_item->file_id = $file->id;
-                    $file_item->item_id = $response->id;
-                    $file_item->item_type_id = FileItemType::GAS_RESPONSE;
-                    $file_item->save();
-                    $response->files;
                 }
 
                 return response()->json($response, 200);
@@ -403,7 +469,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = ($request["Response"] == "true") ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
                 $response->resource = $request['HeatResource'];
                 $response->second_resource = $request['HeatSecondResource'];
                 $response->load_contract_num = $request['HeatLoadContractNum'];
@@ -462,43 +528,65 @@ class ApzProviderController extends Controller
                     }
                 }
 
-                if ($request->file('file')) {
-                    $old_file = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->first();
+                if ($request['Response'] == 'accept') {
+                    $custom_tc = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                        $query->where('category_id', FileCategory::CUSTOM_TC);
+                    })->first();
 
-                    if ($old_file) {
-                        Storage::delete($old_file->file->url);
-
-                        $old_file->file->delete();
-                        $old_file->delete();
+                    if ($custom_tc) {
+                        Storage::delete($custom_tc->file->url);
+                        $custom_tc->file->delete();
+                        $custom_tc->delete();
                     }
+                }
 
-                    $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
-                    $file_ext = $request->file('file')->getClientOriginalExtension();
-                    $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+                if ($request->files) {
+                    foreach ($request->files as $key => $value) {
+                        if ($key == 'file') {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->get();
+                        } else {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                                $query->where('category_id', FileCategory::CUSTOM_TC);
+                            })->get();
+                        }
 
-                    Storage::put($file_url, file_get_contents($request->file('file')));
+                        if ($old_files) {
+                            foreach ($old_files as $old_file) {
+                                Storage::delete($old_file->file->url);
 
-                    if (!Storage::disk('local')->exists($file_url)) {
-                        return response()->json(['message' => 'Файл не сохранен'], 500);
+                                $old_file->file->delete();
+                                $old_file->delete();
+                            }
+                        }
+
+                        $file_name = md5($value->getClientOriginalName() . microtime());
+                        $file_ext = $value->getClientOriginalExtension();
+                        $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                        Storage::put($file_url, file_get_contents($value));
+
+                        if (!Storage::disk('local')->exists($file_url)) {
+                            return response()->json(['message' => 'Файл не сохранен'], 500);
+                        }
+
+                        $file = new File();
+                        $file->name = $value->getClientOriginalName();
+                        $file->url = $file_url;
+                        $file->extension = $value->getClientOriginalExtension();
+                        $file->content_type = $value->getClientMimeType();
+                        $file->size = $value->getClientSize();
+                        $file->hash = $file_name;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->user_id = Auth::user()->id;
+                        $file->save();
+
+                        $file_item = new FileItem();
+                        $file_item->file_id = $file->id;
+                        $file_item->item_id = $response->id;
+                        $file_item->item_type_id = FileItemType::HEAT_RESPONSE;
+                        $file_item->save();
+                        $response->files;
                     }
-
-                    $file = new File();
-                    $file->name = $request->file('file')->getClientOriginalName();
-                    $file->url = $file_url;
-                    $file->extension = $request->file('file')->getClientOriginalExtension();
-                    $file->content_type = $request->file('file')->getClientMimeType();
-                    $file->size = $request->file('file')->getClientSize();
-                    $file->hash = $file_name;
-                    $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
-                    $file->user_id = Auth::user()->id;
-                    $file->save();
-
-                    $file_item = new FileItem();
-                    $file_item->file_id = $file->id;
-                    $file_item->item_id = $response->id;
-                    $file_item->item_type_id = FileItemType::HEAT_RESPONSE;
-                    $file_item->save();
-                    $response->files;
                 }
 
                 return response()->json($response, 200);
@@ -514,7 +602,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = ($request["Response"] == "true") ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
                 $response->service_num = $request['ResponseServiceNum'];
                 $response->capacity = $request['ResponseCapacity'];
                 $response->sewage = $request['ResponseSewage'];
@@ -522,43 +610,65 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
-                if ($request->file('file')) {
-                    $old_file = FileItem::where(['item_type_id' => FileItemType::PHONE_RESPONSE, 'item_id' => $response->id])->first();
+                if ($request['Response'] == 'accept') {
+                    $custom_tc = FileItem::where(['item_type_id' => FileItemType::PHONE_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                        $query->where('category_id', FileCategory::CUSTOM_TC);
+                    })->first();
 
-                    if ($old_file) {
-                        Storage::delete($old_file->file->url);
-
-                        $old_file->file->delete();
-                        $old_file->delete();
+                    if ($custom_tc) {
+                        Storage::delete($custom_tc->file->url);
+                        $custom_tc->file->delete();
+                        $custom_tc->delete();
                     }
+                }
 
-                    $file_name = md5($request->file('file')->getClientOriginalName() . microtime());
-                    $file_ext = $request->file('file')->getClientOriginalExtension();
-                    $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+                if ($request->files) {
+                    foreach ($request->files as $key => $value) {
+                        if ($key == 'file') {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::PHONE_RESPONSE, 'item_id' => $response->id])->get();
+                        } else {
+                            $old_files = FileItem::where(['item_type_id' => FileItemType::PHONE_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
+                                $query->where('category_id', FileCategory::CUSTOM_TC);
+                            })->get();
+                        }
 
-                    Storage::put($file_url, file_get_contents($request->file('file')));
+                        if ($old_files) {
+                            foreach ($old_files as $old_file) {
+                                Storage::delete($old_file->file->url);
 
-                    if (!Storage::disk('local')->exists($file_url)) {
-                        return response()->json(['message' => 'Файл не сохранен'], 500);
+                                $old_file->file->delete();
+                                $old_file->delete();
+                            }
+                        }
+
+                        $file_name = md5($value->getClientOriginalName() . microtime());
+                        $file_ext = $value->getClientOriginalExtension();
+                        $file_url = 'provider_responses/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+
+                        Storage::put($file_url, file_get_contents($value));
+
+                        if (!Storage::disk('local')->exists($file_url)) {
+                            return response()->json(['message' => 'Файл не сохранен'], 500);
+                        }
+
+                        $file = new File();
+                        $file->name = $value->getClientOriginalName();
+                        $file->url = $file_url;
+                        $file->extension = $value->getClientOriginalExtension();
+                        $file->content_type = $value->getClientMimeType();
+                        $file->size = $value->getClientSize();
+                        $file->hash = $file_name;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->user_id = Auth::user()->id;
+                        $file->save();
+
+                        $file_item = new FileItem();
+                        $file_item->file_id = $file->id;
+                        $file_item->item_id = $response->id;
+                        $file_item->item_type_id = FileItemType::PHONE_RESPONSE;
+                        $file_item->save();
+                        $response->files;
                     }
-
-                    $file = new File();
-                    $file->name = $request->file('file')->getClientOriginalName();
-                    $file->url = $file_url;
-                    $file->extension = $request->file('file')->getClientOriginalExtension();
-                    $file->content_type = $request->file('file')->getClientMimeType();
-                    $file->size = $request->file('file')->getClientSize();
-                    $file->hash = $file_name;
-                    $file->category_id = ($request["Response"] == "true") ? FileCategory::TECHNICAL_CONDITION : FileCategory::MOTIVATED_REJECT;
-                    $file->user_id = Auth::user()->id;
-                    $file->save();
-
-                    $file_item = new FileItem();
-                    $file_item->file_id = $file->id;
-                    $file_item->item_id = $response->id;
-                    $file_item->item_type_id = FileItemType::PHONE_RESPONSE;
-                    $file_item->save();
-                    $response->files;
                 }
 
                 return response()->json($response, 200);
