@@ -181,6 +181,15 @@ class ApzProviderController extends Controller
             return response()->json(['message' => 'Заявка не найдена'], 404);
         }
 
+        $response = $apz->commission && $apz->commission->apzWaterResponse ? $apz->commission->apzWaterResponse : false;
+
+        $apz['tc_text_water'] = $response && $response->tc_text_water ? $response->tc_text_water : view('pdf_templates.textarea.water', ['apz' => $apz])->render();
+        $apz['tc_text_water_requirements'] = $response && $response->tc_text_water_requirements ? $response->tc_text_water_requirements : view('pdf_templates.textarea.water_requirements', ['apz' => $apz])->render();
+        $apz['tc_text_water_general'] = $response && $response->tc_text_water_general ? $response->tc_text_water_general : view('pdf_templates.textarea.water_general', ['apz' => $apz])->render();
+        $apz['tc_text_sewage'] = $response && $response->tc_text_sewage ? $response->tc_text_sewage : view('pdf_templates.textarea.sewage', ['apz' => $apz])->render();
+        $apz['tc_text_sewage_requirements'] = $response && $response->tc_text_sewage_requirements ? $response->tc_text_sewage_requirements : view('pdf_templates.textarea.sewage_requirements', ['apz' => $apz])->render();
+        $apz['tc_text_sewage_general'] = $response && $response->tc_text_sewage_general ? $response->tc_text_sewage_general : view('pdf_templates.textarea.sewage_general', ['apz' => $apz])->render();
+
         return response()->json($apz, 200);
     }
 
@@ -227,6 +236,12 @@ class ApzProviderController extends Controller
                 $response->water_pressure = $request['WaterPressure'];
                 $response->water_customer_duties = $request['WaterCustomerDuties'];
                 $response->sewage_customer_duties = $request['SewageCustomerDuties'];
+                $response->tc_text_water = $request['TcTextWater'];
+                $response->tc_text_water_requirements = $request['TcTextWaterRequirements'];
+                $response->tc_text_water_general = $request['TcTextWaterGeneral'];
+                $response->tc_text_sewage = $request['TcTextSewage'];
+                $response->tc_text_sewage_requirements = $request['TcTextSewageRequirements'];
+                $response->tc_text_sewage_general = $request['TcTextSewageGeneral'];
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
