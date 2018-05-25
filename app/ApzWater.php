@@ -42,28 +42,31 @@ class ApzWater extends Model
     protected $table = "apz_waters";
 
     /**
-     * Add item in database
+     * Save item in database
      *
      * @param Request $request
      * @param integer $apz_id
      *
      * @return self
      */
-    public function addItem($request, $apz_id)
+    public function saveItem($request, $apz_id)
     {
-        $this->apz_id = $apz_id;
-        $this->requirement = $request->WaterRequirement;
-        $this->requirement_hour = $request->WaterRequirementHour;
-        $this->requirement_sec = $request->WaterRequirementSec;
-        $this->drinking = $request->WaterDrinking;
-        $this->drinking_hour = $request->WaterDrinkingHour;
-        $this->drinking_sec = $request->WaterDrinkingSec;
-        $this->production = $request->WaterProduction;
-        $this->production_hour = $request->WaterProductionHour;
-        $this->production_sec = $request->WaterProductionSec;
-        $this->fire_fighting = $request->WaterFireFighting;
-        $this->sewage = $request->WaterSewage;
-        $this->save();
+        $this->requirement = $request->waterRequirement;
+        $this->requirement_hour = $request->waterRequirementHour;
+        $this->requirement_sec = $request->waterRequirementSec;
+        $this->drinking = $request->waterDrinking;
+        $this->drinking_hour = $request->waterDrinkingHour;
+        $this->drinking_sec = $request->waterDrinkingSec;
+        $this->production = $request->waterProduction;
+        $this->production_hour = $request->waterProductionHour;
+        $this->production_sec = $request->waterProductionSec;
+        $this->fire_fighting = $request->waterFireFighting;
+        $this->sewage = $request->waterSewage;
+
+        if (array_filter($this->getAttributes())) {
+            $this->apz_id = $apz_id;
+            $this->save();
+        }
 
         return $this;
     }

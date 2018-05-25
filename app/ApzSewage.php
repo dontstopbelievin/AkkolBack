@@ -40,26 +40,29 @@ class ApzSewage extends Model
     protected $table = "apz_sewages";
 
     /**
-     * Add item in database
+     * Save item in database
      *
      * @param Request $request
      * @param integer $apz_id
      *
      * @return self
      */
-    public function addItem($request, $apz_id)
+    public function saveItem($request, $apz_id)
     {
-        $this->apz_id = $apz_id;
-        $this->amount = $request->SewageAmount;
-        $this->amount_hour = $request->SewageAmountHour;
-        $this->feksal = $request->SewageFeksal;
-        $this->feksal_hour = $request->SewageFeksalHour;
-        $this->production = $request->SewageProduction;
-        $this->production_hour = $request->SewageProductionHour;
-        $this->to_city = $request->SewageToCity;
-        $this->to_city_hour = $request->SewageToCityHour;
-        $this->client_wishes = $request->SewageClientWishes;
-        $this->save();
+        $this->amount = $request->sewageAmount;
+        $this->amount_hour = $request->sewageAmountHour;
+        $this->feksal = $request->sewageFeksal;
+        $this->feksal_hour = $request->sewageFeksalHour;
+        $this->production = $request->sewageProduction;
+        $this->production_hour = $request->sewageProductionHour;
+        $this->to_city = $request->sewageToCity;
+        $this->to_city_hour = $request->sewageToCityHour;
+        $this->client_wishes = $request->sewageClientWishes;
+
+        if (array_filter($this->getAttributes())) {
+            $this->apz_id = $apz_id;
+            $this->save();
+        }
 
         return $this;
     }
