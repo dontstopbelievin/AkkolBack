@@ -62,11 +62,8 @@ class ApzWater extends Model
         $this->production_sec = $request->waterProductionSec;
         $this->fire_fighting = $request->waterFireFighting;
         $this->sewage = $request->waterSewage;
-
-        if (array_filter($this->getAttributes())) {
-            $this->apz_id = $apz_id;
-            $this->save();
-        }
+        $this->apz_id = $apz_id;
+        $this->save();
 
         return $this;
     }

@@ -26,4 +26,5 @@ class ApzStatus extends Model
     const PROVIDER          = 5; // Провайдер
     const APZ_DEPARTMENT    = 6; // Отдел АПЗ
     const CHIEF_ARCHITECT   = 7; // Главный архитектор
+    const DRAFT             = 8; // Черновик
 }

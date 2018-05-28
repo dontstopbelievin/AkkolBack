@@ -52,6 +52,8 @@ class ApzHeat extends Model
         $this->saving = $request->heatSaving;
 
         if ($request->blocks && array_filter(array_slice($request->blocks, 0, 1)[0])) {
+            ApzHeatBlock::where(['apz_id' => $apz_id])->delete();
+
             foreach ($request->blocks as $item) {
                 $block = new ApzHeatBlock();
                 $block->apz_id = $apz_id;
@@ -63,10 +65,8 @@ class ApzHeat extends Model
             }
         }
 
-        if (array_filter($this->getAttributes())) {
-            $this->apz_id = $apz_id;
-            $this->save();
-        }
+        $this->apz_id = $apz_id;
+        $this->save();
 
         return $this;
     }

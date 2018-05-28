@@ -95,7 +95,7 @@ class Apz extends Model
         $this->project_address = $request->projectAddress;
         $this->project_address_coordinates = $request->projectAddressCoordinates;
         $this->cadastral_number = $request->cadastralNumber;
-        $this->status_id = ApzStatus::ARCHITECT;
+        $this->status_id = $request->publish == 'true' ? ApzStatus::ARCHITECT : ApzStatus::DRAFT;
         $this->save();
 
         return $this;

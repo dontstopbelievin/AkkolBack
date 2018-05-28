@@ -38,8 +38,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => '/citizen', 'middleware' => 'role:citizen'], function () {
             Route::get('/', 'Apz\ApzCitizenController@all');
             Route::get('/detail/{id}', 'Apz\ApzCitizenController@show');
-            Route::post('/create', 'Apz\ApzCitizenController@create')->middleware('holiday');
-            Route::post('/upload/{id}', 'Apz\ApzCitizenController@upload')->middleware('holiday');
+            Route::post('/save/{id?}', 'Apz\ApzCitizenController@save')->middleware('holiday');
             Route::post('/company_search', 'Apz\ApzCitizenController@companySearch');
         });
 

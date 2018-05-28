@@ -47,11 +47,8 @@ class ApzPhone extends Model
         $this->capacity = $request->phoneCapacity;
         $this->sewage = $request->phoneSewage;
         $this->client_wishes = $request->phoneClientWishes;
-
-        if (array_filter($this->getAttributes())) {
-            $this->apz_id = $apz_id;
-            $this->save();
-        }
+        $this->apz_id = $apz_id;
+        $this->save();
 
         return $this;
     }

@@ -53,11 +53,8 @@ class ApzGas extends Model
         $this->ventilation = $request->gasVentilation;
         $this->conditioner = $request->gasConditioner;
         $this->water = $request->gasWater;
-
-        if (array_filter($this->getAttributes())) {
-            $this->apz_id = $apz_id;
-            $this->save();
-        }
+        $this->apz_id = $apz_id;
+        $this->save();
 
         return $this;
     }

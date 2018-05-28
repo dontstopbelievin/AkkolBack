@@ -8,6 +8,7 @@ use App\ApzGas;
 use App\ApzHeat;
 use App\ApzPhone;
 use App\ApzSewage;
+use App\ApzStatus;
 use App\ApzWater;
 use App\Http\Controllers\Controller;
 use App\File;
@@ -23,46 +24,6 @@ use Illuminate\Support\Facades\Storage;
 class ApzCitizenController extends Controller
 {
     /**
-     * Create Apz
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-        DB::beginTransaction();
-
-        try {
-            $apz = new Apz();
-            $apz->saveItem($request);
-
-            $apz_water = new ApzWater();
-            $apz_water->saveItem($request, $apz->id);
-
-            $apz_electricity = new ApzElectricity();
-            $apz_electricity->saveItem($request, $apz->id);
-
-            $apz_gas = new ApzGas();
-            $apz_gas->saveItem($request, $apz->id);
-
-            $apz_heat = new ApzHeat();
-            $apz_heat->saveItem($request, $apz->id);
-
-            $apz_phone = new ApzPhone();
-            $apz_phone->saveItem($request, $apz->id);
-
-            $apz_sewage = new ApzSewage();
-            $apz_sewage->saveItem($request, $apz->id);
-
-            DB::commit();
-            return response()->json($apz, 200);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json(['message' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
      * Save Apz
      *
      * @param Request $request
@@ -71,52 +32,44 @@ class ApzCitizenController extends Controller
      */
     public function save(Request $request, $id = false)
     {
-        //$apz = $id ? Apz::with(Apz::getApzBaseRelationList())->where('id', $id)->firstOrFail() : new Apz();
-        //return response()->json(['message' => $apz], 500);
         DB::beginTransaction();
 
         try {
-            $apz = $id ? Apz::findOrFail($id) : new Apz();
-            $apz->saveItem($request);
+            $apz = $id ? Apz::where(['id' => $id, 'status_id' => ApzStatus::DRAFT])->firstOrFail() : new Apz();
 
-            $apz_water = $apz->apzWater ? $apz->apzWater : new ApzWater();
-            $apz_water->saveItem($request, $apz->id);
+            if ($apz->saveItem($request)) {
+                $apz_water = $apz->apzWater ? $apz->apzWater : new ApzWater();
+                $apz_water->saveItem($request, $apz->id);
 
-            $apz_electricity = $apz->apzElectricity ? $apz->apzElectricity : new ApzElectricity();
-            $apz_electricity->saveItem($request, $apz->id);
+                $apz_electricity = $apz->apzElectricity ? $apz->apzElectricity : new ApzElectricity();
+                $apz_electricity->saveItem($request, $apz->id);
 
-            $apz_gas = $apz->apzGas ? $apz->apzGas : new ApzGas();
-            $apz_gas->saveItem($request, $apz->id);
+                $apz_gas = $apz->apzGas ? $apz->apzGas : new ApzGas();
+                $apz_gas->saveItem($request, $apz->id);
 
-            $apz_heat = $apz->apzHeat ? $apz->apzHeat : new ApzHeat();
-            $apz_heat->saveItem($request, $apz->id);
+                $apz_heat = $apz->apzHeat ? $apz->apzHeat : new ApzHeat();
+                $apz_heat->saveItem($request, $apz->id);
 
-            $apz_phone = $apz->apzPhone ? $apz->apzPhone : new ApzPhone();
-            $apz_phone->saveItem($request, $apz->id);
+                $apz_phone = $apz->apzPhone ? $apz->apzPhone : new ApzPhone();
+                $apz_phone->saveItem($request, $apz->id);
 
-            $apz_sewage = $apz->apzSewage ? $apz->apzSewage : new ApzSewage();
-            $apz_sewage->saveItem($request, $apz->id);
+                $apz_sewage = $apz->apzSewage ? $apz->apzSewage : new ApzSewage();
+                $apz_sewage->saveItem($request, $apz->id);
+            }
 
             if (count($request->files) > 0) {
                 foreach ($request->files as $key => $value) {
                     $file_name = md5($value->getClientOriginalName() . microtime());
                     $file_ext = $value->getClientOriginalExtension();
-                    $category = $key == 'PersonalIdFile' ? FileCategory::IDENTITY_CARD : ($key == 'ConfirmedTaskFile' ? FileCategory::APPROVED_ASSIGNMENT : ($key == 'TitleDocumentFile' ? FileCategory::TITLE_DOCUMENT : FileCategory::PAYMENT_PHONE));
-
-                    // Перехода к следующей итерации если файл уже загружен
-                    $is_exist = File::where(['name' => $value->getClientOriginalName(), 'size' => $value->getClientSize(), 'category_id' => $category])->first();
-
-                    if ($is_exist) {
-                        var_dump($is_exist); die;
-                    }
+                    $category = $key == 'personalIdFile' ? FileCategory::IDENTITY_CARD : ($key == 'confirmedTaskFile' ? FileCategory::APPROVED_ASSIGNMENT : ($key == 'titleDocumentFile' ? FileCategory::TITLE_DOCUMENT : ($key == 'paymentPhotoFile' ? FileCategory::PAYMENT_PHONE : FileCategory::SURVEY)));
 
                     // Удаление старого файла
                     $old_file_list = $apz->files->filter(function ($value) use ($category) {
                         return $value->category_id == $category;
                     });
 
-                    if ($old_file_list) {
-                        $old_file = $old_file_list[0];
+                    if (sizeof($old_file_list) > 0) {
+                        $old_file = $old_file_list->first();
 
                         if (File::destroy($old_file->id)) {
                             Storage::delete($old_file->url);
@@ -152,60 +105,6 @@ class ApzCitizenController extends Controller
 
             DB::commit();
             return response()->json($apz, 200);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json(['message' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Upload files
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function upload(Request $request, $id)
-    {
-        $apz = Apz::where(['user_id' => Auth::user()->id, 'id' => $id])->first();
-        $userId = Auth::user()->id;
-
-        if (!$apz) {
-            return response()->json(['message' => 'Заявка не найдена'], 404);
-        }
-
-        DB::beginTransaction();
-
-        try {
-            foreach ($request->files as $key => $value) {
-                $fileName = md5($value->getClientOriginalName() . microtime());
-                $fileExt = $value->getClientOriginalExtension();
-                $fileUrl = 'usersfiles/' . $userId . '/apz/' . $apz->id . '/' . $fileName . '.' . $fileExt;
-
-                Storage::put($fileUrl, file_get_contents($value));
-
-                if (!Storage::disk('local')->exists($fileUrl)) {
-                    throw new \Exception('Файл не сохранен');
-                }
-
-                $file = new File();
-                $file->name = $value->getClientOriginalName();
-                $file->url = $fileUrl;
-                $file->extension = $value->getClientOriginalExtension();
-                $file->content_type = $value->getClientMimeType();
-                $file->size = $value->getClientSize();
-                $file->hash = $fileName;
-                $file->category_id = $key == 'PersonalIdFile' ? FileCategory::IDENTITY_CARD : ($key == 'ConfirmedTaskFile' ? FileCategory::APPROVED_ASSIGNMENT : ($key == 'TitleDocumentFile' ? FileCategory::TITLE_DOCUMENT : ($key == 'PaymentPhotoFile' ? FileCategory::PAYMENT_PHONE : FileCategory::SURVEY)));
-                $file->user_id = $userId;
-                $file->save();
-
-                $file_item = new FileItem();
-                $file_item->file_id = $file->id;
-                $file_item->item_id = $apz->id;
-                $file_item->item_type_id = FileItemType::APZ;
-                $file_item->save();
-            }
-
-            DB::commit();
-            return response()->json(['message' => 'Файлы успешно сохранены'], 200);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 500);

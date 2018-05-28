@@ -58,11 +58,8 @@ class ApzSewage extends Model
         $this->to_city = $request->sewageToCity;
         $this->to_city_hour = $request->sewageToCityHour;
         $this->client_wishes = $request->sewageClientWishes;
-
-        if (array_filter($this->getAttributes())) {
-            $this->apz_id = $apz_id;
-            $this->save();
-        }
+        $this->apz_id = $apz_id;
+        $this->save();
 
         return $this;
     }

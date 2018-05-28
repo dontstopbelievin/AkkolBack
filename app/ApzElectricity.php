@@ -53,11 +53,8 @@ class ApzElectricity extends Model
         $this->max_load_device = $request->electricMaxLoadDevice;
         $this->max_load = $request->electricMaxLoad;
         $this->allowed_power = $request->electricAllowedPower;
-
-        if (array_filter($this->getAttributes())) {
-            $this->apz_id = $apz_id;
-            $this->save();
-        }
+        $this->apz_id = $apz_id;
+        $this->save();
 
         return $this;
     }
