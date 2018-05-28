@@ -159,6 +159,27 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/delete/{id}', 'StaticPagesController@delete');
     });
 
+    Route::group(['prefix' => '/menu', 'middleware' => 'role:admin'], function () {
+        Route::get('/', 'MenuItemController@all');
+        Route::get('/categories', 'MenuItemController@getCategories');
+        Route::post('/category/insert', 'MenuItemController@insertCategories');
+        Route::get('/category/delete/{id}', 'MenuItemController@deleteCategories');
+        Route::get('/pages', 'MenuItemController@getPages');
+        Route::get('/roles', 'MenuItemController@getRoles');
+        Route::post('/insert', 'MenuItemController@insert');
+        Route::get('/show/{id}', 'MenuItemController@show');
+        Route::post('/update/{id}', 'MenuItemController@update');
+        Route::get('/delete/{id}', 'MenuItemController@delete');
+    });
+
+
+});
+
+Route::group(['prefix' => '/menu'], function () {
+    Route::get('/', 'MenuItemController@all');
+    Route::get('/categories', 'MenuItemController@getCategories');
+    Route::get('/roles', 'MenuItemController@getRoles');
+    Route::get('/items/{name}', 'MenuItemController@getItems');
 });
 
 Route::group(['prefix' => '/getPage'],function (){
