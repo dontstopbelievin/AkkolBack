@@ -32,6 +32,14 @@ class ApzCitizenController extends Controller
      */
     public function save(Request $request, $id = false)
     {
+        $files = [
+            FileCategory::IDENTITY_CARD => $request->personalIdFile,
+            FileCategory::APPROVED_ASSIGNMENT => $request->confirmedTaskFile,
+            FileCategory::TITLE_DOCUMENT => $request->titleDocumentFile,
+            FileCategory::PAYMENT_PHONE => $request->paymentPhotoFile,
+            FileCategory::SURVEY => $request->survey
+        ];
+
         DB::beginTransaction();
 
         try {
@@ -57,46 +65,46 @@ class ApzCitizenController extends Controller
                 $apz_sewage->saveItem($request, $apz->id);
             }
 
-            if (count($request->files) > 0) {
-                foreach ($request->files as $key => $value) {
-                    $file_name = md5($value->getClientOriginalName() . microtime());
-                    $file_ext = $value->getClientOriginalExtension();
-                    $category = $key == 'personalIdFile' ? FileCategory::IDENTITY_CARD : ($key == 'confirmedTaskFile' ? FileCategory::APPROVED_ASSIGNMENT : ($key == 'titleDocumentFile' ? FileCategory::TITLE_DOCUMENT : ($key == 'paymentPhotoFile' ? FileCategory::PAYMENT_PHONE : FileCategory::SURVEY)));
+            foreach ($files as $key => $value) {
+                switch ($key) {
+                    case FileCategory::IDENTITY_CARD:
+                        $file_id = isset($request->personalIdFile['id']) ? $request->personalIdFile['id'] : null;
+                        break;
 
-                    // Удаление старого файла
-                    $old_file_list = $apz->files->filter(function ($value) use ($category) {
-                        return $value->category_id == $category;
-                    });
+                    case FileCategory::APPROVED_ASSIGNMENT:
+                        $file_id = isset($request->confirmedTaskFile['id']) ? $request->confirmedTaskFile['id'] : null;
+                        break;
 
-                    if (sizeof($old_file_list) > 0) {
-                        $old_file = $old_file_list->first();
+                    case FileCategory::TITLE_DOCUMENT:
+                        $file_id = isset($request->titleDocumentFile['id']) ? $request->titleDocumentFile['id'] : null;
+                        break;
 
-                        if (File::destroy($old_file->id)) {
-                            Storage::delete($old_file->url);
-                        }
-                    }
+                    case FileCategory::PAYMENT_PHONE:
+                        $file_id = isset($request->paymentPhotoFile['id']) ? $request->paymentPhotoFile['id'] : null;
+                        break;
 
-                    $fileUrl = 'usersfiles/' . Auth::user()->id . '/apz/' . $apz->id . '/' . $file_name . '.' . $file_ext;
+                    case FileCategory::SURVEY:
+                        $file_id = isset($request->survey['id']) ? $request->survey['id'] : null;
+                        break;
 
-                    Storage::put($fileUrl, file_get_contents($value));
+                    default:
+                        throw new \Exception('Категория не найдена');
+                }
 
-                    if (!Storage::disk('local')->exists($fileUrl)) {
-                        throw new \Exception('Файл не сохранен');
-                    }
+                $file_id = (int)$file_id;
 
-                    $file = new File();
-                    $file->name = $value->getClientOriginalName();
-                    $file->url = $fileUrl;
-                    $file->extension = $value->getClientOriginalExtension();
-                    $file->content_type = $value->getClientMimeType();
-                    $file->size = $value->getClientSize();
-                    $file->hash = $file_name;
-                    $file->category_id = $category;
-                    $file->user_id = Auth::user()->id;
-                    $file->save();
+                $old_item = FileItem::where(['item_id' => $apz->id, 'item_type_id' => FileItemType::APZ])
+                    ->whereHas('file', function($query) use ($key) {
+                        $query->where(['category_id' => $key]);
+                    })->first();
 
+                if (($old_item && $file_id && ($old_item->file->id != $file_id)) || !$file_id && $old_item) {
+                    $old_item->delete();
+                }
+
+                if (($file_id && !$old_item) || ($file_id && ($old_item->file->id != $file_id))) {
                     $file_item = new FileItem();
-                    $file_item->file_id = $file->id;
+                    $file_item->file_id = $file_id;
                     $file_item->item_id = $apz->id;
                     $file_item->item_type_id = FileItemType::APZ;
                     $file_item->save();
