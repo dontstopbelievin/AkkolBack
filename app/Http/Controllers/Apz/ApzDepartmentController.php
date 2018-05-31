@@ -21,43 +21,33 @@ class ApzDepartmentController extends Controller
     /**
      * Show apz list for region
      *
+     * @param string $status
      * @return \Illuminate\Http\Response
      */
-    public function all()
+    public function all($status)
     {
-        $data = Apz::with(Apz::getApzBaseRelationList())->get();
-        $result = ['in_process' => [], 'accepted' => [], 'declined' => []];
+        $data = Apz::with(Apz::getApzBaseRelationList());
 
-        foreach ($data as $item) {
-            $in_process = $item->stateHistory->filter(function ($value) {
-                return in_array($value->state_id, [ApzState::APZ_APPROVED, ApzState::APZ_DECLINED]);
-            });
+        switch ($status) {
+            case 'accepted':
+                $data->whereHas('stateHistory', function ($query) {
+                    $query->where('state_id', ApzState::APZ_APPROVED);
+                });
+                break;
 
-            $accepted = $item->stateHistory->filter(function ($value) {
-                return $value->state_id == ApzState::APZ_APPROVED;
-            });
+            case 'declined':
+                $data->whereHas('stateHistory', function ($query) {
+                    $query->where('state_id', ApzState::APZ_DECLINED);
+                });
+                break;
 
-            $declined = $item->stateHistory->filter(function ($value) {
-                return $value->state_id == ApzState::APZ_DECLINED;
-            });
-
-            if (sizeof($in_process) == 0 || $item->status_id == ApzStatus::APZ_DEPARTMENT) {
-                $result['in_process'][] = $item;
-                continue;
-            }
-
-            if (sizeof($accepted) > 0) {
-                $result['accepted'][] = $item;
-                continue;
-            }
-
-            if (sizeof($declined) > 0) {
-                $result['declined'][] = $item;
-                continue;
-            }
+            case 'active':
+            default:
+                $data->where('status_id', ApzStatus::APZ_DEPARTMENT);
+                break;
         }
 
-        return response()->json($result, 200);
+        return response()->json($data->orderBy('created_at', 'desc')->paginate(20), 200);
     }
 
     /**

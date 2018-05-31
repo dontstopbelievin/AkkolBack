@@ -36,14 +36,14 @@ Route::get('get_email/{email}/{token}', 'GetEmailController@getEmail');
 Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => '/apz'], function () {
         Route::group(['prefix' => '/citizen', 'middleware' => 'role:citizen'], function () {
-            Route::get('/', 'Apz\ApzCitizenController@all');
+            Route::get('/all/{status}', 'Apz\ApzCitizenController@all');
             Route::get('/detail/{id}', 'Apz\ApzCitizenController@show');
             Route::post('/save/{id?}', 'Apz\ApzCitizenController@save')->middleware('holiday');
             Route::post('/company_search', 'Apz\ApzCitizenController@companySearch');
         });
 
         Route::group(['prefix' => '/region', 'middleware' => 'role:region'], function () {
-            Route::get('/', 'Apz\ApzRegionController@all');
+            Route::get('/all/{status}', 'Apz\ApzRegionController@all');
             Route::get('/detail/{id}', 'Apz\ApzRegionController@show');
             Route::post('/status/{id}', 'Apz\ApzRegionController@decision')->middleware('holiday');
             Route::get('/get_xml/{id}', 'Apz\ApzRegionController@generateXml');
@@ -51,7 +51,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         });
 
         Route::group(['prefix' => '/engineer', 'middleware' => 'role:engineer'], function () {
-            Route::get('/', 'Apz\ApzEngineerController@all');
+            Route::get('/all/{status}', 'Apz\ApzEngineerController@all');
             Route::get('/detail/{id}', 'Apz\ApzEngineerController@show');
             Route::get('/get_commission/{id}', 'Apz\ApzEngineerController@getCommission');
             Route::post('/create_commission/{id}', 'Apz\ApzEngineerController@createCommission')->middleware('holiday');
@@ -61,7 +61,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => '/provider', 'middleware' => 'role:provider'], function () {
             Route::get('/get_xml/{provider}/{id}', 'Apz\ApzProviderController@generateXml');
             Route::post('/save_xml/{provider}/{id}', 'Apz\ApzProviderController@saveXml')->middleware('holiday');
-            Route::get('/{provider}', 'Apz\ApzProviderController@all');
+            Route::get('/{provider}/all/{status}', 'Apz\ApzProviderController@all');
             Route::get('/{provider}/{id}', 'Apz\ApzProviderController@show');
             Route::post('/{provider}/{id}/save', 'Apz\ApzProviderController@save');
             Route::get('/{provider}/{id}/update', 'Apz\ApzProviderController@update')->middleware('holiday');
@@ -71,7 +71,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => '/apz_department', 'middleware' => 'role:apzdepartment'], function () {
             Route::get('/get_xml/{id}', 'Apz\ApzDepartmentController@generateXml');
             Route::post('/save_xml/{id}', 'Apz\ApzDepartmentController@saveXml')->middleware('holiday');
-            Route::get('/', 'Apz\ApzDepartmentController@all');
+            Route::get('/all/{status}', 'Apz\ApzDepartmentController@all');
             Route::get('/detail/{id}', 'Apz\ApzDepartmentController@show');
             Route::post('/status/{id}', 'Apz\ApzDepartmentController@decision')->middleware('holiday');
         });
@@ -79,14 +79,14 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::group(['prefix' => '/head', 'middleware' => 'role:head'], function () {
             Route::get('/get_xml/{id}', 'Apz\ApzHeadController@generateXml');
             Route::post('/save_xml/{id}', 'Apz\ApzHeadController@saveXml')->middleware('holiday');
-            Route::get('/', 'Apz\ApzHeadController@all');
+            Route::get('/all/{status}', 'Apz\ApzHeadController@all');
             Route::get('/detail/{id}', 'Apz\ApzHeadController@show');
             Route::post('save/{id}', 'Apz\ApzHeadController@save');
             Route::post('status/{id}', 'Apz\ApzHeadController@decision')->middleware('holiday');
         });
 
         Route::group(['prefix' => '/answer_template', 'middleware' => 'role:region'], function () {
-            Route::get('/', 'Apz\ApzAnswerTemplateController@all');
+            Route::get('/all', 'Apz\ApzAnswerTemplateController@all');
             Route::post('/create', 'Apz\ApzAnswerTemplateController@create');
             Route::get('/detail/{id}', 'Apz\ApzAnswerTemplateController@show');
             Route::post('/update/{id}', 'Apz\ApzAnswerTemplateController@update');

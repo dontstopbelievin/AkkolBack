@@ -36,17 +36,18 @@ class ApzProviderController extends Controller
     /**
      * Show apz list for region
      *
+     * @param string $status
      * @param string $provider
      * @return \Illuminate\Http\Response
      */
-    public function all($provider)
+    public function all($provider, $status)
     {
         switch ($provider) {
             case 'Water':
                 $base_role = Role::WATER;
                 $approved_state = ApzState::WATER_APPROVED;
                 $declined_state = ApzState::WATER_DECLINED;
-                $response = 'apzWaterResponse';
+                $response = 'commission.apzWaterResponse';
                 $is_performer = Auth::user()->hasRole('PerformerWater');
                 break;
 
@@ -54,7 +55,7 @@ class ApzProviderController extends Controller
                 $base_role = Role::GAS;
                 $approved_state = ApzState::GAS_APPROVED;
                 $declined_state = ApzState::GAS_DECLINED;
-                $response = 'apzGasResponse';
+                $response = 'commission.apzGasResponse';
                 $is_performer = Auth::user()->hasRole('PerformerGas');
                 break;
 
@@ -62,7 +63,7 @@ class ApzProviderController extends Controller
                 $base_role = Role::ELECTRICITY;
                 $approved_state = ApzState::ELECTRICITY_APPROVED;
                 $declined_state = ApzState::ELECTRICITY_DECLINED;
-                $response = 'apzElectricityResponse';
+                $response = 'commission.apzElectricityResponse';
                 $is_performer = Auth::user()->hasRole('PerformerElectricity');
                 break;
 
@@ -70,7 +71,7 @@ class ApzProviderController extends Controller
                 $base_role = Role::PHONE;
                 $approved_state = ApzState::PHONE_APPROVED;
                 $declined_state = ApzState::PHONE_DECLINED;
-                $response = 'apzPhoneResponse';
+                $response = 'commission.apzPhoneResponse';
                 $is_performer = Auth::user()->hasRole('PerformerPhone');
                 break;
 
@@ -78,7 +79,7 @@ class ApzProviderController extends Controller
                 $base_role = Role::HEAT;
                 $approved_state = ApzState::HEAT_APPROVED;
                 $declined_state = ApzState::HEAT_DECLINED;
-                $response = 'apzHeatResponse';
+                $response = 'commission.apzHeatResponse';
                 $is_performer = Auth::user()->hasRole('PerformerHeat');
                 break;
 
@@ -86,45 +87,45 @@ class ApzProviderController extends Controller
                 return response()->json(['message' => 'Служба не найдена'], 500);
         }
 
-        $apzs = Apz::where(['status_id' => ApzStatus::PROVIDER])
-            ->with(Apz::getApzBaseRelationList())
+        $apzs = Apz::with(Apz::getApzBaseRelationList())
             ->whereHas('commission.users', function($query) use ($base_role) {
                 $query->where('role_id', $base_role);
-            })->get();
-
-        $result = ['in_process' => [], 'awaiting'=> [], 'accepted' => [], 'declined' => []];
-
-        foreach ($apzs as $item) {
-            $accepted = $item->stateHistory->filter(function ($value) use ($approved_state) {
-                return $value->state_id == $approved_state;
             });
 
-            $declined = $item->stateHistory->filter(function ($value) use ($declined_state) {
-                return $value->state_id == $declined_state;
-            });
+        switch ($status) {
+            case 'awaiting':
+                $apzs->where(['status_id' => ApzStatus::PROVIDER]);
 
-            if (sizeof($accepted) > 0) {
-                $result['accepted'][] = $item;
-                continue;
-            }
+                if ($is_performer) {
+                    $apzs->has($response);
+                }
+                break;
 
-            if (sizeof($declined) > 0) {
-                $result['declined'][] = $item;
-                continue;
-            }
+            case 'accepted':
+                $apzs->whereHas('stateHistory', function ($query) use ($approved_state) {
+                    $query->where('state_id', $approved_state);
+                });
+                break;
 
-            if ($item->status_id == ApzStatus::PROVIDER && $item->commission->$response && $is_performer) {
-                $result['awaiting'][] = $item;
-                continue;
-            }
+            case 'declined':
+                $apzs->whereHas('stateHistory', function ($query) use ($declined_state) {
+                    $query->where('state_id', $declined_state);
+                });
+                break;
 
-            if ($item->status_id == ApzStatus::PROVIDER) {
-                $result['in_process'][] = $item;
-                continue;
-            }
+            case 'active':
+            default:
+                $apzs->where('status_id', ApzStatus::PROVIDER);
+
+                if ($is_performer) {
+                    $apzs->doesntHave($response);
+                } else {
+                    $apzs->has($response);
+                }
+                break;
         }
 
-        return response()->json($result, 200);
+        return response()->json($apzs->orderBy('created_at', 'desc')->paginate(20), 200);
     }
 
     /**

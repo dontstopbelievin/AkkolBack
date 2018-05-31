@@ -20,44 +20,37 @@ class ApzEngineerController extends Controller
     /**
      * Show apz list for region
      *
+     * @param string $status
      * @return \Illuminate\Http\Response
      */
-    public function all()
+    public function all($status)
     {
-        $data = Apz::with(Apz::getApzBaseRelationList())->get();
-        $result = ['in_process' => [], 'awaiting'=> [], 'accepted' => [], 'declined' => []];
+        $data = Apz::with(Apz::getApzBaseRelationList());
 
-        foreach ($data as $item) {
-            $accepted = $item->stateHistory->filter(function ($value) {
-                return $value->state_id == ApzState::ENGINEER_APPROVED;
-            });
+        switch ($status) {
+            case 'awaiting':
+                $data->where('status_id', ApzStatus::PROVIDER);
+                break;
 
-            $declined = $item->stateHistory->filter(function ($value) {
-                return $value->state_id == ApzState::ENGINEER_DECLINED;
-            });
+            case 'accepted':
+                $data->whereHas('stateHistory', function ($query) {
+                    $query->where('state_id', ApzState::ENGINEER_APPROVED);
+                });
+                break;
 
-            if ($item->status_id == ApzStatus::PROVIDER) {
-                $result['awaiting'][] = $item;
-                continue;
-            }
+            case 'declined':
+                $data->whereHas('stateHistory', function ($query) {
+                    $query->where('state_id', ApzState::ENGINEER_DECLINED);
+                });
+                break;
 
-            if ($item->status_id == ApzStatus::ENGINEER) {
-                $result['in_process'][] = $item;
-                continue;
-            }
-
-            if (sizeof($accepted) > 0) {
-                $result['accepted'][] = $item;
-                continue;
-            }
-
-            if (sizeof($declined) > 0) {
-                $result['declined'][] = $item;
-                continue;
-            }
+            case 'active':
+            default:
+                $data->where('status_id', ApzStatus::ENGINEER);
+                break;
         }
 
-        return response()->json($result, 200);
+        return response()->json($data->orderBy('created_at', 'desc')->paginate(20), 200);
     }
 
     /**

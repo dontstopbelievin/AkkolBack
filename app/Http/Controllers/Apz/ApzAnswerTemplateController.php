@@ -15,7 +15,7 @@ class ApzAnswerTemplateController extends Controller
      */
     public function all()
     {
-        $templates = ApzAnswerTemplate::where(['user_id' => \Auth::user()->id])->get();
+        $templates = ApzAnswerTemplate::where(['user_id' => \Auth::user()->id])->orderBy('created_at', 'desc')->paginate(20);
 
         return response()->json($templates, 200);
     }

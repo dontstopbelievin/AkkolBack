@@ -24,9 +24,10 @@ class ApzHeadController extends Controller
     /**
      * Show apz list for region
      *
+     * @param string $status
      * @return \Illuminate\Http\Response
      */
-    public function all()
+    public function all($status)
     {
         $query = Apz::with(Apz::getApzBaseRelationList());
 
@@ -44,39 +45,26 @@ class ApzHeadController extends Controller
             $query->where('created_at', '<', Input::get('end_date'));
         }
 
-        $data = $query->get();
-        $result = ['in_process' => [], 'accepted' => [], 'declined' => []];
+        switch ($status) {
+            case 'accepted':
+                $query->whereHas('stateHistory', function ($query) {
+                    $query->where('state_id', ApzState::HEAD_APPROVED);
+                });
+                break;
 
-        foreach ($data as $item) {
-            $in_process = $item->stateHistory->filter(function ($value) {
-                return in_array($value->state_id, [ApzState::HEAD_APPROVED, ApzState::HEAD_DECLINED]);
-            });
+            case 'declined':
+                $query->whereHas('stateHistory', function ($query) {
+                    $query->where('state_id', ApzState::HEAD_DECLINED);
+                });
+                break;
 
-            $accepted = $item->stateHistory->filter(function ($value) {
-                return $value->state_id == ApzState::HEAD_APPROVED;
-            });
-
-            $declined = $item->stateHistory->filter(function ($value) {
-                return $value->state_id == ApzState::HEAD_DECLINED;
-            });
-
-            if (sizeof($in_process) == 0 && $item->status_id == ApzStatus::CHIEF_ARCHITECT) {
-                $result['in_process'][] = $item;
-                continue;
-            }
-
-            if (sizeof($accepted) > 0) {
-                $result['accepted'][] = $item;
-                continue;
-            }
-
-            if (sizeof($declined) > 0) {
-                $result['declined'][] = $item;
-                continue;
-            }
+            case 'active':
+            default:
+                $query->where('status_id', ApzStatus::CHIEF_ARCHITECT);
+                break;
         }
 
-        return response()->json($result, 200);
+        return response()->json($query->orderBy('created_at', 'desc')->paginate(20), 200);
     }
 
     /**

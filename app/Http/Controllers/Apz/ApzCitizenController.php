@@ -122,13 +122,33 @@ class ApzCitizenController extends Controller
     /**
      * Show apz list for user
      *
+     * @param string $status
      * @return \Illuminate\Http\Response
      */
-    public function all()
+    public function all($status)
     {
-        $apzs = Apz::where('user_id', Auth::user()->id)->get();
+        $apzs = Apz::where('user_id', Auth::user()->id);
 
-        return response()->json($apzs, 200);
+        switch ($status) {
+            case 'draft':
+                $apzs->where('status_id', ApzStatus::DRAFT);
+                break;
+
+            case 'accepted':
+                $apzs->where('status_id', ApzStatus::ACCEPTED);
+                break;
+
+            case 'declined':
+                $apzs->where('status_id', ApzStatus::DECLINED);
+                break;
+
+            case 'active':
+            default:
+                $apzs->whereNotIn('status_id', [ApzStatus::ACCEPTED, ApzStatus::DECLINED, ApzStatus::DRAFT]);
+                break;
+        }
+
+        return response()->json($apzs->orderBy('created_at', 'desc')->paginate(20), 200);
     }
 
     /**

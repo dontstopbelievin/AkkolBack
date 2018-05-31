@@ -23,9 +23,10 @@ class ApzRegionController extends Controller
     /**
      * Show apz list for region
      *
+     * @param string $status
      * @return \Illuminate\Http\Response
      */
-    public function all()
+    public function all($status)
     {
         $region = Auth::user()->roles()->where('level', 3)->first();
 
@@ -49,40 +50,30 @@ class ApzRegionController extends Controller
             $query->where('created_at', '<', Input::get('end_date'));
         }
 
-        $data = $query->get();
-        $result = ['in_process' => [], 'awaiting'=> [], 'accepted' => [], 'declined' => []];
+        switch ($status) {
+            case 'awaiting':
+                $query->whereIn('status_id', [ApzStatus::ENGINEER, ApzStatus::PROVIDER, ApzStatus::APZ_DEPARTMENT, ApzStatus::CHIEF_ARCHITECT]);
+                break;
 
-        foreach ($data as $item) {
-            $accepted = $item->stateHistory->filter(function ($value) {
-                return $value->state_id == ApzState::REGION_APPROVED;
-            });
+            case 'accepted':
+                $query->whereHas('stateHistory', function ($query) {
+                    $query->where('state_id', ApzState::REGION_APPROVED);
+                });
+                break;
 
-            $declined = $item->stateHistory->filter(function ($value) {
-                return $value->state_id == ApzState::REGION_DECLINED;
-            });
+            case 'declined':
+                $query->whereHas('stateHistory', function ($query) {
+                    $query->where('state_id', ApzState::REGION_DECLINED);
+                });
+                break;
 
-            if (in_array($item->status_id, [ApzStatus::ENGINEER, ApzStatus::PROVIDER, ApzStatus::APZ_DEPARTMENT, ApzStatus::CHIEF_ARCHITECT])) {
-                $result['awaiting'][] = $item;
-                continue;
-            }
-
-            if ($item->status_id == ApzStatus::ARCHITECT) {
-                $result['in_process'][] = $item;
-                continue;
-            }
-
-            if (sizeof($accepted) > 0) {
-                $result['accepted'][] = $item;
-                continue;
-            }
-
-            if (sizeof($declined) > 0) {
-                $result['declined'][] = $item;
-                continue;
-            }
+            case 'active':
+            default:
+                $query->where('status_id', ApzStatus::ARCHITECT);
+                break;
         }
 
-        return response()->json($result, 200);
+        return response()->json($query->orderBy('created_at', 'desc')->paginate(20), 200);
     }
 
     /**
