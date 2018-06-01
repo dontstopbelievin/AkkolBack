@@ -118,7 +118,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/personal', 'PhotoReportController@personal');
     });
 
-    Route::group(['prefix' => '/newsPanel', 'middleware' => 'role:admin'], function () {
+    Route::group(['prefix' => '/newsPanel', 'middleware' => 'role:reporter'], function () {
         Route::get('/', 'NewsController@all');
         Route::post('/insert', 'NewsController@insert');
         Route::get('/edit/{id}', 'NewsController@edit');
