@@ -15,6 +15,8 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+//use Thujohn\Twitter\Twitter;
+use Thujohn\Twitter;
 
 class NewsController extends Controller
 {
@@ -45,6 +47,7 @@ class NewsController extends Controller
 
         if ( $answer->save() ){
             $message = 'Запись была добавлена в базу данных!';
+            $this->postTweet ($answer);
         }else{
             $message = 'Запись не была добавлена в базу данных!';
         }
@@ -52,6 +55,17 @@ class NewsController extends Controller
         return response()->json([
             'message' => $message
         ], 200);
+    }
+
+    private function postTweet ($news) {
+        $tweet = ['status' => $news->title.'
+        
+'.$news->description.'
+'.'
+http://almaty.uaig.kz/NewsArticle/'.$news->id];
+
+        return $tweeter = Twitter\Facades\Twitter::postTweet($tweet);
+
     }
 
 
