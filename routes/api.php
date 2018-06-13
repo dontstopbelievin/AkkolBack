@@ -118,13 +118,14 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/personal', 'PhotoReportController@personal');
     });
 
-    Route::group(['prefix' => '/newsPanel', 'middleware' => 'role:reporter'], function () {
+    Route::group(['prefix' => '/newsPanel', 'middleware' => 'role:reporter,admin'], function () {
         Route::get('/', 'NewsController@all');
         Route::post('/insert', 'NewsController@insert');
         Route::get('/edit/{id}', 'NewsController@edit');
         Route::post('/update', 'NewsController@update');
         Route::get('/delete/{id}', 'NewsController@delete');
     });
+
 
     Route::group(['prefix' => '/userTable', 'middleware' => 'role:admin'], function () {
         Route::get('/getUsers', 'UserTableController@allUsers');

@@ -15,12 +15,27 @@ class CheckRole
      * @param  string $role
      * @return mixed
      */
-    public function handle($request, Closure $next, $role)
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next)
     {
-        if (!Auth::user() || !Auth::user()->hasRole($role)) {
-            return response()->json(['message' => 'У вас недостаточно прав для доступа к данной странице.'],403);
+        $roles = array_slice(func_get_args(), 2);
+
+        if (!Auth::user()) {
+            return response()->json(['message' => 'Вы не авторизованы.'],401);
         }
 
-        return $next($request);
+        foreach (Auth::user()->roles as $role) {
+            if (in_array(mb_strtolower($role->name), $roles)) {
+                return $next($request);
+            }
+        }
+
+        return response()->json(['message' => 'У вас недостаточно прав для доступа к данной странице.'],403);
     }
 }
