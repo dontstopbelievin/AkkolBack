@@ -204,7 +204,7 @@ class ApzProviderController extends Controller
      */
     public function save(Request $request, $provider, $id)
     {
-        $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+        $apz = Apz::where(['id' => $id])->with(Apz::getApzProviderRelationList())->first();
 
         if (!$apz) {
             return response()->json(['message' => 'Заявка не найдена'], 404);
@@ -222,7 +222,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer', 'true']) ? true : false;
                 $response->gen_water_req = $request['GenWaterReq'];
                 $response->drinking_water = $request['DrinkingWater'];
                 $response->prod_water = $request['ProdWater'];
@@ -320,7 +320,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer', 'true']) ? true : false;
                 $response->req_power = $request['ElecReqPower'];
                 $response->phase = $request['ElecPhase'];
                 $response->safe_category = $request['ElecSafeCategory'];
@@ -403,7 +403,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer', 'true']) ? true : false;
                 $response->connection_point = $request['ConnectionPoint'];
                 $response->gas_pipe_diameter = $request['GasPipeDiameter'];
                 $response->assumed_capacity = $request['AssumedCapacity'];
@@ -485,7 +485,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer', 'true']) ? true : false;
                 $response->resource = $request['HeatResource'];
                 $response->second_resource = $request['HeatSecondResource'];
                 $response->load_contract_num = $request['HeatLoadContractNum'];
@@ -618,7 +618,7 @@ class ApzProviderController extends Controller
                 $response->apz_id = $apz->id;
                 $response->user_id = Auth::user()->id;
                 $response->response_text = $request['Message'];
-                $response->response = in_array($request['Response'], ['accept', 'answer']) ? true : false;
+                $response->response = in_array($request['Response'], ['accept', 'answer', 'true']) ? true : false;
                 $response->service_num = $request['ResponseServiceNum'];
                 $response->capacity = $request['ResponseCapacity'];
                 $response->sewage = $request['ResponseSewage'];
