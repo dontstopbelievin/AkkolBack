@@ -98,6 +98,9 @@ class ApzProviderController extends Controller
 
                 if ($is_performer) {
                     $apzs->has($response);
+                    $apzs->whereDoesntHave('stateHistory', function ($query) use ($approved_state, $declined_state) {
+                        $query->where('state_id', $approved_state)->orWhere('state_id', $declined_state);
+                    });
                 }
                 break;
 
