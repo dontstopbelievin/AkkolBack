@@ -7,6 +7,7 @@ use App\ApzState;
 use App\ApzStateHistory;
 use App\ApzStatus;
 use App\Commission;
+use App\CommissionStatus;
 use App\CommissionUser;
 use App\Http\Controllers\Controller;
 use App\Role;
@@ -175,6 +176,13 @@ class ApzEngineerController extends Controller
         try {
             $apz->status_id = $request['direct'] == 'apz' ? ApzStatus::APZ_DEPARTMENT : ApzStatus::ARCHITECT;
             $apz->save();
+
+            $commission = Commission::where(['apz_id' => $id])->first();
+
+            if ($commission) {
+                $commission->status_id = CommissionStatus::FINISHED;
+                $commission->save();
+            }
 
             if ($request["response"] == "true") {
                 $region_state = new ApzStateHistory();

@@ -249,7 +249,7 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
-                if ($request['Response'] == 'accept') {
+                if (in_array($request['Response'], ['accept', 'true'])) {
                     $custom_tc = FileItem::where(['item_type_id' => FileItemType::WATER_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
                         $query->where('category_id', FileCategory::CUSTOM_TC);
                     })->first();
@@ -297,7 +297,7 @@ class ApzProviderController extends Controller
                         $file->content_type = $value->getClientMimeType();
                         $file->size = $value->getClientSize();
                         $file->hash = $file_name;
-                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer', 'true']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
                         $file->user_id = Auth::user()->id;
                         $file->save();
 
@@ -332,7 +332,7 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
-                if ($request['Response'] == 'accept') {
+                if (in_array($request['Response'], ['accept', 'true'])) {
                     $custom_tc = FileItem::where(['item_type_id' => FileItemType::ELECTRICITY_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
                         $query->where('category_id', FileCategory::CUSTOM_TC);
                     })->first();
@@ -380,7 +380,7 @@ class ApzProviderController extends Controller
                         $file->content_type = $value->getClientMimeType();
                         $file->size = $value->getClientSize();
                         $file->hash = $file_name;
-                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer', 'true']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
                         $file->user_id = Auth::user()->id;
                         $file->save();
 
@@ -414,7 +414,7 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
-                if ($request['Response'] == 'accept') {
+                if (in_array($request['Response'], ['accept', 'true'])) {
                     $custom_tc = FileItem::where(['item_type_id' => FileItemType::GAS_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
                         $query->where('category_id', FileCategory::CUSTOM_TC);
                     })->first();
@@ -462,7 +462,7 @@ class ApzProviderController extends Controller
                         $file->content_type = $value->getClientMimeType();
                         $file->size = $value->getClientSize();
                         $file->hash = $file_name;
-                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer', 'true']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
                         $file->user_id = Auth::user()->id;
                         $file->save();
 
@@ -547,7 +547,7 @@ class ApzProviderController extends Controller
                     }
                 }
 
-                if ($request['Response'] == 'accept') {
+                if (in_array($request['Response'], ['accept', 'true'])) {
                     $custom_tc = FileItem::where(['item_type_id' => FileItemType::HEAT_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
                         $query->where('category_id', FileCategory::CUSTOM_TC);
                     })->first();
@@ -595,7 +595,7 @@ class ApzProviderController extends Controller
                         $file->content_type = $value->getClientMimeType();
                         $file->size = $value->getClientSize();
                         $file->hash = $file_name;
-                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer', 'true']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
                         $file->user_id = Auth::user()->id;
                         $file->save();
 
@@ -629,7 +629,7 @@ class ApzProviderController extends Controller
                 $response->doc_number = $request['DocNumber'];
                 $response->save();
 
-                if ($request['Response'] == 'accept') {
+                if (in_array($request['Response'], ['accept', 'true'])) {
                     $custom_tc = FileItem::where(['item_type_id' => FileItemType::PHONE_RESPONSE, 'item_id' => $response->id])->whereHas('file', function($query) {
                         $query->where('category_id', FileCategory::CUSTOM_TC);
                     })->first();
@@ -677,7 +677,7 @@ class ApzProviderController extends Controller
                         $file->content_type = $value->getClientMimeType();
                         $file->size = $value->getClientSize();
                         $file->hash = $file_name;
-                        $file->category_id = in_array($request['Response'], ['accept', 'answer']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
+                        $file->category_id = in_array($request['Response'], ['accept', 'answer', 'true']) ? ($key == 'file' ? FileCategory::TECHNICAL_CONDITION : FileCategory::CUSTOM_TC) : FileCategory::MOTIVATED_REJECT;
                         $file->user_id = Auth::user()->id;
                         $file->save();
 
@@ -826,19 +826,7 @@ class ApzProviderController extends Controller
             $commission_user->status_id = $response->response ? CommissionUserStatus::ACCEPTED : CommissionUserStatus::DECLINED;
             $commission_user->save();
 
-            if (!$response->response) {
-                $apz->status_id = ApzStatus::ARCHITECT;
-                $apz->save();
-
-                $commission->status_id = CommissionStatus::FINISHED;
-                $commission->save();
-
-                $engineer_state = new ApzStateHistory();
-                $engineer_state->apz_id = $apz->id;
-                $engineer_state->state_id = ApzState::TO_REGION;
-                $engineer_state->comment = $response->response_text;
-                $engineer_state->save();
-            } elseif (sizeof($commission->users()->where('status_id', '<>', CommissionUserStatus::IN_PROCESS)->get()) == sizeof($commission->users)) {
+            if (sizeof($commission->users()->where('status_id', '<>', CommissionUserStatus::IN_PROCESS)->get()) == sizeof($commission->users)) {
                 $apz->status_id = ApzStatus::ENGINEER;
                 $apz->save();
 
