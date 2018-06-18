@@ -25,6 +25,7 @@ Route::post('login_with_cert', 'Auth\LoginController@loginWithCert');
 Route::post('logout', 'Auth\LoginController@logout');
 Route::post('register', ['as' => 'register', 'uses' => 'Auth\RegisterController@create'])->middleware('cors');
 Route::get('/user_info', 'Auth\LoginController@userInfo');
+Route::get('/search', 'HomeController@search');
 
 Route::group(['prefix' => 'system_files'], function () {
     Route::get('/category/{name}', 'FileController@getFromSystemCategory');
