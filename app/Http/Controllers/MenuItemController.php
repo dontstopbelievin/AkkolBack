@@ -54,6 +54,8 @@ class MenuItemController extends Controller
             $answer->id_page = $request['id_page'];
         }else if ($request['type'] === 2) {
             $answer->link = $request['link'];
+        }else if ($request['type'] === 3) {
+            $answer->link = $request['link'];
         }
 
         if( $answer->save() ){
@@ -104,6 +106,8 @@ class MenuItemController extends Controller
         if ($request['type'] === 1){
             $answer->id_page = $request['id_page'];
         }else if ($request['type'] === 2) {
+            $answer->link = $request['link'];
+        }else if ($request['type'] === 3) {
             $answer->link = $request['link'];
         }
 
