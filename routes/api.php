@@ -74,6 +74,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::post('/save_xml/{id}', 'Apz\ApzDepartmentController@saveXml')->middleware('holiday');
             Route::get('/all/{status}', 'Apz\ApzDepartmentController@all');
             Route::get('/detail/{id}', 'Apz\ApzDepartmentController@show');
+            Route::post('/save/{id}', 'Apz\ApzDepartmentController@save')->middleware('holiday');
             Route::post('/status/{id}', 'Apz\ApzDepartmentController@decision')->middleware('holiday');
         });
 

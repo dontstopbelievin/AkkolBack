@@ -16,7 +16,7 @@ class ApzPrintController extends Controller
      */
     public function printApz($id)
     {
-        $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+        $apz = Apz::where(['id' => $id])->with(Apz::getApzDepartmentRelationList())->first();
 
         if (!$apz) {
             return response()->json(['message' => 'Заявка не найдена'], 404);
@@ -30,7 +30,9 @@ class ApzPrintController extends Controller
             return $value->category_id == FileCategory::XML_REGION;
         })->first();
 
-        $content = view('pdf_templates.apz', ['apz' => $apz, 'apz_sign' => $apz_sign, 'region_sign' => $region_sign])->render();
+        $template = $apz->apzDepartmentResponse ? 'pdf_templates.apz' : 'pdf_templates.apz_old';
+
+        $content = view($template, ['apz' => $apz, 'apz_sign' => $apz_sign, 'region_sign' => $region_sign])->render();
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($content);
 

@@ -148,6 +148,15 @@ class Apz extends Model
         return $base_array;
     }
 
+    public static function getApzDepartmentRelationList()
+    {
+        $base_array = self::getApzBaseRelationList();
+
+        array_push($base_array, 'apzDepartmentResponse');
+
+        return $base_array;
+    }
+
     /**
      * Get electricity
      */
@@ -242,6 +251,60 @@ class Apz extends Model
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    /**
+     * Get ApzDepartmentResponse model
+     */
+    public function apzDepartmentResponse()
+    {
+        return $this->hasOne(ApzDepartmentResponse::class, 'apz_id', 'id');
+    }
+
+    public function getRegionUser()
+    {
+        switch($this->region) {
+            case 'Алатау':
+                $role = Role::ALATAU;
+                break;
+
+            case 'Алмалы':
+                $role = Role::ALMATY;
+                break;
+
+            case 'Ауезов':
+                $role = Role::AUEZOV;
+                break;
+
+            case 'Бостандық':
+                $role = Role::BOSTANDYK;
+                break;
+
+            case 'Жетісу':
+                $role = Role::JETISU;
+                break;
+
+            case 'Медеу':
+                $role = Role::MEDEU;
+                break;
+
+            case 'Наурызбай':
+                $role = Role::NAURYZBAI;
+                break;
+
+            case 'Турксиб':
+                $role = Role::TURKSIB;
+                break;
+
+            default:
+                return false;
+        }
+
+        $user = User::whereHas('roles', function($query) use ($role) {
+            $query->where(['roles.id' => $role]);
+        })->first();
+
+        return $user;
     }
 
     /**

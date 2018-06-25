@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Apz;
 
 use App\Apz;
+use App\ApzDepartmentResponse;
 use App\ApzState;
 use App\ApzStateHistory;
 use App\ApzStatus;
@@ -57,13 +58,95 @@ class ApzDepartmentController extends Controller
      */
     public function show($id)
     {
-        $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+        $apz = Apz::where(['id' => $id])->with(Apz::getApzDepartmentRelationList())->first();
 
         if (!$apz) {
             return response()->json(['message' => 'Заявка не найдена'], 404);
         }
 
         return response()->json($apz, 200);
+    }
+
+    /**
+     * Save decision
+     *
+     * @param Request $request
+     * @param integer $id
+     * @return \Illuminate\Http\Response
+     */
+    public function save(Request $request, $id)
+    {
+        $apz = Apz::where('id', $id)->first();
+
+        if (!$apz) {
+            return response()->json(['message' => 'Заявка не найдена'], 404);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $response = ApzDepartmentResponse::where(['apz_id' => $apz->id])->first();
+
+            if (!$response) {
+                $response = new ApzDepartmentResponse();
+            }
+
+            $response->apz_id = $apz->id;
+            $response->user_id = Auth::user()->id;
+            $response->doc_number = $request->docNumber;
+            $response->basis_for_development_apz = $request->basisForDevelopmentApz;
+            $response->building_presence = $request->buildingPresence;
+            $response->address = $request->address;
+            $response->geodetic_study = $request->geodeticStudy;
+            $response->engineering_geological_study = $request->engineeringGeologicalStudy;
+            $response->planning_system = $request->planningSystem;
+            $response->functional_value_of_object = $request->functionalValueOfObject;
+            $response->floor_sum = $request->floorSum;
+            $response->structural_scheme = $request->structuralScheme;
+            $response->engineering_support = $request->engineeringSupport;
+            $response->energy_efficiency_class = $request->energyEfficiencyClass;
+            $response->spatial_solution = $request->spatialSolution;
+            $response->draft_master_plan = $request->draftMasterPlan;
+            $response->vertical_layout = $request->verticalLayout;
+            $response->landscaping_and_gardening = $request->landscapingAndGardening;
+            $response->parking = $request->parking;
+            $response->use_of_fertile_soil_layer = $request->useOfFertileSoilLayer;
+            $response->small_architectural_forms = $request->smallArchitecturalForms;
+            $response->lighting = $request->lighting;
+            $response->stylistics_of_architecture = $request->stylisticsOfArchitecture;
+            $response->nature_combination = $request->natureCombination;
+            $response->color_solution = $request->colorSolution;
+            $response->advertising_and_information_solution = $request->advertisingAndInformationSolution;
+            $response->night_lighting = $request->nightLighting;
+            $response->input_nodes = $request->inputNodes;
+            $response->conditions_for_low_mobile_groups = $request->conditionsForLowMobileGroups;
+            $response->compliance_noise_conditions = $request->complianceNoiseConditions;
+            $response->plinth = $request->plinth;
+            $response->facade = $request->facade;
+            $response->heat_supply = $request->heatSupply;
+            $response->water_supply = $request->waterSupply;
+            $response->sewerage = $request->sewerage;
+            $response->power_supply = $request->powerSupply;
+            $response->gas_supply = $request->gasSupply;
+            $response->phone_supply = $request->phoneSupply;
+            $response->drainage = $request->drainage;
+            $response->irrigation_systems = $request->irrigationSystems;
+            $response->engineering_surveys_obligation = $request->engineeringSurveysObligation;
+            $response->demolition_obligation = $request->demolitionObligation;
+            $response->transfer_communications_obligation = $request->transferCommunicationsObligation;
+            $response->conservation_plant_obligation = $request->conservationPlantObligation;
+            $response->temporary_fencing_construction_obligation = $request->temporaryFencingConstructionObligation;
+            $response->additional_requirements = $request->additionalRequirements;
+            $response->general_requirements = $request->generalRequirements;
+            $response->notes = $request->notes;
+            $response->save();
+
+            DB::commit();
+            return response()->json($response, 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['message' => $e->getTrace()], 500);
+        }
     }
 
     /**
