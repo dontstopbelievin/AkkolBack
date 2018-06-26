@@ -58,12 +58,18 @@ class ApzRegionController extends Controller
             case 'accepted':
                 $query->whereHas('stateHistory', function ($query) {
                     $query->where('state_id', ApzState::REGION_APPROVED);
+                    $query->where(function ($query) {
+                        $query->where('status_id', ApzStatus::ACCEPTED)->orWhere('status_id', ApzStatus::DECLINED);
+                    });
                 });
                 break;
 
             case 'declined':
                 $query->whereHas('stateHistory', function ($query) {
                     $query->where('state_id', ApzState::REGION_DECLINED);
+                    $query->where(function ($query) {
+                        $query->where('status_id', ApzStatus::ACCEPTED)->orWhere('status_id', ApzStatus::DECLINED);
+                    });
                 });
                 break;
 
