@@ -24,6 +24,7 @@ class StaticPagesController extends Controller
         $answer->title = $request['title'];
         $answer->description = $request['description'];
         $answer->content = $request['content'];
+        $answer->content_kk = $request['content_kk'];
         $answer->status = 1;
 
         if ( $answer->save() ){
@@ -63,11 +64,13 @@ class StaticPagesController extends Controller
         $title = $request['title'];
         $description = $request['description'];
         $content = $request['content'];
+        $content_kk = $request['content_kk'];
 
         $answer =  StaticPages::where('id',$id)->first();
         $answer->title = $title;
         $answer->description = $description;
         $answer->content = $content;
+        $answer->content_kk = $content_kk;
 
         if ( $answer->save() ){
             $message = 'Запись была обновлена!';
