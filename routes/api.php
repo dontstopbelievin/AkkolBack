@@ -61,12 +61,12 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::group(['prefix' => '/provider', 'middleware' => 'role:provider'], function () {
             Route::get('/get_xml/{provider}/{id}', 'Apz\ApzProviderController@generateXml');
-            Route::post('/save_xml/{provider}/{id}', 'Apz\ApzProviderController@saveXml')->middleware('holiday');
+            Route::post('/save_xml/{provider}/{id}', 'Apz\ApzProviderController@saveXml');
             Route::get('/{provider}/all/{status}', 'Apz\ApzProviderController@all');
             Route::get('/{provider}/{id}', 'Apz\ApzProviderController@show');
             Route::post('/{provider}/{id}/save', 'Apz\ApzProviderController@save');
-            Route::get('/{provider}/{id}/update', 'Apz\ApzProviderController@update')->middleware('holiday');
-            Route::post('/{provider}/{id}/response', 'Apz\ApzProviderController@headDecision')->middleware('holiday');
+            Route::get('/{provider}/{id}/update', 'Apz\ApzProviderController@update');
+            Route::post('/{provider}/{id}/response', 'Apz\ApzProviderController@headDecision');
         });
 
         Route::group(['prefix' => '/apz_department', 'middleware' => 'role:apzdepartment'], function () {
