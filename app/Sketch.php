@@ -13,6 +13,22 @@ class Sketch extends Model
 {
     protected $table = 'sketches';
 
+    public static function getSketchBaseRelationList()
+    {
+        return [
+            'apzDepartmentResponse.files',
+            'files.category',
+        ];
+    }
+
+    /**
+     * Get response
+     */
+    public function apzDepartmentResponse()
+    {
+        return $this->hasOne(SketchApzDepartmentResponse::class, 'sketch_id', 'id');
+    }
+
     /**
      * Get status
      */

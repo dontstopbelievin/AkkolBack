@@ -66,13 +66,29 @@ class SketchCitizenController extends Controller
     /**
      * Show sketch list for user
      *
+     * @param string $status
      * @return \Illuminate\Http\Response
      */
-    public function all()
+    public function all($status)
     {
-        $sketches = Sketch::where('user_id', Auth::user()->id)->get();
+        $sketches = Sketch::where('user_id', Auth::user()->id);
 
-        return response()->json($sketches, 200);
+        switch ($status) {
+            case 'accepted':
+                $sketches->where('status_id', SketchStatus::ACCEPTED);
+                break;
+
+            case 'declined':
+                $sketches->where('status_id', SketchStatus::DECLINED);
+                break;
+
+            case 'active':
+            default:
+            $sketches->whereNotIn('status_id', [SketchStatus::ACCEPTED, SketchStatus::DECLINED]);
+                break;
+        }
+
+        return response()->json($sketches->orderBy('created_at', 'desc')->paginate(20), 200);
     }
 
     /**
@@ -83,7 +99,7 @@ class SketchCitizenController extends Controller
      */
     public function show($id)
     {
-        $sketch = Sketch::with(['files', 'files.category'])->where([
+        $sketch = Sketch::with(Sketch::getSketchBaseRelationList())->where([
             'id' => $id,
             'user_id' => Auth::user()->id
         ])->first();

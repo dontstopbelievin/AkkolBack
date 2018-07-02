@@ -147,9 +147,18 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::group(['prefix' => '/sketch'], function () {
         Route::group(['prefix' => '/citizen', 'middleware' => 'role:citizen'], function () {
-            Route::get('/', 'Sketch\SketchCitizenController@all');
+            Route::get('/all/{status}', 'Sketch\SketchCitizenController@all');
             Route::get('/detail/{id}', 'Sketch\SketchCitizenController@show');
             Route::post('/create', 'Sketch\SketchCitizenController@create')->middleware('holiday');
+        });
+
+        Route::group(['prefix' => '/apz_department', 'middleware' => 'role:apzdepartment'], function () {
+            Route::get('/all/{status}', 'Sketch\SketchApzDepartmentController@all');
+            Route::get('/detail/{id}', 'Sketch\SketchApzDepartmentController@show');
+            Route::post('/save/{id}', 'Sketch\SketchApzDepartmentController@save')->middleware('holiday');
+            Route::post('/status/{id}', 'Sketch\SketchApzDepartmentController@decision')->middleware('holiday');;
+            Route::get('/get_xml/{id}', 'Sketch\SketchApzDepartmentController@generateXml');
+            Route::post('/save_xml/{id}', 'Sketch\SketchApzDepartmentController@saveXml')->middleware('holiday');
         });
     });
 
