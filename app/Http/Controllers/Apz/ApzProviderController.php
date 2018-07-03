@@ -128,7 +128,13 @@ class ApzProviderController extends Controller
                 break;
         }
 
-        return response()->json($apzs->orderBy('created_at', 'desc')->paginate(20), 200);
+        $result = $apzs->orderBy('created_at', 'desc')->paginate(20);
+
+        foreach ($result->items() as $item) {
+            $item['term'] = holidayDiffInDays($item->commission->created_at, null, 2);
+        }
+
+        return response()->json($result, 200);
     }
 
     /**
