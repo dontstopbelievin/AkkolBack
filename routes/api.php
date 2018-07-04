@@ -183,6 +183,18 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/delete/{id}', 'MenuItemController@delete');
     });
 
+    Route::group(['prefix' => '/questions'], function () {
+        Route::post('/insert/{id}','QuestionsController@insert');
+        Route::get('/getQuestions/{id}','QuestionsController@allUsers');
+        Route::get('/delete/{id}','QuestionsController@delete');
+    });
+
+    Route::group(['prefix' => '/questions/admin', 'middleware' => 'role:admin'], function () {
+        Route::post('/answer','QuestionsController@update');
+        Route::get('/getQuestions','QuestionsController@all');
+        Route::get('/delete/{id}','QuestionsController@delete');
+    });
+
 
 });
 
