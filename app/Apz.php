@@ -157,6 +157,15 @@ class Apz extends Model
         return $base_array;
     }
 
+    public static function getApzHeadRelationList()
+    {
+        $base_array = self::getApzBaseRelationList();
+
+        array_push($base_array, 'apzDepartmentResponse');
+
+        return $base_array;
+    }
+
     /**
      * Get electricity
      */

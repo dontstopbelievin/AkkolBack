@@ -74,7 +74,7 @@ class ApzHeadController extends Controller
      */
     public function show($id)
     {
-        $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
+        $apz = Apz::where(['id' => $id])->with(Apz::getApzHeadRelationList())->first();
 
         if (!$apz) {
             return response()->json(['message' => 'Заявка не найдена'], 404);

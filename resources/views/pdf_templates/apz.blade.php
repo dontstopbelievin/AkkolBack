@@ -412,7 +412,9 @@ $response = $apz->apzDepartmentResponse;
     @endif
 
     <div style="text-align: center; margin-top: 20px">
-        <barcode code="{{ implode(' ', [$apz->apzHeadResponse->user->last_name, $apz->apzHeadResponse->user->first_name, $apz->apzHeadResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+        @if ($apz->apzHeadResponse)
+            <barcode code="{{ implode(' ', [$apz->apzHeadResponse->user->last_name, $apz->apzHeadResponse->user->first_name, $apz->apzHeadResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+        @endif
 
         @if ($apz_sign)
             <barcode code="{{ implode(' ', [$apz_sign->user->last_name, $apz_sign->user->first_name, $apz_sign->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
