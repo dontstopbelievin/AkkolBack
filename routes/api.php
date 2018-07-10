@@ -198,6 +198,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 });
 
+Route::post('/insertWithoutUser','QuestionsController@insertWithoutUser');
+Route::get('/allQuestionsWithAnswer','QuestionsController@all');
+
 Route::group(['prefix' => '/menu'], function () {
     Route::get('/', 'MenuItemController@all');
     Route::get('/categories', 'MenuItemController@getCategories');

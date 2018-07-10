@@ -25,6 +25,23 @@ class QuestionsController extends Controller
             ], 500);
         }
     }
+    //вопрос админу без зарегистрированного пользователя
+    public function insertWithoutUser (Request $request)
+    {
+        $question = new Questions();
+        $question->question = $request['question'];
+        $question->status = 1;
+
+        if ($question->save()) {
+            return response()->json([
+                'answer' => 'Вопрос успешно отправлен администрацию. Ожидайте ответа!'
+            ], 200);
+        } else {
+            return response()->json([
+                'answer' => 'Ошибка во время отправления вопроса !'
+            ], 500);
+        }
+    }
     //ответ от админа
     public function update(Request $request)
     {
