@@ -139,6 +139,7 @@ class ApzDepartmentController extends Controller
             $response->additional_requirements = $request->additionalRequirements;
             $response->general_requirements = $request->generalRequirements;
             $response->notes = $request->notes;
+            $response->template_type = $request->templateType;
             $response->save();
 
             DB::commit();
