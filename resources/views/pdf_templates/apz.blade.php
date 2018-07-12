@@ -49,15 +49,7 @@ $third_counter = 1;
 <body>
 <div>
     <div style="page-break-after:always">
-        <br><br><br><br><br><br><br><br><br><br>
-        <div style="text-align: right;">
-            <p>УТВЕРЖДАЮ:</p>
-
-            <p>Руководитель управления архитектуры<br />
-            и градостроительства города Алматы</p>
-
-            _________________ Н. Ұранхаев
-        </div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
         <h2 style="text-align: center; font-size: 13px; margin: 40px 0;">АРХИТЕКТУРНО-ПЛАНИРОВОЧНОЕ ЗАДАНИЕ (АПЗ) НА ПРОЕКТИРОВАНИЕ</h2>
 
