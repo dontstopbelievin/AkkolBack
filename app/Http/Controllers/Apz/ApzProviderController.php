@@ -126,10 +126,16 @@ class ApzProviderController extends Controller
                 $apzs->where('status_id', ApzStatus::PROVIDER);
 
                 if ($is_performer) {
-                    $apzs->where(function ($query) use ($response, $signed_state) {
+                    $apzs->where(function ($query) use ($response, $approved_state, $declined_state, $signed_state) {
                         $query->doesntHave($response);
-                        $query->orWhereHas('stateHistory', function ($query) use ($signed_state) {
-                            $query->where('state_id', $signed_state);
+
+                        $query->orWhere(function ($query) use ($approved_state, $declined_state, $signed_state) {
+                            $query->whereHas('stateHistory', function ($query) use ($signed_state) {
+                                $query->where('state_id', $signed_state);
+                            });
+                            $query->whereDoesntHave('stateHistory', function ($query) use ($approved_state, $declined_state) {
+                                $query->where('state_id', $approved_state)->orWhere('state_id', $declined_state);
+                            });
                         });
                     });
 
