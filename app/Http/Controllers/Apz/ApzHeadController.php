@@ -9,6 +9,7 @@ use App\ApzStateHistory;
 use App\ApzStatus;
 use App\FileItem;
 use App\FileItemType;
+use App\FileSign;
 use App\Http\Controllers\Controller;
 use App\File;
 use App\FileCategory;
@@ -237,6 +238,7 @@ class ApzHeadController extends Controller
             $server_xml = simplexml_load_string("<?xml version=\"1.0\" ?>\n" . $output);
 
             $current_xml = simplexml_load_string($request->xml);
+            $signatureNode = $current_xml->children('ds', true)->Signature;
 
             if ($server_xml->content->asXML() != $current_xml->content->asXML()) {
                 throw new \Exception('Некорректный XML');
@@ -278,6 +280,18 @@ class ApzHeadController extends Controller
             if (!$file_item) {
                 throw new \Exception('Не удалось сохранить модель FileItem');
             }
+
+            $state = new ApzStateHistory();
+            $state->apz_id = $apz->id;
+            $state->state_id = ApzState::HEAD_SIGNED;
+            $state->save();
+
+            $sign = new FileSign();
+            $sign->user_id = Auth::user()->id;
+            $sign->file_id = $file->id;
+            $sign->sign = $signatureNode->SignatureValue;
+            $sign->cert = $signatureNode->KeyInfo->X509Data->X509Certificate;
+            $sign->save();
 
             return response()->json(['status' => true], '200');
         } catch (\Exception $e) {

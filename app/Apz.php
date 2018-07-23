@@ -166,6 +166,11 @@ class Apz extends Model
         return $base_array;
     }
 
+    public function hasState($state)
+    {
+        return $this->stateHistory->where('state_id', $state)->first();
+    }
+
     /**
      * Get electricity
      */

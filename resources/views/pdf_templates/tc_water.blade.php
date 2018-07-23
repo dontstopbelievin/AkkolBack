@@ -191,7 +191,9 @@
         </div>
 
         <p style="text-align: center;">
-            <barcode code="{{ implode(' ', [$apz->commission->apzWaterResponse->user->last_name, $apz->commission->apzWaterResponse->user->first_name, $apz->commission->apzWaterResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+            @if ($apz->commission->apzWaterResponse->isSigned())
+                <barcode code="{{ implode(' ', [$apz->commission->apzWaterResponse->user->last_name, $apz->commission->apzWaterResponse->user->first_name, $apz->commission->apzWaterResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+            @endif
         </p>
     </div>
 </body>

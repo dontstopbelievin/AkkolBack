@@ -411,7 +411,11 @@ $table_result = 0;
                         <tbody>
                             <tr>
                                 <td><h3>Главный инженер<br/>Д. Кирдяйкин</h3></td>
-                                <td><barcode code="{{ implode(' ', [$response->user->last_name, $response->user->first_name, $response->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" /></td>
+                                <td>
+                                    @if ($response->isSigned())
+                                        <barcode code="{{ implode(' ', [$response->user->last_name, $response->user->first_name, $response->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+                                    @endif
+                                </td>
                             </tr>
                             <tr>
                                 <td>

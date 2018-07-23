@@ -105,7 +105,11 @@
             <tbody>
                 <tr>
                     <td><p><b>Начальник ПТО<br />Е.Балабеков</b></p></td>
-                    <td style="text-align: right;"><barcode code="{{ implode(' ', [$apz->commission->apzGasResponse->user->last_name, $apz->commission->apzGasResponse->user->first_name, $apz->commission->apzGasResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" /></td>
+                    <td style="text-align: right;">
+                        @if ($apz->commission->apzGasResponse->isSigned())
+                            <barcode code="{{ implode(' ', [$apz->commission->apzGasResponse->user->last_name, $apz->commission->apzGasResponse->user->first_name, $apz->commission->apzGasResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>Исп. {{ $apz->commission->apzGasResponse->user->name  }}<br />e-mail.: {{ $apz->commission->apzGasResponse->user->email }}</td>

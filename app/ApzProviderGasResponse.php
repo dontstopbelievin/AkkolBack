@@ -67,6 +67,21 @@ class ApzProviderGasResponse extends Model
     }
 
     /**
+     * Check if signed
+     */
+    public function isSigned()
+    {
+        $item = FileItem::where([
+            'item_id' => $this->id,
+            'item_type_id' => FileItemType::GAS_RESPONSE
+        ])->whereHas('file', function ($query) {
+            $query->category_id = FileCategory::XML_GAS;
+        });
+
+        return $item;
+    }
+
+    /**
      * Get files
      */
     public function files()

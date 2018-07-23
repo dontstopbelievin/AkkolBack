@@ -52,4 +52,7 @@ class ApzState extends Model
     const ELECTRICITY_SIGNED    = 26;
     const PHONE_SIGNED          = 27;
     const HEAT_SIGNED           = 28;
+    const REGION_SIGNED         = 29;
+    const APZ_SIGNED            = 30;
+    const HEAD_SIGNED           = 31;
 }

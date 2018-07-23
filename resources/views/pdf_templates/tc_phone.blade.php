@@ -152,7 +152,9 @@
         <br/>
         <p>Технические условия (ТУ) действуют в течение всего срока нормативной продолжительности строительства, утвержденной в составе проектной (проектно-сметной) документации</p>
         <p style="text-align: center;">
-            <barcode code="{{ implode(' ', [$apz->commission->apzPhoneResponse->user->last_name, $apz->commission->apzPhoneResponse->user->first_name, $apz->commission->apzPhoneResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+            @if ($apz->commission->apzPhoneResponse->isSigned())
+                <barcode code="{{ implode(' ', [$apz->commission->apzPhoneResponse->user->last_name, $apz->commission->apzPhoneResponse->user->first_name, $apz->commission->apzPhoneResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
+            @endif
         </p>
         <p>
             <b>город Алматы 2017 год</b>

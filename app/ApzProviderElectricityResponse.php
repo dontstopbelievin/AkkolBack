@@ -69,6 +69,21 @@ class ApzProviderElectricityResponse extends Model
     }
 
     /**
+     * Check if signed
+     */
+    public function isSigned()
+    {
+        $item = FileItem::where([
+            'item_id' => $this->id,
+            'item_type_id' => FileItemType::ELECTRICITY_RESPONSE
+        ])->whereHas('file', function ($query) {
+            $query->category_id = FileCategory::XML_ELECTRICITY;
+        });
+
+        return $item;
+    }
+
+    /**
      * Get files
      */
     public function files()

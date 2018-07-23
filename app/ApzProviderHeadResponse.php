@@ -21,6 +21,21 @@ class ApzProviderHeadResponse extends Model
     protected $table = "apz_provider_heads_responses";
 
     /**
+     * Check if signed
+     */
+    public function isSigned()
+    {
+        $item = FileItem::where([
+            'item_id' => $this->id,
+            'item_type_id' => FileItemType::HEAD_RESPONSE
+        ])->whereHas('file', function ($query) {
+            $query->category_id = FileCategory::XML_HEAD;
+        });
+
+        return $item;
+    }
+
+    /**
      * Get user
      */
     public function user()

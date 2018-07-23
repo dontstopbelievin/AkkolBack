@@ -168,7 +168,7 @@
         <br/>
         <p>Технические условия (ТУ) действуют в течение всего срока нормативной продолжительности строительства, утвержденной в составе проектной (проектно-сметной) документации</p>
 
-        @if ($apz->commission && $apz->commission->apzElectricityResponse && $apz->commission->apzElectricityResponse->user)
+        @if ($apz->commission && $apz->commission->apzElectricityResponse && $apz->commission->apzElectricityResponse->isSigned())
             <p style="text-align: center;">
                 <barcode code="{{ implode(' ', [$apz->commission->apzElectricityResponse->user->last_name, $apz->commission->apzElectricityResponse->user->first_name, $apz->commission->apzElectricityResponse->user->middle_name]) }}" type="QR" class="barcode" size="1" error="M" />
             </p>
