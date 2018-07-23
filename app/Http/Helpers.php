@@ -29,5 +29,20 @@ if (!function_exists('holidayDiffInDays'))
 
         return isset($expired) ? -$days_diff : $days_diff;
     }
+}
+
+if (!function_exists('log_pro'))
+{
+    function log_pro($code = 'empty_key', $data = '', $level = 'INFO')
+    {
+        \App\Log::create([
+            'code'     => $code,
+            'user_id' => Auth::user() ? Auth::user()->id : null,
+            'level'   => $level,
+            'data' => serialize($data),
+            'ip_address' => request()->ip(),
+            'browser' => request()->header('User-Agent'),
+        ]);
+    }
 
 }

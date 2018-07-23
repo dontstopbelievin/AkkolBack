@@ -50,6 +50,11 @@ class ApzHeat extends Model
         $this->tech = $request->heatTech;
         $this->distribution = $request->heatDistribution;
         $this->saving = $request->heatSaving;
+        $this->contract_num = $request->contractNum;
+        $this->main_in_contract = $request->heatMainInContract;
+        $this->ven_in_contract = $request->heatVenInContract;
+        $this->water_in_contract = $request->heatWaterInContract;
+        $this->water_in_contract_max = $request->heatWaterMaxInContract;
 
         if ($request->blocks && array_filter(array_slice($request->blocks, 0, 1)[0])) {
             ApzHeatBlock::where(['apz_id' => $apz_id])->delete();

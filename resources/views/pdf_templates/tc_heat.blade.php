@@ -18,107 +18,124 @@ $table_result = 0;
     <title></title>
 
     <style type="text/css">
-        p, table {text-align: center}
-        .row
-        {
-            display: flex;
-            flex-wrap: wrap;
-            margin-right: 10px;
-            margin-left: 30px;
+        @page {
+            margin: 30px;
         }
-        .col-6
-        {
-            flex: 0 0 50%;
-            max-width: 50%;
+
+        p, table {
+            text-align: center
         }
-        #root
-        {
+
+        ol {
+            padding-left: 25px;
+        }
+
+        #root {
             position: relative;
+            text-align: justify;
+            padding: 10px;
         }
-        .wrap{
+
+        .wrap {
             width: 700px;
             margin:0 auto;
             overflow: hidden;
-            /*border:solid 1px #ccc;*/
         }
-        .logo{
+
+        .logo {
             width:800px;
-            /*border:solid 1px #000;*/
             text-align: center;
             margin-bottom:10px;
         }
-        .divider{
+
+        .divider {
             border-bottom: solid 2px #000;
             width:600px;
             margin:0 auto;
         }
+
+        .small_text table {
+            margin: auto;
+        }
+
         .small_text table td{
             font-size: 9px;
-            padding-left: 95px;
             font-family: "Times New Roman";
         }
 
-        .number{
+        .number {
             width:250px;
             float: left;
         }
-        .number p{
+
+        .number p {
             font-size: 12px;
             text-align: center;
             margin-left: 20px;
 
         }
-        .number .underline{
+
+        .number .underline {
             text-decoration: underline;
             margin-left: 22px;
             font-size: 12px;
         }
-        .number .third{
+
+        .number .third {
             margin-left: 22px;
         }
-        .too{
+
+        .too {
             width: 250px;
             float: right;
             margin-right:30px;
             margin-top:55px;
         }
-        .section h3{
+
+        .section h3 {
             text-align: center;
             color: #00b050;
             font-size: 14px;
         }
-        .section h3 span{
+
+        .section h3 span {
             font-size: 10px;
         }
-        .heat_info th, .heat_info td{
+
+        .heat_info th, .heat_info td {
             border:solid 1px #000;
         }
-        .heat_info{
+
+        .heat_info {
             border-collapse: collapse;
             font-size:13.5px;
             margin-top: 10px;
             margin-bottom: 20px;
         }
-        .last-col{
+
+        .last-col {
             width:80px;
         }
+
         .footer {
             margin-left: 40px;
             margin-top: 20px;
         }
-        .footer h3, .footer h2{
+
+        .footer h3, .footer h2 {
             text-align: left;
         }
-        .footer h2{
+
+        .footer h2 {
             font-size: 18px;
             margin-top:40px;
         }
-        .footer p{
+
+        .footer p {
             font-size: 10px;
             text-align: left;
             margin-top: 20px;
         }
-
     </style>
 </head>
 <body>
@@ -137,14 +154,17 @@ $table_result = 0;
                     <table>
                         <tr>
                             <td>050026, Алматы қаласы, Байзақов көшесі, 221,</td>
+                            <td width="30%"></td>
                             <td>050026, город Алматы, улица Байзакова, 221,</td>
                         </tr>
                         <tr>
                             <td>СТН 600700574582, БСН 060640007336,</td>
+                            <td></td>
                             <td>РНН 600700574582, БИН 060640007336,</td>
                         </tr>
                         <tr>
                             <td>тел.: 8(727) 341-07-00, факс: 8(727) 378-06-73</td>
+                            <td></td>
                             <td>тел.: 8(727) 341-07-00, факс: 8(727) 378-06-73</td>
                         </tr>
 
@@ -244,15 +264,22 @@ $table_result = 0;
                                     @endforeach
 
                                     <td>{{ $response->main_in_contract }}</td>
-                                    <td class="last-col">{{ $response->main_in_contract ? $response->main_in_contract - $table['main'] : $table['main'] }}
-                                    </td>
-                                    <td class="last-col">
-                                        @if ($response->main_in_contract)
-                                            {{ round((($response->main_in_contract - $table['main']) / $response->main_in_contract) * 100, 2, PHP_ROUND_HALF_DOWN) }}
-                                        @else
-                                            100
-                                        @endif
-                                    </td>
+
+                                    @if ($response->main_increase !== null)
+                                        <td class="last-col">{{ $response->main_increase }}</td>
+                                        <td class="last-col">{{ $response->main_percentage_increase }}</td>
+                                    @else
+                                        <td class="last-col">
+                                            {{ $response->main_in_contract ? $response->main_in_contract - $table['main'] : $table['main'] }}
+                                        </td>
+                                        <td class="last-col">
+                                            @if ($response->main_in_contract)
+                                                {{ round((($response->main_in_contract - $table['main']) / $response->main_in_contract) * 100, 2, PHP_ROUND_HALF_DOWN) }}
+                                            @else
+                                                100
+                                            @endif
+                                        </td>
+                                    @endif
                                 </tr>
                                 <tr>
                                     <td>Вентиляция</td>
@@ -266,14 +293,20 @@ $table_result = 0;
                                     @endforeach
 
                                     <td>{{ $response->ven_in_contract }}</td>
-                                    <td class="last-col">{{ $response->ven_in_contract ? $response->ven_in_contract - $table['ven'] : $table['ven'] }}</td>
-                                    <td class="last-col">
-                                        @if ($response->ven_in_contract)
-                                            {{ round((($response->ven_in_contract - $table['ven']) / $response->ven_in_contract) * 100, 2, PHP_ROUND_HALF_DOWN) }}
-                                        @else
-                                            100
-                                        @endif
-                                    </td>
+
+                                    @if ($response->ven_increase !== null)
+                                        <td class="last-col">{{ $response->ven_increase }}</td>
+                                        <td class="last-col">{{ $response->ven_percentage_increase }}</td>
+                                    @else
+                                        <td class="last-col">{{ $response->ven_in_contract ? $response->ven_in_contract - $table['ven'] : $table['ven'] }}</td>
+                                        <td class="last-col">
+                                            @if ($response->ven_in_contract)
+                                                {{ round((($response->ven_in_contract - $table['ven']) / $response->ven_in_contract) * 100, 2, PHP_ROUND_HALF_DOWN) }}
+                                            @else
+                                                100
+                                            @endif
+                                        </td>
+                                    @endif
                                 </tr>
                                 <tr>
                                     <td>ГВС, макс/ч</td>
@@ -287,14 +320,20 @@ $table_result = 0;
                                     @endforeach
 
                                     <td>{{ $response->water_in_contract_max }}</td>
-                                    <td class="last-col">{{ $response->water_in_contract_max ? $response->water_in_contract_max - $table['water_max'] : $table['water_max'] }}</td>
-                                    <td class="last-col">
-                                        @if ($response->water_in_contract_max)
-                                            {{ round((($response->water_in_contract_max - $table['water_max']) / $response->water_in_contract_max) * 100, 2, PHP_ROUND_HALF_DOWN) }}
-                                        @else
-                                            100
-                                        @endif
-                                    </td>
+
+                                    @if ($response->water_max_increase !== null)
+                                        <td class="last-col">{{ $response->water_max_increase }}</td>
+                                        <td class="last-col">{{ $response->water_max_percentage_increase }}</td>
+                                    @else
+                                        <td class="last-col">{{ $response->water_in_contract_max ? $response->water_in_contract_max - $table['water_max'] : $table['water_max'] }}</td>
+                                        <td class="last-col">
+                                            @if ($response->water_in_contract_max)
+                                                {{ round((($response->water_in_contract_max - $table['water_max']) / $response->water_in_contract_max) * 100, 2, PHP_ROUND_HALF_DOWN) }}
+                                            @else
+                                                100
+                                            @endif
+                                        </td>
+                                    @endif
                                 </tr>
                                 <tr>
                                     <th>ИТОГО:</th>
@@ -308,18 +347,24 @@ $table_result = 0;
                                     @endforeach
 
                                     <th>{{ $response->main_in_contract + $response->ven_in_contract + $response->water_in_contract_max }}</th>
-                                    <th class="last-col">
-                                        @php
-                                            $in_contract = $response->main_in_contract + $response->ven_in_contract + $response->water_in_contract_max;
-                                        @endphp
 
-                                        @if ($in_contract == 0)
-                                            {{ $table_result }}
-                                        @else
-                                            {{ $in_contract - $table_result }}
-                                        @endif
-                                    </th>
-                                    <th class="last-col">{{ round((($in_contract - $table_result) / $table_result) * 100, 2, PHP_ROUND_HALF_DOWN) }}</th>
+                                    @if ($response->final_increase !== null)
+                                        <td class="last-col">{{ $response->final_increase }}</td>
+                                        <td class="last-col">{{ $response->final_percentage_increase }}</td>
+                                    @else
+                                        <th class="last-col">
+                                            @php
+                                                $in_contract = $response->main_in_contract + $response->ven_in_contract + $response->water_in_contract_max;
+                                            @endphp
+
+                                            @if ($in_contract == 0)
+                                                {{ $table_result }}
+                                            @else
+                                                {{ $in_contract - $table_result }}
+                                            @endif
+                                        </th>
+                                        <th class="last-col">{{ round((($in_contract - $table_result) / $table_result) * 100, 2, PHP_ROUND_HALF_DOWN) }}</th>
+                                    @endif
                                 </tr>
                             </table>
                         </li>

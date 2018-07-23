@@ -65,7 +65,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/{provider}/all/{status}', 'Apz\ApzProviderController@all');
             Route::get('/{provider}/{id}', 'Apz\ApzProviderController@show');
             Route::post('/{provider}/{id}/save', 'Apz\ApzProviderController@save');
-            Route::get('/{provider}/{id}/update', 'Apz\ApzProviderController@update');
+            Route::post('/{provider}/{id}/update', 'Apz\ApzProviderController@update');
             Route::post('/{provider}/{id}/response', 'Apz\ApzProviderController@headDecision');
         });
 

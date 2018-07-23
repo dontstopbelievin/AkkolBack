@@ -47,4 +47,9 @@ class ApzState extends Model
     const TO_HEAD               = 21;
     const HEAD_APPROVED         = 22;
     const HEAD_DECLINED         = 23;
+    const WATER_SIGNED          = 24;
+    const GAS_SIGNED            = 25;
+    const ELECTRICITY_SIGNED    = 26;
+    const PHONE_SIGNED          = 27;
+    const HEAT_SIGNED           = 28;
 }

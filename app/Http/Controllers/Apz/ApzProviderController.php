@@ -47,6 +47,7 @@ class ApzProviderController extends Controller
                 $base_role = Role::WATER;
                 $approved_state = ApzState::WATER_APPROVED;
                 $declined_state = ApzState::WATER_DECLINED;
+                $signed_state = ApzState::WATER_SIGNED;
                 $response = 'commission.apzWaterResponse';
                 $is_performer = Auth::user()->hasRole('PerformerWater');
                 break;
@@ -55,6 +56,7 @@ class ApzProviderController extends Controller
                 $base_role = Role::GAS;
                 $approved_state = ApzState::GAS_APPROVED;
                 $declined_state = ApzState::GAS_DECLINED;
+                $signed_state = ApzState::GAS_SIGNED;
                 $response = 'commission.apzGasResponse';
                 $is_performer = Auth::user()->hasRole('PerformerGas');
                 break;
@@ -63,6 +65,7 @@ class ApzProviderController extends Controller
                 $base_role = Role::ELECTRICITY;
                 $approved_state = ApzState::ELECTRICITY_APPROVED;
                 $declined_state = ApzState::ELECTRICITY_DECLINED;
+                $signed_state = ApzState::ELECTRICITY_SIGNED;
                 $response = 'commission.apzElectricityResponse';
                 $is_performer = Auth::user()->hasRole('PerformerElectricity');
                 break;
@@ -71,6 +74,7 @@ class ApzProviderController extends Controller
                 $base_role = Role::PHONE;
                 $approved_state = ApzState::PHONE_APPROVED;
                 $declined_state = ApzState::PHONE_DECLINED;
+                $signed_state = ApzState::PHONE_SIGNED;
                 $response = 'commission.apzPhoneResponse';
                 $is_performer = Auth::user()->hasRole('PerformerPhone');
                 break;
@@ -79,6 +83,7 @@ class ApzProviderController extends Controller
                 $base_role = Role::HEAT;
                 $approved_state = ApzState::HEAT_APPROVED;
                 $declined_state = ApzState::HEAT_DECLINED;
+                $signed_state = ApzState::HEAT_SIGNED;
                 $response = 'commission.apzHeatResponse';
                 $is_performer = Auth::user()->hasRole('PerformerHeat');
                 break;
@@ -98,8 +103,8 @@ class ApzProviderController extends Controller
 
                 if ($is_performer) {
                     $apzs->has($response);
-                    $apzs->whereDoesntHave('stateHistory', function ($query) use ($approved_state, $declined_state) {
-                        $query->where('state_id', $approved_state)->orWhere('state_id', $declined_state);
+                    $apzs->whereDoesntHave('stateHistory', function ($query) use ($approved_state, $declined_state, $signed_state) {
+                        $query->where('state_id', $approved_state)->orWhere('state_id', $declined_state)->orWhere('state_id', $signed_state);
                     });
                 }
                 break;
@@ -121,7 +126,13 @@ class ApzProviderController extends Controller
                 $apzs->where('status_id', ApzStatus::PROVIDER);
 
                 if ($is_performer) {
-                    $apzs->doesntHave($response);
+                    $apzs->where(function ($query) use ($response, $signed_state) {
+                        $query->doesntHave($response);
+                        $query->orWhereHas('stateHistory', function ($query) use ($signed_state) {
+                            $query->where('state_id', $signed_state);
+                        });
+                    });
+
                 } else {
                     $apzs->has($response);
                 }
@@ -525,6 +536,15 @@ class ApzProviderController extends Controller
                 $response->connection_terms = $request["Connection_terms"];
                 $response->heating_networks_design = $request["Heating_networks_design"];
                 $response->final_heat_loads = $request["Final_heat_loads"];
+                $response->energy_efficiency = $request["Energy_efficiency"];
+                $response->main_increase = $request["Main_increase"];
+                $response->main_percentage_increase = $request["Main_percentage_increase"];
+                $response->ven_increase = $request["Ven_increase"];
+                $response->ven_percentage_increase = $request["Ven_percentage_increase"];
+                $response->water_max_increase = $request["Water_max_increase"];
+                $response->water_max_percentage_increase = $request["Water_max_percentage_increase"];
+                $response->final_increase = $request["Final_increase"];
+                $response->final_percentage_increase = $request["Final_percentage_increase"];
                 $response->heat_networks_relaying = $request["Heat_networks_relaying"];
                 $response->condensate_return = $request["Condensate_return"];
                 $response->thermal_energy_meters = $request["Thermal_energy_meters"];
@@ -738,11 +758,12 @@ class ApzProviderController extends Controller
     /**
      * Save apz
      *
+     * @param Request $request
      * @param string $provider
      * @param integer $id
      * @return \Illuminate\Http\Response
      */
-    public function update($provider, $id)
+    public function update(Request $request, $provider, $id)
     {
         $apz = Apz::where(['id' => $id])->with(Apz::getApzBaseRelationList())->first();
         $commission = Commission::where(['apz_id' => $id])->first();
@@ -827,6 +848,9 @@ class ApzProviderController extends Controller
             if (!$response) {
                 return response()->json(['message' => 'Ответ не найден'], 404);
             }
+
+            $response->doc_number = $request->docNumber;
+            $response->save();
 
             $commission_user = CommissionUser::where(['commission_id' => $commission->id, 'role_id' => $role])->first();
             $commission_user->status_id = $response->response ? CommissionUserStatus::ACCEPTED : CommissionUserStatus::DECLINED;
@@ -944,6 +968,12 @@ class ApzProviderController extends Controller
                     if (!$file_item) {
                         throw new \Exception('Не удалось сохранить модель FileItem');
                     }
+
+                    $state = new ApzStateHistory();
+                    $state->apz_id = $apz->id;
+                    $state->state_id = ApzState::WATER_SIGNED;
+                    $state->save();
+
                     break;
 
                 case 'gas':
@@ -964,6 +994,12 @@ class ApzProviderController extends Controller
                     if (!$file_item) {
                         throw new \Exception('Не удалось сохранить модель FileItem');
                     }
+
+                    $state = new ApzStateHistory();
+                    $state->apz_id = $apz->id;
+                    $state->state_id = ApzState::GAS_SIGNED;
+                    $state->save();
+
                     break;
 
                 case 'electricity':
@@ -984,6 +1020,12 @@ class ApzProviderController extends Controller
                     if (!$file_item) {
                         throw new \Exception('Не удалось сохранить модель FileItem');
                     }
+
+                    $state = new ApzStateHistory();
+                    $state->apz_id = $apz->id;
+                    $state->state_id = ApzState::ELECTRICITY_SIGNED;
+                    $state->save();
+
                     break;
 
                 case 'heat':
@@ -1004,6 +1046,12 @@ class ApzProviderController extends Controller
                     if (!$file_item) {
                         throw new \Exception('Не удалось сохранить модель FileItem');
                     }
+
+                    $state = new ApzStateHistory();
+                    $state->apz_id = $apz->id;
+                    $state->state_id = ApzState::HEAT_SIGNED;
+                    $state->save();
+
                     break;
 
                 case 'phone':
@@ -1024,6 +1072,12 @@ class ApzProviderController extends Controller
                     if (!$file_item) {
                         throw new \Exception('Не удалось сохранить модель FileItem');
                     }
+
+                    $state = new ApzStateHistory();
+                    $state->apz_id = $apz->id;
+                    $state->state_id = ApzState::PHONE_SIGNED;
+                    $state->save();
+
                     break;
 
                 default:
