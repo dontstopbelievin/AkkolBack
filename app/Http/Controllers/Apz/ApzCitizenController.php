@@ -37,7 +37,8 @@ class ApzCitizenController extends Controller
             FileCategory::APPROVED_ASSIGNMENT => $request->confirmedTaskFile,
             FileCategory::TITLE_DOCUMENT => $request->titleDocumentFile,
             FileCategory::PAYMENT_PHONE => $request->paymentPhotoFile,
-            FileCategory::SURVEY => $request->survey
+            FileCategory::SURVEY => $request->survey,
+            FileCategory::JUSTIFICATION_CLAIMED_CAPACITY => $request->claimedCapacityJustification
         ];
 
         DB::beginTransaction();
@@ -85,6 +86,10 @@ class ApzCitizenController extends Controller
 
                     case FileCategory::SURVEY:
                         $file_id = isset($request->survey['id']) ? $request->survey['id'] : null;
+                        break;
+
+                    case FileCategory::JUSTIFICATION_CLAIMED_CAPACITY:
+                        $file_id = isset($request->claimedCapacityJustification['id']) ? $request->claimedCapacityJustification['id'] : null;
                         break;
 
                     default:
