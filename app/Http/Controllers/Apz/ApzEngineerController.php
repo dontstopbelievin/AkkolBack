@@ -69,7 +69,7 @@ class ApzEngineerController extends Controller
 
         if ($apz->commission) {
             foreach ($apz->commission->users as $user) {
-                $user['days'] = holidayDiffInDays($user->created_at, null, 2);
+                $user['days'] = holidayDiffInDays($user->created_at, null, 3);
             }
         }
 

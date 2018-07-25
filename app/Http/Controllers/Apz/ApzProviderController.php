@@ -149,7 +149,7 @@ class ApzProviderController extends Controller
         $result = $apzs->orderBy('created_at', 'desc')->paginate(20);
 
         foreach ($result->items() as $item) {
-            $item['term'] = holidayDiffInDays($item->commission->created_at, null, 2);
+            $item['term'] = holidayDiffInDays($item->commission->created_at, null, 3);
         }
 
         return response()->json($result, 200);
