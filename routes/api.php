@@ -195,15 +195,34 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/delete/{id}','QuestionsController@delete');
     });
 
+  Route::group(['prefix' => '/vacancies', 'middleware' => 'role:admin,reporter'], function () {
+    Route::post('/insert','VacanciesController@insert');
+    Route::post('/update/{id}','VacanciesController@update');
+    Route::get('/delete/{id}','VacanciesController@delete');
+    Route::get('/recovery/{id}','VacanciesController@recovery');
+    Route::get('/disable/{id}','VacanciesController@disable');
+    Route::get('/un-disable/{id}','VacanciesController@unDisable');
+    Route::get('/allTrashed','VacanciesController@allTrashed');
+    Route::get('/all/{status}','VacanciesController@all');
+    Route::get('/show/{id}','VacanciesController@show');
+  });
+
 
 });
+
+
 
 Route::post('/insertWithoutUser','QuestionsController@insertWithoutUser');
 Route::get('/allQuestionsWithAnswer','QuestionsController@all');
 
+Route::group(['prefix' => '/guest/vacancies'], function () {
+  Route::get('/all','VacanciesController@allForGuests');
+  Route::get('/show/{id}','VacanciesController@show');
+});
+
 Route::group(['prefix' => '/menu'], function () {
     Route::get('/', 'MenuItemController@all');
-    Route::get('/categories', 'MenuItemController@getCategories');
+    Route::get('/categories', 'MenuItemController@getCategories')->name('getting-categories');
     Route::get('/roles', 'MenuItemController@getRoles');
     Route::get('/items/{name}', 'MenuItemController@getItems');
 });
