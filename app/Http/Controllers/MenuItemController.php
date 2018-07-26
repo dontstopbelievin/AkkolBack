@@ -28,7 +28,7 @@ class MenuItemController extends Controller
     }
 
     public function getPages () {
-        $item = StaticPages::select('id','title','description')->where('status',1)->get();
+        $item = StaticPages::select('id','title_ru','description_ru')->where('status',1)->get();
 
         return response()->json([
             'pages' => $item
