@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 class VacanciesController extends Controller
 {
   // all vacancies used by status["1-active, 2-disabled"]
-  public function allForGuests($status)
+  public function allForGuests()
   {
-    $vacancies = Vacancies::orderBy('created_at', 'desc')->get();
+    $vacancies = Vacancies::where('status',1)->orderBy('created_at', 'desc')->get();
 
     return response()->json([
       'vacancies' => $vacancies
@@ -38,8 +38,10 @@ class VacanciesController extends Controller
   public function insert(Request $request)
   {
     $vacancy = new Vacancies();
-    $vacancy->title = $request['title'];
-    $vacancy->description = $request['description'];
+    $vacancy->title_ru = $request['title_ru'];
+    $vacancy->title_kk = $request['title_kk'];
+    $vacancy->description_ru = $request['description_ru'];
+    $vacancy->description_kk = $request['description_kk'];
     $vacancy->content_ru = $request['content_ru'];
     $vacancy->content_kk = $request['content_kk'];
     $vacancy->status = 1;
@@ -62,8 +64,10 @@ class VacanciesController extends Controller
 
     if ($vacancy)
     {
-      $vacancy->title = $request['title'];
-      $vacancy->description = $request['description'];
+      $vacancy->title_ru = $request['title_ru'];
+      $vacancy->title_kk = $request['title_kk'];
+      $vacancy->description_ru = $request['description_ru'];
+      $vacancy->description_kk = $request['description_kk'];
       $vacancy->content_ru = $request['content_ru'];
       $vacancy->content_kk = $request['content_kk'];
       $vacancy->status = 1;
