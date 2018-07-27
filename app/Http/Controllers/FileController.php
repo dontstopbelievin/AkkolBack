@@ -34,25 +34,25 @@ class FileController extends Controller
 
     public function images()
     {
-        try {
-            $userId = Auth::user()->id;
-            $query = File::select('id', 'name', 'content_type', 'description', 'url', 'hash', 'extension', 'size', 'category_id', 'created_at')
-                ->with('category')
-                ->where('user_id', $userId)
-                ->where('content_type', 'like', '%image%')
-                ->whereHas('category', function($query) {
-                    $query->where('is_visible', 1);
-                })
-                ->get();
+      try {
+        $userId = Auth::user()->id;
+        $query = File::select('id', 'name', 'content_type', 'description', 'url', 'hash', 'extension', 'size', 'category_id', 'created_at')
+          ->with('category')
+          ->where('user_id', $userId)
+          ->where('content_type', 'like', '%image%')
+          ->whereHas('category', function($query) {
+              $query->where('is_visible', 1);
+          })
+          ->get();
 
-            foreach ($query as $item) {
-                $item['base64'] = base64_encode(file_get_contents(storage_path('app/' . $item->url)));
-            }
-            return response()->json($query, 200);
+        foreach ($query as $item) {
+          $item['base64'] = base64_encode(file_get_contents(storage_path('app/' . $item->url)));
         }
-        catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
-        }
+        return response()->json($query, 200);
+      }
+      catch (\Exception $e) {
+        return response()->json(['message' => $e->getMessage()], 500);
+      }
     }
 
     public function categoriesList()
