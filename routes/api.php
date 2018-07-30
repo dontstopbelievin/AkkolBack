@@ -27,98 +27,7 @@ Route::post('register', ['as' => 'register', 'uses' => 'Auth\RegisterController@
 Route::get('/user_info', 'Auth\LoginController@userInfo');
 Route::get('/search', 'HomeController@search');
 
-Route::group(['prefix' => 'system_files'], function () {
-    Route::get('/category/{name}', 'FileController@getFromSystemCategory');
-    Route::get('/download/{type}/{id}', 'FileController@downloadSystemFile');
-});
-
 Route::get('get_email/{email}/{token}', 'GetEmailController@getEmail');
-
-Route::group(['middleware' => 'auth:api'], function () {
-    Route::group(['prefix' => '/apz'], function () {
-        Route::group(['prefix' => '/citizen', 'middleware' => 'role:citizen'], function () {
-            Route::get('/all/{status}', 'Apz\ApzCitizenController@all');
-            Route::get('/detail/{id}', 'Apz\ApzCitizenController@show');
-            Route::post('/save/{id?}', 'Apz\ApzCitizenController@save')->middleware('holiday');
-            Route::post('/company_search', 'Apz\ApzCitizenController@companySearch');
-        });
-
-        Route::group(['prefix' => '/region', 'middleware' => 'role:region'], function () {
-            Route::get('/all/{status}', 'Apz\ApzRegionController@all');
-            Route::get('/detail/{id}', 'Apz\ApzRegionController@show');
-            Route::post('/status/{id}', 'Apz\ApzRegionController@decision')->middleware('holiday');
-            Route::get('/get_xml/{id}', 'Apz\ApzRegionController@generateXml');
-            Route::post('/save_xml/{id}', 'Apz\ApzRegionController@saveXml')->middleware('holiday');
-        });
-
-        Route::group(['prefix' => '/engineer', 'middleware' => 'role:engineer'], function () {
-            Route::get('/all/{status}', 'Apz\ApzEngineerController@all');
-            Route::get('/detail/{id}', 'Apz\ApzEngineerController@show');
-            Route::get('/get_commission/{id}', 'Apz\ApzEngineerController@getCommission');
-            Route::post('/create_commission/{id}', 'Apz\ApzEngineerController@createCommission')->middleware('holiday');
-            Route::post('/status/{id}', 'Apz\ApzEngineerController@decision')->middleware('holiday');
-        });
-
-        Route::group(['prefix' => '/provider', 'middleware' => 'role:provider'], function () {
-            Route::get('/get_xml/{provider}/{id}', 'Apz\ApzProviderController@generateXml');
-            Route::post('/save_xml/{provider}/{id}', 'Apz\ApzProviderController@saveXml');
-            Route::get('/{provider}/all/{status}', 'Apz\ApzProviderController@all');
-            Route::get('/{provider}/{id}', 'Apz\ApzProviderController@show');
-            Route::post('/{provider}/{id}/save', 'Apz\ApzProviderController@save');
-            Route::post('/{provider}/{id}/update', 'Apz\ApzProviderController@update');
-            Route::post('/{provider}/{id}/response', 'Apz\ApzProviderController@headDecision');
-        });
-
-        Route::group(['prefix' => '/apz_department', 'middleware' => 'role:apzdepartment'], function () {
-            Route::get('/get_xml/{id}', 'Apz\ApzDepartmentController@generateXml');
-            Route::post('/save_xml/{id}', 'Apz\ApzDepartmentController@saveXml')->middleware('holiday');
-            Route::get('/all/{status}', 'Apz\ApzDepartmentController@all');
-            Route::get('/detail/{id}', 'Apz\ApzDepartmentController@show');
-            Route::post('/save/{id}', 'Apz\ApzDepartmentController@save')->middleware('holiday');
-            Route::post('/status/{id}', 'Apz\ApzDepartmentController@decision')->middleware('holiday');
-        });
-
-        Route::group(['prefix' => '/head', 'middleware' => 'role:head'], function () {
-            Route::get('/get_xml/{id}', 'Apz\ApzHeadController@generateXml');
-            Route::post('/save_xml/{id}', 'Apz\ApzHeadController@saveXml')->middleware('holiday');
-            Route::get('/all/{status}', 'Apz\ApzHeadController@all');
-            Route::get('/detail/{id}', 'Apz\ApzHeadController@show');
-            Route::post('save/{id}', 'Apz\ApzHeadController@save');
-            Route::post('status/{id}', 'Apz\ApzHeadController@decision')->middleware('holiday');
-        });
-
-        Route::group(['prefix' => '/answer_template', 'middleware' => 'role:region'], function () {
-            Route::get('/all', 'Apz\ApzAnswerTemplateController@all');
-            Route::post('/create', 'Apz\ApzAnswerTemplateController@create');
-            Route::get('/detail/{id}', 'Apz\ApzAnswerTemplateController@show');
-            Route::post('/update/{id}', 'Apz\ApzAnswerTemplateController@update');
-            Route::post('/delete/{id}', 'Apz\ApzAnswerTemplateController@delete');
-        });
-    });
-
-    Route::group(['prefix' => '/print'], function () {
-        Route::get('/apz/{id}', 'ApzPrintController@printApz');
-        Route::get('/tc/{tc}/{id}', 'ApzPrintController@printTc');
-        Route::get('/region/{id}', 'ApzPrintController@printRegionAnswer');
-    });
-
-    Route::group(['prefix' => '/file'], function () {
-        Route::get('/', 'FileController@index');
-        Route::get('all', 'FileController@all');
-        Route::get('images', 'FileController@images');
-        Route::get('category/{id}', 'FileController@getFromCategory');
-        Route::get('categoriesList', 'FileController@categoriesList');
-        Route::get('download/{id}', 'FileController@download');
-        Route::post('upload', 'FileController@upload');
-        Route::post('delete/{id}', 'FileController@delete');
-    });
-
-    Route::group(['prefix' => '/photoreport'], function () {
-        Route::get('/', 'PhotoReportController@index');
-        Route::post('/create', 'PhotoReportController@create');
-        Route::post('/response', 'PhotoReportController@response');
-        Route::get('/personal', 'PhotoReportController@personal');
-    });
 
     Route::group(['prefix' => '/newsPanel', 'middleware' => 'role:reporter,admin'], function () {
         Route::get('/', 'NewsController@all');
@@ -143,23 +52,6 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/edit/{id}', 'PersonalDataController@edit');
         Route::post('/editPassword/{id}', 'PersonalDataController@editPassword');
         Route::post('/updatePassword/{id}', 'PersonalDataController@updatePassword');
-    });
-
-    Route::group(['prefix' => '/sketch'], function () {
-        Route::group(['prefix' => '/citizen', 'middleware' => 'role:citizen'], function () {
-            Route::get('/all/{status}', 'Sketch\SketchCitizenController@all');
-            Route::get('/detail/{id}', 'Sketch\SketchCitizenController@show');
-            Route::post('/create', 'Sketch\SketchCitizenController@create')->middleware('holiday');
-        });
-
-        Route::group(['prefix' => '/apz_department', 'middleware' => 'role:apzdepartment'], function () {
-            Route::get('/all/{status}', 'Sketch\SketchApzDepartmentController@all');
-            Route::get('/detail/{id}', 'Sketch\SketchApzDepartmentController@show');
-            Route::post('/save/{id}', 'Sketch\SketchApzDepartmentController@save')->middleware('holiday');
-            Route::post('/status/{id}', 'Sketch\SketchApzDepartmentController@decision')->middleware('holiday');;
-            Route::get('/get_xml/{id}', 'Sketch\SketchApzDepartmentController@generateXml');
-            Route::post('/save_xml/{id}', 'Sketch\SketchApzDepartmentController@saveXml')->middleware('holiday');
-        });
     });
 
     Route::group(['prefix' => '/addPages', 'middleware' => 'role:admin'], function () {

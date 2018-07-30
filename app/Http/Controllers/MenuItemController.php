@@ -174,13 +174,13 @@ class MenuItemController extends Controller
 
         for ($i = 0; $i < count($rolesId); $i++) {
             $items = MenuItem::where('role_id',$rolesId[$i])->get();
+
+            // CHANGE LOOP TO FUNCTION LATER
+            //array_push($menu_items,$items->toArray());
             for ($y = 0; $y < count($items); $y++ ){
                 array_push($menu_items,$items[$y]);
             }
-
         }
-
-
 
         if( $menu_items ){
             return response()->json([

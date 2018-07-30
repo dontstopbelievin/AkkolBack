@@ -18,7 +18,9 @@ class CreateNewsTable extends Migration
             $table->string('title', 150);
             $table->string('description', 150);
             $table->text('text');
+            $table->integer('heading_id')->unsigned()->comment('идентификотор рубрики')->nullable();
             $table->integer('status')->default(1);
+            $table->foreign('heading_id')->references('id')->on('heading_for_news');
             $table->timestamps();
         });
     }

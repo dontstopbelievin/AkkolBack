@@ -15,11 +15,12 @@ class CreateStaticPagesTable extends Migration
     {
         Schema::create('static_pages', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title','150')->comment('Названиие статичной страницы');
-            $table->text('description')->comment('Описание страницы');
-            $table->text('content')->comment('Сама страница');
-            $table->integer('role_id')->unsigned()->nullable()->comment('Роль доступа');
-            $table->foreign('role_id')->references('id')->on('roles');
+            $table->text('title_ru','150')->comment('Названиие на русском языке');
+            $table->text('title_kk', '150')->comment('Название на казахском языке');
+            $table->text('description_ru')->comment('Описание на русском языке');
+            $table->text('description_kk')->comment('Описание на казахском языке');
+            $table->text('content_ru')->comment('Контент на русском');
+            $table->text('content_kk')->comment('Контент на казахском');
             $table->integer('status')->comment('Статус на отображение в сайте');
             $table->timestamps();
         });

@@ -107,7 +107,7 @@ class VacanciesController extends Controller
       ],500);
     }
   }
-  // get exactly one vacancy even trashed one.
+  // delete exactly one vacancy even trashed one.
   public function delete($id)
   {
     $vacancy = Vacancies::where('id',$id)->delete();
@@ -120,7 +120,7 @@ class VacanciesController extends Controller
     } else
     {
       return response()->json([
-        'message' => 'Не удалось найти вакасию'
+        'message' => 'Не удалось найти вакансию'
       ],500);
     }
   }

@@ -22,6 +22,8 @@ class CreateMenuItemTable extends Migration
             $table->text('title_kk')->comment('Название пункта меню на казахском');
             $table->text('title_ru')->comment('Название пункта меню на русском');
             $table->integer('type')->comment('тип элем. 1 = страница, 2 = ссылка');
+            $table->integer('role_id')->unsigned()->nullable()->comment('Роль доступа');
+            $table->foreign('role_id')->references('id')->on('roles');
             $table->text('link')->nullable()->comment('ссылка на сторонний ресурс');
             $table->timestamps();
             $table->SoftDeletes();

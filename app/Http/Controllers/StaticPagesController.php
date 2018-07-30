@@ -25,7 +25,7 @@ class StaticPagesController extends Controller
     $answer->title_kk = $request['title_kk'];
     $answer->description_ru = $request['description_ru'];
     $answer->description_kk = $request['description_kk'];
-    $answer->content = $request['content'];
+    $answer->content = $request['content_ru'];
     $answer->content_kk = $request['content_kk'];
     $answer->status = 1;
 
@@ -69,7 +69,7 @@ class StaticPagesController extends Controller
     $answer->title_kk = $request['title_kk'];
     $answer->description_ru = $request['description_ru'];
     $answer->description_kk = $request['description_kk'];
-    $answer->content = $request['content'];
+    $answer->content = $request['content_ru'];
     $answer->content_kk = $request['content_kk'];
 
     if ( $answer->save() ){

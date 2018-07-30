@@ -15,8 +15,10 @@ class CreateVacanciesTable extends Migration
   {
     Schema::create('vacancies', function (Blueprint $table) {
       $table->increments('id');
-      $table->text('title')->comment('Заголовок записи вакансии');
-      $table->text('description')->comment('Описание записи вакансии');
+      $table->text('title_ru')->comment('Заголовок записи вакансии');
+      $table->text('title_kk')->comment('Название на казахском языке');
+      $table->text('description_ru')->comment('Описание записи вакансии');
+      $table->text('description_kk')->comment('Описание на казахском языке');
       $table->text('content_kk')->comment('Контент вакансии на казахском');
       $table->text('content_ru')->comment('Контент вакансии на русском');
       $table->integer('status')->comment('1-активный, 2-отключенный');

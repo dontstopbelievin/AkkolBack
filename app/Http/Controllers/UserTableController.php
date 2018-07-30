@@ -2,12 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Apz;
-use App\ApzState;
-use App\ApzStateHistory;
-use App\ApzStatus;
-use App\Commission;
-use App\CommissionUser;
 use App\Http\Controllers\Controller;
 use App\News;
 use App\PersonalData;
@@ -148,12 +142,4 @@ class UserTableController extends Controller
             ]);
         }
     }
-
-
-
-
-
-
-
-
 }
