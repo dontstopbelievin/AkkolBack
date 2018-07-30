@@ -30,14 +30,14 @@ Route::get('/search', 'HomeController@search');
 Route::get('get_email/{email}/{token}', 'GetEmailController@getEmail');
 
 Route::group(['middleware' => 'auth:api'], function () {
-    Route::group(['prefix' => '/newsPanel', 'middleware' => 'role:reporter,admin'], function () {
+
+    Route::group(['prefix' => '/newsPanel'], function () {
         Route::get('/', 'NewsController@all');
         Route::post('/insert', 'NewsController@insert');
         Route::get('/edit/{id}', 'NewsController@edit');
         Route::post('/update', 'NewsController@update');
         Route::get('/delete/{id}', 'NewsController@delete');
     });
-
 
     Route::group(['prefix' => '/userTable', 'middleware' => 'role:admin'], function () {
         Route::get('/getUsers', 'UserTableController@allUsers');
@@ -46,7 +46,6 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/deleteUser/{id}', 'UserTableController@deleteUsers');
         Route::post('/addRoleToUser', 'UserTableController@addRoleToUser');
     });
-
 
     Route::group(['prefix' => '/personalData'], function () {
         Route::post('/update/{id}', 'PersonalDataController@update');
@@ -88,7 +87,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/delete/{id}','QuestionsController@delete');
     });
 
-  Route::group(['prefix' => '/vacancies', 'middleware' => 'role:admin,reporter'], function () {
+  Route::group(['prefix' => '/vacancies'], function () {
     Route::post('/insert','VacanciesController@insert');
     Route::post('/update/{id}','VacanciesController@update');
     Route::get('/delete/{id}','VacanciesController@delete');
