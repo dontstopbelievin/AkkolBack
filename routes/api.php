@@ -29,6 +29,7 @@ Route::get('/search', 'HomeController@search');
 
 Route::get('get_email/{email}/{token}', 'GetEmailController@getEmail');
 
+Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['prefix' => '/newsPanel', 'middleware' => 'role:reporter,admin'], function () {
         Route::get('/', 'NewsController@all');
         Route::post('/insert', 'NewsController@insert');
